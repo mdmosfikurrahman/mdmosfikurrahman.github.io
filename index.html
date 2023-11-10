@@ -28,8 +28,7 @@
 <body class="home1-page">
 
 <!-- Background Video -->
-<video class="body-overlay" muted autoplay loop>
-    <source src="assets/backgroundVideo/singleString.mp4" type="video/mp4">
+<video id="background-video" class="body-overlay" muted autoplay loop>
 </video>
 
 <!-- Page Loader Icon -->
@@ -590,7 +589,9 @@
                                                 <p class="designation">Email: <a href="mailto:deanfsit@daffodilvarsity.edu.bd">deanfsit@daffodilvarsity.edu.bd</a></p>
                                             </div>
                                         </div>
-                                        <p>"An outstanding student with a brilliant mind. Demonstrated exceptional research skills and a keen interest in advancing his career. His dedication to our collaborative research projects showcased his commitment to excellence."</p>
+                                        <blockquote>
+                                            <p>"An outstanding student with a brilliant mind. Demonstrated exceptional research skills and a keen interest in advancing his career. His dedication to our collaborative research projects showcased his commitment to excellence."</p>
+                                        </blockquote>
                                     </div>
                                 </div>
 
@@ -611,7 +612,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <p>"A diligent and proactive researcher, consistently delivering high-quality work. During our collaboration, I observed a strong analytical mindset and a genuine passion for exploring new avenues in the field. A valuable asset to any research team."</p>
+                                        <blockquote>
+                                            <p>"A diligent and proactive researcher, consistently delivering high-quality work. During our collaboration, I observed a strong analytical mindset and a genuine passion for exploring new avenues in the field. A valuable asset to any research team."</p>
+                                        </blockquote>
                                     </div>
                                 </div>
 
@@ -627,7 +630,9 @@
                                                 <p class="designation">Email: <a href="mailto:aminul.cse@daffodilvarsity.edu.bd">aminul.cse@daffodilvarsity.edu.bd</a></p>
                                             </div>
                                         </div>
-                                        <p>"Impressive leadership skills and a knack for data science. Excelled not only in academics but also in extracurricular activities, notably as the Vice President of the Computer and Programming Club. A dedicated individual who consistently exceeded expectations."</p>
+                                        <blockquote>
+                                            <p>"Impressive leadership skills and a knack for data science. Excelled not only in academics but also in extracurricular activities, notably as the Vice President of the Computer and Programming Club. A dedicated individual who consistently exceeded expectations."</p>
+                                        </blockquote>
                                     </div>
                                 </div>
 
@@ -667,7 +672,6 @@
                     </div>
                 </div>
             </section>
-
         </div>
     </div>
 </main>
@@ -683,5 +687,26 @@
 
 <script src="./assets/js/main.js"></script>
 <script src="./assets/js/ajax-form.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const videos = ["connectedString.mp4", "earthScience.mp4", "singleString.mp4", "water.mp4"];
+
+        const lastVideo = localStorage.getItem("lastVideo");
+
+        let randomVideo;
+        do {
+            randomVideo = videos[Math.floor(Math.random() * videos.length)];
+        } while (randomVideo === lastVideo);
+
+        const backgroundVideo = document.getElementById("background-video");
+        backgroundVideo.src = "assets/backgroundVideo/" + randomVideo;
+
+        localStorage.setItem("lastVideo", randomVideo);
+
+        backgroundVideo.load();
+        backgroundVideo.play();
+    });
+</script>
 </body>
 </html>
