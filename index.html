@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
 
 </head>
@@ -18,12 +19,16 @@
     <div class="scroll-up-btn">
         <i class="fas fa-angle-up"></i>
     </div>
+
+    <!-- navbar start -->
     <nav class="navbar">
         <div class="max-width">
             <div class="logo"><a href="#">Mos<span>fik</span></a></div>
             <ul class="menu">
                 <li><a href="#home" class="menu-btn">Home</a></li>
                 <li><a href="#about" class="menu-btn">About</a></li>
+                <li><a href="#education" class="menu-btn">Education</a></li>
+                <li><a href="#experience" class="menu-btn">Experience</a></li>
                 <li><a href="#expertise" class="menu-btn">Expertise</a></li>
                 <li><a href="#skills" class="menu-btn">Skills</a></li>
                 <li><a href="#references" class="menu-btn">References</a></li>
@@ -47,10 +52,10 @@
         </div>
     </section>
 
-    <!-- about section start -->
+    <!-- about section start সাদা -->
     <section class="about" id="about">
         <div class="max-width">
-            <h2 class="title">About me</h2>
+            <h2 class="title">About Me</h2>
             <div class="about-content">
                 <div class="column left">
                     <img src="images/myself/me.jpg" alt="Mosfik">
@@ -68,11 +73,91 @@
         </div>
     </section>
 
-    <!-- expertise section start -->
+    <!-- education section start কালা -->
+    <section class="education" id="education">
+        <div class="max-width">
+            <h2 class="title">My Education</h2>
+            <div class="carousel owl-carousel">
+                <div class="card">
+                    <div class="box">
+                        <img src="images/references/moonMam.jpeg" alt="Nazmun Nessa Moon">
+                        <div class="text">Bachelor in Science</div>
+                        <p>CGPA: 3.83 out of 4.00</p>
+                        <p>Computer Science & Engineering</p>
+                        <p>Daffodil International University</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="box">
+                        <img src="images/references/saifSir.JPG" alt="Mohd. Saifuzzaman">
+                        <div class="text">Erasmus Mundus</div>
+                        <p>Grade: PASSED with 80% Marks</p>
+                        <p>Computer Science & Engineering</p>
+                        <p>Adam Mickiewicz University</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="box">
+                        <img src="images/references/saifSir.JPG" alt="Mohd. Saifuzzaman">
+                        <div class="text">Higher Secondary</div>
+                        <p>GPA: 4.67 out of 5.00 (Science)</p>
+                        <p>Major General Mahmudul Hasan Adarsha College, Tangail</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="box">
+                        <img src="images/references/saifSir.JPG" alt="Mohd. Saifuzzaman">
+                        <div class="text">Secondary</div>
+                        <p>GPA: 5.00 out of 5.00 (Science)</p>
+                        <p>Police Lines Adarsha High School, Tangail</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- experience section start সাদা -->
+    <section class="experience" id="experience">
+        <div class="max-width">
+            <h2 class="title">My Experiences</h2>
+            <div class="experience-content">
+                <div class="column left">
+                    <div class="text">Software Engineer (July 2023 – Present)</div>
+                    <div class="text">REVE Systems Ltd.</div>
+                    <div class="job-responsibilities">
+                        <ul>
+                            <li>Develop and maintain Java full-stack applications.</li>
+                            <li>Use object-oriented design patterns for efficient solutions.</li>
+                            <li>Collaborate on multi-tier distributed applications with MySQL.</li>
+                            <li>Follow agile development practices and core development.</li>
+                            <li>Explore new technologies to enhance web platform functionality.</li>
+                            <li>Get familiar and work in Government project in e-Governance.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="column right">
+                    <div class="text">Software Engineer (April 2022 – June 2023)</div>
+                    <div class="text">BJIT Limited, Bangladesh</div>
+                    <div class="job-responsibilities">
+                        <ul>
+                            <li>Implement JavaEE back-end/API using REST, SOAP, Spring.</li>
+                            <li>Use object-oriented design patterns for efficient solutions.</li>
+                            <li>Build enterprise apps using Java web frameworks and Thymeleaf.</li>
+                            <li>Create fundamental papers, including API specifications and UMLs.</li>
+                            <li>Compose unit and integration tests for software quality.</li>
+                            <li>Used GraphQL as the most cutting edge technology.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- expertise section start কালা -->
     <section class="expertise" id="expertise">
         <div class="max-width">
             <h2 class="title">My Expertise</h2>
-            <div class="serv-content">
+            <div class="expertise-content">
                 <div class="card">
                     <div class="box">
                         <i class="fas fa-cogs"></i>
@@ -98,10 +183,10 @@
         </div>
     </section>
 
-    <!-- skills section start -->
+    <!-- skills section start সাদা -->
     <section class="skills" id="skills">
         <div class="max-width">
-            <h2 class="title">My skills</h2>
+            <h2 class="title">My Skills</h2>
             <div class="skills-content">
                 <div class="column left">
                     <div class="text">My creative skills & experiences.</div>
@@ -176,7 +261,7 @@
         </div>
     </section>
 
-    <!-- references section start -->
+    <!-- references section start কালা -->
     <section class="references" id="references">
         <div class="max-width">
             <h2 class="title">My References</h2>
@@ -209,7 +294,7 @@
         </div>
     </section>
 
-    <!-- contact section start -->
+    <!-- contact section start সাদা -->
     <section class="contact" id="contact">
         <div class="max-width">
             <h2 class="title">Contact me</h2>
@@ -251,11 +336,9 @@
         </div>
     </section>
 
-    <!-- footer section start -->
+    <!-- footer section start সাদা/কালা-->
     <footer>
         <span>Created By <a href="#">Mosfik</a> | <span class="far fa-copyright"></span> 2023 All rights reserved.</span>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
