@@ -1,0 +1,49 @@
+/* experience section styling */
+.experience{
+    font-family: 'Poppins', sans-serif;
+}
+.experience .title::after{
+    content: "where do i work";
+}
+.experience .experience-content{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+.experience .experience-content .column{
+    width: calc(50% - 30px);
+}
+.experience .experience-content .text{
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.experience .experience-content .left p{
+    text-align: justify;
+}
+.experience .experience-content .left .icons{
+    margin: 10px 0;
+}
+.experience .experience-content .row{
+    display: flex;
+    height: 65px;
+    align-items: center;
+}
+.experience .experience-content .row .info{
+    margin-left: 30px;
+}
+.experience .experience-content .row i{
+    font-size: 25px;
+    color: blueviolet;
+}
+.experience .experience-content .info .head{
+    font-weight: 500;
+}
+.experience .experience-content .info .sub-title{
+    color: #333;
+}
+.experience .experience-content .job-responsibilities {
+    text-align: justify;
+    margin: 10px 0;
+}

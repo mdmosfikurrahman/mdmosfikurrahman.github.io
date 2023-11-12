@@ -1,0 +1,50 @@
+/* reference section styling */
+.references{
+    color:#fff;
+    background: #111;
+    font-family: 'Poppins', sans-serif;
+}
+.references .title::before{
+    background: #fff;
+}
+.references .title::after{
+    background: #111;
+    content: "who guided me";
+}
+.references .carousel .card{
+    background: #222;
+    border-radius: 6px;
+    padding: 25px 35px;
+    text-align: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.references .carousel .card:hover{
+    background: blueviolet;
+}
+.references .carousel .card .box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.references .carousel .card:hover .box{
+    transform: scale(1.05);
+}
+.references .carousel .card .text{
+    font-size: 25px;
+    font-weight: 500;
+    margin: 10px 0 7px 0;
+}
+.references .carousel .card img{
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid blueviolet;
+    transition: all 0.3s ease;
+}
+.references .carousel .card:hover img{
+    border-color: #fff;
+}
