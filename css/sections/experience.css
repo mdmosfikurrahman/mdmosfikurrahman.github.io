@@ -1,8 +1,14 @@
 /* experience section styling */
 .experience{
+    color:#fff;
+    background: #111;
     font-family: 'Poppins', sans-serif;
 }
+.experience .title::before{
+    background: #fff;
+}
 .experience .title::after{
+    background: #111;
     content: "where do i work";
 }
 .experience .experience-content{

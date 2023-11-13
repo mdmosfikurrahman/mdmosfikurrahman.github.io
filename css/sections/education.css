@@ -1,11 +1,9 @@
 /* education section styling */
 .education{
-    color:#fff;
-    background: #111;
     font-family: 'Poppins', sans-serif;
 }
 .education .carousel .card{
-    background: #222;
+    background: #ddd;
     border-radius: 6px;
     padding: 25px 35px;
     text-align: center;
@@ -13,7 +11,7 @@
     transition: all 0.3s ease;
 }
 .education .carousel .card:hover{
-    background: blueviolet;
+    background: #75D41D;
 }
 .education .carousel .card .box{
     display: flex;
@@ -41,10 +39,6 @@
 .education .carousel .card:hover img{
     border-color: #fff;
 }
-.education .title::before{
-    background: #fff;
-}
 .education .title::after{
-    background: #111;
     content: "what did i study";
 }
