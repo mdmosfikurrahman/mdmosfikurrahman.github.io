@@ -71,3 +71,26 @@ $(document).ready(function(){
         }
     });
 });
+
+function openModal(reference) {
+    const modal = document.getElementById("referenceModal");
+    const modalContent = document.getElementById("modalContent");
+
+    modalContent.innerHTML = `
+        <h3>${reference.name}</h3>
+        <br>
+        <p>${reference.designation}</p>
+        <p>${reference.department}</p>
+        <p>${reference.company}</p>
+        <br>
+        <p>Contact: ${reference.contact}</p>
+        <p>Email: <a href="mailto:${reference.email}" style="color: #fff;">${reference.email}</a></p>
+    `;
+
+    modal.style.display = "block";
+}
+
+function closeModal() {
+    const modal = document.getElementById("referenceModal");
+    modal.style.display = "none";
+}

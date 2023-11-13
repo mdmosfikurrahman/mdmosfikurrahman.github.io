@@ -12,6 +12,7 @@
     content: "who guided me";
 }
 .references .carousel .card{
+    z-index: 1;
     background: #222;
     border-radius: 6px;
     padding: 25px 35px;

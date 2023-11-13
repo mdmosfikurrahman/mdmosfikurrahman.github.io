@@ -13,6 +13,7 @@
 @import url('utils/navbar.css');
 @import url('utils/section.css');
 @import url('utils/footer.css');
+@import url('utils/modal.css');
 
 /* External libraries */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');

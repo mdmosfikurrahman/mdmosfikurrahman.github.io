@@ -22,7 +22,7 @@
     <!-- navbar start -->
     <nav class="navbar">
         <div class="max-width">
-            <div class="logo"><a href="#">Mos<span>fik</span></a></div>
+            <div class="logo"><a href="#">Mos<span>fik.</span></a></div>
             <ul class="menu">
                 <li><a href="#home" class="menu-btn">Home</a></li>
                 <li><a href="#about" class="menu-btn">About</a></li>
@@ -260,12 +260,27 @@
         </div>
     </section>
 
+    <!-- Modal -->
+    <div class="modal" id="referenceModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
     <!-- reference section start কালা -->
     <section class="references" id="references">
         <div class="max-width">
             <h2 class="title">My References</h2>
             <div class="carousel owl-carousel">
-                <div class="card">
+                <div class="card" onclick="openModal({
+                    name: 'Nazmun Nessa Moon',
+                    designation: 'Associate Professor',
+                    department: 'Department of Computer Science & Engineering',
+                    company: 'Daffodil International University',
+                    contact: '+880 1798-145670',
+                    email: 'moon@daffodilvarsity.edu.bd'
+                })">
                     <div class="box">
                         <img src="images/reference/moonMam.jpeg" alt="Nazmun Nessa Moon">
                         <div class="text">Nazmun Nessa Moon</div>
@@ -273,15 +288,33 @@
                         <p>Daffodil International University</p>
                     </div>
                 </div>
-                <div class="card">
+
+
+                <div class="card" onclick="openModal({
+                    name: 'Mohd. Saifuzzaman',
+                    designation: 'Software Engineer',
+                    department: 'Software Quality Assurance',
+                    company: 'TechnoNext Ltd., Bangladesh',
+                    contact: '+880 1715-484340',
+                    email: 'mohdsaifuzzaman.cse@gmail.com'
+                })">
                     <div class="box">
                         <img src="images/reference/saifSir.JPG" alt="Mohd. Saifuzzaman">
                         <div class="text">Mohd. Saifuzzaman</div>
-                        <p>Software QA Engineer</p>
+                        <p>Software Engineer</p>
                         <p>TechnoNext Ltd., Bangladesh</p>
                     </div>
                 </div>
-                <div class="card">
+
+
+                <div class="card" onclick="openModal({
+                    name: 'Dr. S. M. Aminul Haque',
+                    designation: 'Associate Professor & Associate Head',
+                    department: 'Department of Computer Science & Engineering',
+                    company: 'Daffodil International University',
+                    contact: '+880 1847-140129',
+                    email: 'aminul.cse@daffodilvarsity.edu.bd'
+                })">
                     <div class="box">
                         <img src="images/reference/aminulSir.jpeg" alt="Dr. S. M. Aminul Haque">
                         <div class="text">Dr. S. M. Aminul Haque</div>
@@ -289,7 +322,15 @@
                         <p>Daffodil International University</p>
                     </div>
                 </div>
-                <div class="card">
+
+                <div class="card" onclick="openModal({
+                    name: 'Tahmidur Rahman',
+                    designation: 'Senior Software Engineer',
+                    department: 'ENT-4',
+                    company: 'BJIT Ltd., Bangladesh',
+                    contact: '+880 1712-895085',
+                    email: 'tahmidur.rahman@bjitgroup.com'
+                })">
                     <div class="box">
                         <img src="images/reference/tahmidBhai.jpg" alt="Tahmidur Rahman">
                         <div class="text">Tahmidur Rahman</div>
