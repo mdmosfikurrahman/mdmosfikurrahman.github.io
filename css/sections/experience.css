@@ -1,11 +1,12 @@
 /* experience section styling */
 .experience{
-    color:#fff;
+    color:#eee;
     background: #111;
     font-family: 'Poppins', sans-serif;
+    counter-reset: journal-counter conference-counter;
 }
 .experience .title::before{
-    background: #fff;
+    background: #eee;
 }
 .experience .title::after{
     background: #111;
@@ -18,7 +19,21 @@
     justify-content: space-between;
 }
 .experience .experience-content .column{
+    box-sizing: border-box;
+    padding: 20px;
     width: calc(50% - 30px);
+}
+.experience .experience-content .column.left {
+    width: 100%;
+}
+.experience .experience-content .column.left .row {
+    counter-increment: journal-counter;
+}
+.experience .experience-content .column.right {
+    width: 100%;
+}
+.experience .experience-content .column.right .row {
+    counter-increment: conference-counter;
 }
 .experience .experience-content .text{
     font-size: 20px;
@@ -32,24 +47,36 @@
     margin: 10px 0;
 }
 .experience .experience-content .row{
-    display: flex;
-    height: 65px;
-    align-items: center;
+    width: 100%;
 }
 .experience .experience-content .row .info{
-    margin-left: 30px;
+    margin-left: 0;
 }
 .experience .experience-content .row i{
     font-size: 25px;
     color: blueviolet;
 }
+.experience .experience-content .row .number::before {
+    content: counter(journal-counter) ". ";
+    font-weight: bold;
+    margin-right: 10px;
+    color: #ccc;
+}
+.experience .experience-content .row.right .number::before {
+    content: counter(conference-counter) ". ";
+    font-weight: bold;
+    margin-right: 10px;
+    color: #ccc;
+}
+.experience .experience-content .info {
+    margin-left: 10px;
+}
 .experience .experience-content .info .head{
     font-weight: 500;
+    margin-left: 0;
 }
 .experience .experience-content .info .sub-title{
-    color: #333;
-}
-.experience .experience-content .job-responsibilities {
-    text-align: justify;
-    margin: 10px 0;
+    margin-left: 0;
+    color: #ccc;
+    margin-bottom: 10px;
 }

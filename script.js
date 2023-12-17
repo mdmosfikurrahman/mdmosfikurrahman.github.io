@@ -80,6 +80,12 @@ function openModal(reference) {
     `;
 
     modal.style.display = "block";
+
+    window.addEventListener("click", function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
 }
 
 function closeModal() {
