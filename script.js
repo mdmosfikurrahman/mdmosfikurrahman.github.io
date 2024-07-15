@@ -27,14 +27,7 @@ $(document).ready(function(){
         $('.menu-btn i').toggleClass("active");
     });
 
-    var typed = new Typed(".typing", {
-        strings: ["Software Engineer", "Backend Developer", "Researcher", "Data Analyst"],
-        typeSpeed: 100,
-        backSpeed: 60,
-        loop: true
-    });
-
-    var typed = new Typed(".typing-2", {
+    const typed = new Typed(".typing", {
         strings: ["Software Engineer", "Backend Developer", "Researcher", "Data Analyst"],
         typeSpeed: 100,
         backSpeed: 60,

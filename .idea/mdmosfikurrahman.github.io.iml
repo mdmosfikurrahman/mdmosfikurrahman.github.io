@@ -18,5 +18,6 @@
     <orderEntry type="library" name="typed.js" level="application" />
     <orderEntry type="library" name="waypoints" level="application" />
     <orderEntry type="library" name="OwlCarousel2" level="application" />
+    <orderEntry type="library" name="bootstrap-icons" level="application" />
   </component>
 </module>

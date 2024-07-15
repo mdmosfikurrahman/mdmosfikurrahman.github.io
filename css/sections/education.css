@@ -1,34 +1,54 @@
 /* education section styling */
-.education{
+.education {
     font-family: 'Poppins', sans-serif;
 }
-.education .carousel .card{
+
+.education .title::after {
+    content: "what did i study";
+}
+
+.education-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.education-cards .card {
     background: #ddd;
     border-radius: 6px;
     padding: 25px 35px;
     text-align: center;
     overflow: hidden;
     transition: all 0.3s ease;
+    box-sizing: border-box;
+    flex: 1 1 calc(33.333% - 40px);
+    max-width: calc(33.333% - 40px);
 }
-.education .carousel .card:hover{
+
+.education-cards .card:hover {
     background: #75D41D;
 }
-.education .carousel .card .box{
+
+.education-cards .card .box {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
 }
-.education .carousel .card:hover .box{
+
+.education-cards .card:hover .box {
     transform: scale(1.05);
 }
-.education .carousel .card .text{
+
+.education-cards .card .text {
     font-size: 25px;
     font-weight: 500;
     margin: 10px 0 7px 0;
 }
-.education .carousel .card img{
+
+.education-cards .card img {
     height: 150px;
     width: 150px;
     object-fit: cover;
@@ -36,9 +56,21 @@
     border: 5px solid blueviolet;
     transition: all 0.3s ease;
 }
-.education .carousel .card:hover img{
+
+.education-cards .card:hover img {
     border-color: #fff;
 }
-.education .title::after{
-    content: "what did i study";
+
+@media (max-width: 1200px) {
+    .education-cards .card {
+        flex: 1 1 calc(50% - 40px);
+        max-width: calc(50% - 40px);
+    }
+}
+
+@media (max-width: 768px) {
+    .education-cards .card {
+        flex: 1 1 calc(100% - 40px);
+        max-width: calc(100% - 40px);
+    }
 }
