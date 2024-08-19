@@ -1,20 +1,11 @@
-/* Reference section styling */
-.references {
+/* reference section styling */
+.references{
     font-family: 'Poppins', sans-serif;
 }
-
-.references .title::after {
+.references .title::after{
     content: "who guided me";
 }
-
-.reference-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.reference-cards .card {
+.references .carousel .card{
     z-index: 1;
     background: #ddd;
     border-radius: 6px;
@@ -22,34 +13,26 @@
     text-align: center;
     overflow: hidden;
     transition: all 0.3s ease;
-    box-sizing: border-box;
-    flex: 1 1 calc(33.333% - 40px);
-    max-width: calc(33.333% - 40px);
 }
-
-.reference-cards .card:hover {
+.references .carousel .card:hover{
     background: #75D41D;
 }
-
-.reference-cards .card .box {
+.references .carousel .card .box{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
 }
-
-.reference-cards .card:hover .box {
+.references .carousel .card:hover .box{
     transform: scale(1.05);
 }
-
-.reference-cards .card .text {
+.references .carousel .card .text{
     font-size: 25px;
     font-weight: 500;
     margin: 10px 0 7px 0;
 }
-
-.reference-cards .card img {
+.references .carousel .card img{
     height: 150px;
     width: 150px;
     object-fit: cover;
@@ -57,21 +40,6 @@
     border: 5px solid blueviolet;
     transition: all 0.3s ease;
 }
-
-.reference-cards .card:hover img {
+.references .carousel .card:hover img{
     border-color: #fff;
-}
-
-@media (max-width: 1200px) {
-    .reference-cards .card {
-        flex: 1 1 calc(50% - 40px);
-        max-width: calc(50% - 40px);
-    }
-}
-
-@media (max-width: 768px) {
-    .reference-cards .card {
-        flex: 1 1 calc(100% - 40px);
-        max-width: calc(100% - 40px);
-    }
 }
