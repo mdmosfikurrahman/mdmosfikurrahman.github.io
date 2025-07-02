@@ -2,7 +2,7 @@
 # GitHub Pages Deploy Script
 # ============================
 
-# Ensure script runs from its own directory
+# Ensure script runs from its directory
 Set-Location -Path $PSScriptRoot
 
 # Step 1: Ensure we are on dynamic-source
@@ -23,7 +23,9 @@ npm run build
 
 # Step 5: Backup dist to a temp directory
 $tempDistPath = "$env:TEMP\deploy_dist_copy"
-if (Test-Path $tempDistPath) { Remove-Item -Recurse -Force $tempDistPath }
+if (Test-Path $tempDistPath) {
+    Remove-Item -Recurse -Force $tempDistPath
+}
 Copy-Item -Recurse -Force .\dist $tempDistPath
 
 # Step 6: Switch to or create dynamic-2 branch
