@@ -12,13 +12,10 @@ if ($currentBranch -ne "dynamic-source") {
     exit 1
 }
 
-Write-Host "Step 2: Pulling latest changes from origin/dynamic-source..."
 git pull origin dynamic-source
 
-Write-Host "Step 3: Installing dependencies..."
 npm install
 
-Write-Host "Step 4: Building the project..."
 npm run build
 
 # Step 5: Backup dist to a temp directory
@@ -62,7 +59,6 @@ if (-not $newlyCreated) {
 }
 
 # Step 9: Clean all files except .git, .idea, and deploy.ps1
-Write-Host "Cleaning workspace..."
 Get-ChildItem -Force | Where-Object {
     $_.Name -ne '.git' -and
             $_.Name -ne '.idea' -and
@@ -70,17 +66,13 @@ Get-ChildItem -Force | Where-Object {
 } | Remove-Item -Recurse -Force
 
 # Step 10: Move dist files to root
-Write-Host "Copying built files to root..."
 Copy-Item -Recurse -Force "$tempDist\*" .
 
 # Step 11: Remove temp dist
 Remove-Item -Recurse -Force $tempDist
 
 # Step 12: Commit and push
-Write-Host "Committing and pushing to dynamic-2..."
 git add .
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 git commit -m "Deploy from dynamic-source at $timestamp"
 git push -u origin dynamic-2
-
-Write-Host "Deployment completed successfully."
