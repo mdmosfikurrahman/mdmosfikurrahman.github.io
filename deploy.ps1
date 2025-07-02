@@ -27,21 +27,29 @@ if (Test-Path $tempDistPath) { Remove-Item -Recurse -Force $tempDistPath }
 Copy-Item -Recurse -Force .\dist $tempDistPath
 
 # Step 6: Switch to or create dynamic-2
-if (-not (git show-ref --quiet refs/heads/dynamic-2)) {
+$branchExists = git show-ref --quiet refs/heads/dynamic-2
+$newlyCreated = $false
+if (-not $branchExists) {
     Write-Host "Creating new branch: dynamic-2"
     git checkout -b dynamic-2
+    $newlyCreated = $true
 } else {
     Write-Host "Switching to existing dynamic-2 branch"
     git checkout dynamic-2
 }
 
-# Step 7: Pull from remote to avoid push errors
-$pullResult = git pull origin dynamic-2 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "ERROR: Could not pull from origin/dynamic-2"
-    Write-Host $pullResult
-    Write-Host "Aborting to prevent data loss."
-    exit 1
+# Step 7: Pull from remote only if branch already exists
+if (-not $newlyCreated) {
+    Write-Host "Pulling from origin/dynamic-2"
+    $pullResult = git pull origin dynamic-2 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR: Could not pull from origin/dynamic-2"
+        Write-Host $pullResult
+        Write-Host "Aborting to prevent data loss."
+        exit 1
+    }
+} else {
+    Write-Host "Skipping pull since dynamic-2 is newly created"
 }
 
 # Step 8: Delete everything except .git, .idea, deploy.ps1
