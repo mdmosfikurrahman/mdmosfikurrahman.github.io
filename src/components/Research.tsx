@@ -12,13 +12,13 @@ const Research = () => {
       doi: "https://doi.org/10.1016/j.crbeha.2021.100038"
     },
     {
-      title: "Impact of COVID-19 on mental health",
+      title: "Impact of COVID-19 on mental health: A quantitative analysis of anxiety and depression based on regular life and internet use",
       journal: "Current Research in Behavioral Sciences",
       year: "2021",
       doi: "https://doi.org/10.1016/j.crbeha.2021.100037"
     },
     {
-      title: "COVID-19 and Bangladesh: Situation report",
+      title: "COVID-19 and Bangladesh: Situation report, comparative analysis, and case study",
       journal: "Current Research in Behavioral Sciences",
       year: "2021",
       doi: "https://doi.org/10.1016/j.crbeha.2021.100034"
@@ -27,34 +27,46 @@ const Research = () => {
 
   const conferences = [
     {
-      title: "Future City of Bangladesh: IoT-Based Smart Sewerage",
+      title: "Future city of bangladesh: Iot based autonomous smart sewerage and hazard condition sharing system",
       conference: "IEEE WIECON-ECE",
       year: "2020",
       doi: "https://doi.org/10.1109/WIECON-ECE52138.2020.9397950"
     },
     {
-      title: "Deep Learning Model for Plant Disease Detection",
+      title: "Deep Learning Model for Detecting and Diagnosing Plant Disease",
       conference: "SMART GENCON",
       year: "2021",
       doi: "https://doi.org/10.1109/SMARTGENCON51891.2021.9645857"
     },
     {
-      title: "TraFoo: Android App for Food Delivery in Train",
+      title: "TraFoo: An Android Application for Food Delivery in Train",
       conference: "SMART GENCON",
       year: "2021",
       doi: "https://doi.org/10.1109/SMARTGENCON51891.2021.9645900"
     },
     {
-      title: "Pandemic Effect on Education System",
+      title: "Pandemic effect on education system among university students",
       conference: "Springer: Progress in AI & Robotics",
-      year: "2022",
+      year: "2021",
       doi: "https://doi.org/10.1007/978-3-030-98531-8_16"
     },
     {
-      title: "ML-Based Prediction of COVID-19",
+      title: "Machine Learning-Based Prediction of COVID-19: A Robust Approach for Early Diagnosis and Treatment",
       conference: "Springer: Trends in Computational and Cognitive Engineering",
-      year: "2024",
+      year: "2023",
       doi: "https://doi.org/10.1007/978-981-97-1923-5_16"
+    },
+    {
+      title: "A New Chaotic-Based Analysis of Data Encryption and Decryption",
+      conference: "Springer: Advances in Data Science and Artificial Intelligence",
+      year: "2022",
+      doi: "https://doi.org/10.1007/978-3-031-16178-0_32"
+    },
+    {
+      title: "Cyber Security Intruder Detection Using Deep Learning Approach",
+      conference: "Springer: Information Systems and Management Science",
+      year: "2021",
+      doi: "https://doi.org/10.1007/978-3-031-13150-9_42"
     }
   ];
 
@@ -161,23 +173,23 @@ const Research = () => {
 
         {/* Research Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-          <div className="text-center animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <div className="text-3xl font-bold text-primary">10+</div>
-            <div className="text-sm text-gray-600">Total Publications</div>
-          </div>
-          <div className="text-center animate-fade-up" style={{ animationDelay: '0.35s' }}>
-            <div className="text-3xl font-bold text-primary">3</div>
-            <div className="text-sm text-gray-600">Journal Papers</div>
-          </div>
-          <div className="text-center animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            <div className="text-3xl font-bold text-primary">7</div>
-            <div className="text-sm text-gray-600">Conference Papers</div>
-          </div>
-          <div className="text-center animate-fade-up" style={{ animationDelay: '0.45s' }}>
-            <div className="text-3xl font-bold text-primary">7</div>
-            <div className="text-sm text-gray-600">Reviewer Roles</div>
-          </div>
+          {[
+            { label: "Total Publications", value: journals.length + conferences.length },
+            { label: "Journal Papers", value: journals.length },
+            { label: "Conference Papers", value: conferences.length },
+            { label: "Reviewer Roles", value: reviewerRoles.length }
+          ].map((stat, i) => (
+              <div
+                  key={i}
+                  className="text-center animate-fade-up"
+                  style={{ animationDelay: `${0.3 + i * 0.05}s` }}
+              >
+                <div className="text-3xl font-bold text-primary">{stat.value}</div>
+                <div className="text-sm text-gray-600">{stat.label}</div>
+              </div>
+          ))}
         </div>
+
       </div>
     </section>
   );
