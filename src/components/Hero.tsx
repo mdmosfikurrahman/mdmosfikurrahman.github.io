@@ -68,7 +68,7 @@ const Hero = () => {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="https://mdmosfikurrahman.github.io/resume/cv" target="_blank" rel="noopener noreferrer">
+              <a href="https://mdmosfikurrahman.github.io/cv" target="_blank" rel="noopener noreferrer">
                 <Download className="w-5 h-5 mr-2" />
                 CV
               </a>
