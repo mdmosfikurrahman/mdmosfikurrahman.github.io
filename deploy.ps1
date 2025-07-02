@@ -1,48 +1,48 @@
-# === GitHub Pages Deploy Script (Minimal, Safe) ===
+# ============================
+# GitHub Pages Deploy Script
+# From dynamic-source to dynamic-2
+# ============================
 
+# Move to script's directory
 Set-Location -Path $PSScriptRoot
 
-# Ensure you're on dynamic-source
-$currentBranch = git branch --show-current
-if ($currentBranch -ne "dynamic-source") {
-    Write-Host "You must be on 'dynamic-source' to deploy. Aborting."
-    exit 1
-}
-
+Write-Host "Step 1: Checkout dynamic-source"
+git checkout dynamic-source
 git pull origin dynamic-source
+
+Write-Host "Step 2: Install dependencies"
 npm install
+
+Write-Host "Step 3: Build the project"
 npm run build
 
-# Backup dist
-$tempDist = "$env:TEMP\_deploy_dist"
-if (Test-Path $tempDist) { Remove-Item -Recurse -Force $tempDist }
-Copy-Item -Recurse -Force .\dist $tempDist
+Write-Host "Step 4: Backup dist"
+Copy-Item -Recurse -Force .\dist "$env:TEMP\dist-backup"
 
-# Create or switch to dynamic-2
-if (-not (git show-ref --quiet refs/heads/dynamic-2)) {
-    git checkout -b dynamic-2
-} else {
-    git checkout dynamic-2
-    git pull origin dynamic-2
-}
+Write-Host "Step 5: Switch to dynamic-2"
+git checkout dynamic-2
+git pull origin dynamic-2
 
-# Clean all except .git, .idea, deploy.ps1
+Write-Host "Step 6: Remove old files (except .git, .idea, deploy.ps1)"
 Get-ChildItem -Force | Where-Object {
     $_.Name -ne '.git' -and
             $_.Name -ne '.idea' -and
             $_.Name -ne 'deploy.ps1'
 } | Remove-Item -Recurse -Force
 
-# Copy dist contents to root
-Copy-Item -Recurse -Force "$tempDist\*" .
+Write-Host "Step 7: Copy new build from backup"
+Copy-Item -Recurse -Force "$env:TEMP\dist-backup\*" .
 
-# Cleanup
-Remove-Item -Recurse -Force $tempDist
+Write-Host "Step 8: Remove backup"
+Remove-Item -Recurse -Force "$env:TEMP\dist-backup"
 
-# Commit and push
+Write-Host "Step 9: Commit and push to dynamic-2"
 git add .
-$time = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-git commit -m "Deploy from dynamic-source at $time"
+$timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+git commit -m "Deploy from dynamic-source at $timestamp"
 git push -u origin dynamic-2
 
-Write-Host "Deployment done."
+Write-Host "Step 10: Switch back to dynamic-source"
+git checkout dynamic-source
+
+Write-Host "✅ Deployment completed successfully."
