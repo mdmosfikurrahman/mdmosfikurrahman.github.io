@@ -68,13 +68,13 @@ const Hero = () => {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="https://mdmosfikurrahman.github.io/resume/cv" download>
+              <a href="https://mdmosfikurrahman.github.io/resume/cv" target="_blank" rel="noopener noreferrer">
                 <Download className="w-5 h-5 mr-2" />
                 CV
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="https://mdmosfikurrahman.github.io/resume/" download>
+              <a href="https://mdmosfikurrahman.github.io/resume/" target="_blank" rel="noopener noreferrer">
                 <Download className="w-5 h-5 mr-2" />
                 Resume
               </a>
