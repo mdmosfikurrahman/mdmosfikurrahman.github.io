@@ -50,7 +50,7 @@ const Hero = () => {
 
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <Button asChild variant="outline" size="lg">
-              <a href="https://www.linkedin.com/in/mdmosfikurrahman/" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/in/mdmosfikurrahman" target="_blank" rel="noopener noreferrer">
                 <Linkedin className="w-5 h-5 mr-2" />
                 LinkedIn
               </a>
@@ -62,7 +62,7 @@ const Hero = () => {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="https://scholar.google.com/citations?user=1GAfMAEAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">
+              <a href="https://scholar.google.com/citations?user=1GAfMAEAAAAJ" target="_blank" rel="noopener noreferrer">
                 <GraduationCap className="w-5 h-5 mr-2" />
                 Google Scholar
               </a>
@@ -74,7 +74,7 @@ const Hero = () => {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="https://mdmosfikurrahman.github.io/resume/" target="_blank" rel="noopener noreferrer">
+              <a href="https://mdmosfikurrahman.github.io/resume" target="_blank" rel="noopener noreferrer">
                 <Download className="w-5 h-5 mr-2" />
                 Resume
               </a>
