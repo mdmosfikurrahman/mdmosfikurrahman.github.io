@@ -8,7 +8,7 @@ const Hero = () => {
           <div className="mb-8">
             <div className="w-48 h-48 mx-auto mb-8 rounded-full overflow-hidden shadow-lg">
               <img
-                  src="/IMG_9615.JPG"
+                  src="/assets/IMG_9615.JPG"
                   alt="Md. Mosfikur Rahman"
                   className="w-full h-full object-cover"
               />
