@@ -32,18 +32,18 @@ const Experience = () => {
       level: "Mid-Level"
     },
     {
-      title: "Software Engineer",
-      company: "BJIT Group",
-      location: "Dhaka, Bangladesh",
-      duration: "April 2022 – June 2023",
-      description: [
-        "Worked on enterprise backend solutions using Spring Boot and JavaEE",
-        "Led backend development for Rakuten Echiba and built secure APIs using SOAP and REST",
-        "Managed Oracle DB operations",
-        "Created API specifications and UML documentation for scalable enterprise solutions"
+      "title": "Software Engineer",
+      "company": "BJIT Group",
+      "location": "Dhaka, Bangladesh",
+      "duration": "April 2022 – June 2023",
+      "description": [
+        "Built and maintained GraphQL-based BFF (Backend for Frontend) services using Java and Spring Boot",
+        "Developed scalable APIs for Rakuten Echiba's e-commerce modules with both GraphQL and REST interfaces",
+        "Implemented GraphQL schema stitching, batching, and resolvers for optimized nested queries",
+        "Created detailed API documentation and UML diagrams to support maintainable enterprise integration"
       ],
-      technologies: ["Spring Boot", "JavaEE", "Oracle DB", "SOAP", "REST", "UML"],
-      level: "Junior"
+      "technologies": ["Spring Boot", "GraphQL", "JavaEE", "Oracle DB", "SOAP", "REST", "UML"],
+      "level": "Junior"
     },
     {
       title: "Teaching Assistant (Instructional Role)",

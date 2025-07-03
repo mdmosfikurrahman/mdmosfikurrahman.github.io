@@ -39,14 +39,14 @@ const Projects = () => {
     {
       title: "Rakuten Echiba Backend Development",
       company: "BJIT Ltd.",
-      role: "Backend Developer",
+      role: "Backend Developer (GraphQL BFF)",
       description: [
-        "Built e-commerce backend with Spring Boot.",
-        "Optimized Oracle queries for data consistency.",
-        "Improved throughput with a reusable backend framework.",
-        "Resolved blockers and supported team productivity."
+        "Built GraphQL-based Backend for Frontend (BFF) layer for e-commerce modules.",
+        "Implemented schema stitching, batching, and resolver optimizations.",
+        "Improved query performance and ensured data consistency with Oracle DB.",
+        "Created reusable GraphQL service patterns and assisted teammates with backend support."
       ],
-      technologies: ["Spring Boot", "Oracle DB", "E-commerce", "Performance Optimization"]
+      technologies: ["Spring Boot", "GraphQL", "Oracle DB", "BFF Architecture", "Performance Optimization"]
     },
     {
       title: "Denka Corporate Website",
