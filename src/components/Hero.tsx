@@ -41,7 +41,7 @@ const Hero = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
             <p className="text-lg text-gray-700 leading-relaxed">
-                I am a <strong>backend-focused Software Engineer</strong> with over 4 years of experience in building scalable microservices, designing secure APIs, and contributing to the architecture and development of enterprise systems using <strong>Java, Spring Boot, and PostgreSQL</strong>. I enjoy solving complex problems and shaping foundational software systems, while also contributing to cutting-edge research in AI and machine learning.
+                I am a <strong>backend-focused Software Engineer</strong> with over 5 years of experience in building scalable microservices, designing secure APIs, and contributing to the architecture and development of enterprise systems using <strong>Java, Spring Boot, and PostgreSQL</strong>. I enjoy solving complex problems and shaping foundational software systems, while also contributing to cutting-edge research in AI and machine learning.
             </p>
           </div>
 
@@ -80,7 +80,7 @@ const Hero = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white p-4 rounded-lg shadow-md text-center">
-              <div className="text-2xl font-bold text-primary">4+</div>
+              <div className="text-2xl font-bold text-primary">5+</div>
               <div className="text-sm text-gray-600">Years Experience</div>
             </div>
             <div className="bg-white p-4 rounded-lg shadow-md text-center">

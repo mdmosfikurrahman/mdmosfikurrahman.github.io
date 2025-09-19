@@ -6,16 +6,16 @@ const Navigation = () => {
     const [activeSection, setActiveSection] = useState('hero');
 
     const navItems = [
-        {name: 'About', href: '#hero'},
-        {name: 'Education', href: '#education'},
-        {name: 'Experience', href: '#experience'},
-        {name: 'Projects', href: '#projects'},
-        {name: 'Skills', href: '#skills'},
-        {name: 'Research', href: '#research'},
-        {name: 'Activities', href: '#activities'},
-        {name: 'Interests', href: '#interests'},
-        {name: 'Contact', href: '#contact'},
-
+        { name: 'Home',      href: '#hero' },
+        { name: 'Skills',    href: '#skills' },
+        { name: 'Projects',  href: '#projects' },
+        { name: 'Experience',href: '#experience' },
+        { name: 'Education', href: '#education' },
+        { name: 'Research',  href: '#research' },
+        { name: 'Activities',href: '#activities' },
+        { name: 'Interests', href: '#interests' },
+        { name: 'Github',    href: '#github' },
+        { name: 'Contact',   href: '#contact' },
     ];
 
     // Navigation.tsx
@@ -55,13 +55,17 @@ const Navigation = () => {
         setIsOpen(false);
     };
 
-
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex-shrink-0">
-                        <span className="text-xl font-bold text-gray-900">Md. Mosfikur Rahman</span>
+                        <button
+                            onClick={() => scrollToSection('#hero')}
+                            className="text-xl font-bold text-gray-900 hover:text-primary transition-colors duration-200"
+                        >
+                            Md. Mosfikur Rahman
+                        </button>
                     </div>
 
                     {/* Desktop Navigation */}

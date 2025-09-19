@@ -103,30 +103,30 @@ const Interests = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center animate-fade-up" style={{ animationDelay: '0.3s' }}>
-          <Card className="bg-gradient-to-r from-primary/5 to-blue-500/5 border-primary/20">
-            <CardContent className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Let's Connect & Collaborate</h3>
-              <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
-                I'm always interested in discussing new opportunities, research collaborations, or simply sharing insights 
-                about backend development and academic research. Whether you're looking for a skilled software engineer 
-                or a research collaborator, I'd love to hear from you.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">
-                  Full-Stack Engineering Opportunities
-                </span>
-                <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">
-                  PhD & Masters Programs
-                </span>
-                <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">
-                  Research Collaborations
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/*/!* Call to Action *!/*/}
+        {/*<div className="mt-16 text-center animate-fade-up" style={{ animationDelay: '0.3s' }}>*/}
+        {/*  <Card className="bg-gradient-to-r from-primary/5 to-blue-500/5 border-primary/20">*/}
+        {/*    <CardContent className="p-8">*/}
+        {/*      <h3 className="text-2xl font-bold text-gray-900 mb-4">Let's Connect & Collaborate</h3>*/}
+        {/*      <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">*/}
+        {/*        I'm always interested in discussing new opportunities, research collaborations, or simply sharing insights */}
+        {/*        about backend development and academic research. Whether you're looking for a skilled software engineer */}
+        {/*        or a research collaborator, I'd love to hear from you.*/}
+        {/*      </p>*/}
+        {/*      <div className="flex flex-wrap justify-center gap-4">*/}
+        {/*        <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">*/}
+        {/*          Full-Stack Engineering Opportunities*/}
+        {/*        </span>*/}
+        {/*        <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">*/}
+        {/*          PhD & Masters Programs*/}
+        {/*        </span>*/}
+        {/*        <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">*/}
+        {/*          Research Collaborations*/}
+        {/*        </span>*/}
+        {/*      </div>*/}
+        {/*    </CardContent>*/}
+        {/*  </Card>*/}
+        {/*</div>*/}
       </div>
     </section>
   );
