@@ -49,7 +49,7 @@ const Experience = () => {
       title: "Teaching Assistant (Instructional Role)",
       company: "Daffodil International University",
       location: "Dhaka, Bangladesh",
-      duration: "June 2021 – April 2022",
+      duration: "June 2020 – April 2022",
       description: [
         "Assisted in teaching core computer science courses such as OOP and Data Structures",
         "Conducted labs, prepared assignments, and mentored students",
