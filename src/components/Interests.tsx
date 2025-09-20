@@ -109,8 +109,8 @@ const Interests = () => {
         {/*    <CardContent className="p-8">*/}
         {/*      <h3 className="text-2xl font-bold text-gray-900 mb-4">Let's Connect & Collaborate</h3>*/}
         {/*      <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">*/}
-        {/*        I'm always interested in discussing new opportunities, research collaborations, or simply sharing insights */}
-        {/*        about backend development and academic research. Whether you're looking for a skilled software engineer */}
+        {/*        I'm always interested in discussing new opportunities, research collaborations, or simply sharing insights*/}
+        {/*        about backend development and academic research. Whether you're looking for a skilled software engineer*/}
         {/*        or a research collaborator, I'd love to hear from you.*/}
         {/*      </p>*/}
         {/*      <div className="flex flex-wrap justify-center gap-4">*/}

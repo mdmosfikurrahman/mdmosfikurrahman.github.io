@@ -1,19 +1,38 @@
+// src/components/Contact.tsx
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Mail, User, MessageSquare, Loader2, CheckCircle2, Shield } from 'lucide-react';
+import {
+    Mail,
+    User,
+    MessageSquare,
+    Loader2,
+    CheckCircle2,
+    Shield,
+    Briefcase,
+    GraduationCap,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-type FormState = { name: string; email: string; message: string };
+type InquiryType = 'academic' | 'industry' | 'other';
+
+type FormState = {
+    name: string;
+    email: string;
+    message: string;
+    inquiry: InquiryType;
+};
+
 type TouchState = Partial<Record<keyof FormState, boolean>>;
 type ErrorState = Partial<Record<keyof FormState, string>>;
 
-const initial: FormState = { name: '', email: '', message: '' };
+const initial: FormState = { name: '', email: '', message: '', inquiry: 'academic' };
 
 // Keep your existing config
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbw-IH_B6RBUtUPO76qeQo4NwxgCC7tISn0cUjl--i7n6DjMP9lhWbe7vzVloMBtMHNexA/exec";
-const TO_EMAIL = "mdmosfikurrahman.cse@gmail.com";
+const GAS_ENDPOINT =
+    'https://script.google.com/macros/s/AKfycbzT7oa0dnuzIzoiOCFEu5gCfB6W-iwn5SaWMS98BDCBmE3GyN1LX5U0pfiMxN2-956NSA/exec';
+const TO_EMAIL = 'mdmosfikurrahman.cse@gmail.com';
 
 export default function Contact() {
     const [form, setForm] = useState<FormState>(initial);
@@ -31,7 +50,8 @@ export default function Contact() {
         if (!form.email.trim()) e.email = 'Please enter your email.';
         else if (!emailOk) e.email = 'Please provide a valid email address.';
         if (!form.message.trim()) e.message = 'Please write a short message.';
-        else if (form.message.trim().length < 10) e.message = 'Message should be at least 10 characters.';
+        else if (form.message.trim().length < 10)
+            e.message = 'Message should be at least 10 characters.';
         return e;
     }, [form]);
 
@@ -54,7 +74,7 @@ export default function Contact() {
         if (botField) return; // ignore bots
 
         // mark all touched to show errors if any
-        setTouched({ name: true, email: true, message: true });
+        setTouched({ name: true, email: true, message: true, inquiry: true });
 
         if (hasErrors) return;
 
@@ -76,6 +96,7 @@ export default function Contact() {
                     email: form.email,
                     message: form.message,
                     to: TO_EMAIL,
+                    inquiry: form.inquiry,
                 }).toString(),
                 mode: 'no-cors',
             });
@@ -95,7 +116,9 @@ export default function Contact() {
             <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Contact Me</h2>
-                    <p className="text-lg text-gray-600">Have a question or opportunity? I’ll reply to your email promptly.</p>
+                    <p className="text-lg text-gray-600">
+                        Have a question or opportunity? I’ll reply to your email promptly.
+                    </p>
                 </div>
 
                 <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -107,7 +130,7 @@ export default function Contact() {
                                     <div>
                                         <CardTitle className="text-xl text-gray-900 mb-2">Let’s collaborate</CardTitle>
                                         <p className="text-gray-700">
-                                            I’m open to backend & platform roles, research collaboration, and consulting engagements.
+                                            Open to backend & platform roles, research collaboration, and consulting.
                                         </p>
                                     </div>
 
@@ -149,7 +172,13 @@ export default function Contact() {
 
                             {/* Form */}
                             <div className="md:col-span-3 p-8">
-                                <form onSubmit={onSubmit} className="space-y-5" noValidate autoComplete="off" aria-describedby="form-status">
+                                <form
+                                    onSubmit={onSubmit}
+                                    className="space-y-5"
+                                    noValidate
+                                    autoComplete="off"
+                                    aria-describedby="form-status"
+                                >
                                     {/* Honeypot */}
                                     <input
                                         type="text"
@@ -160,6 +189,48 @@ export default function Contact() {
                                         autoComplete="off"
                                         aria-hidden="true"
                                     />
+
+                                    {/* Inquiry type */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Inquiry type
+                                        </label>
+                                        <div className="flex flex-wrap gap-2" role="group" aria-label="Inquiry type">
+                                            {[
+                                                {
+                                                    key: 'academic' as InquiryType,
+                                                    label: 'Academic (Advisor/Admissions)',
+                                                    icon: <GraduationCap className="w-4 h-4" />,
+                                                },
+                                                {
+                                                    key: 'industry' as InquiryType,
+                                                    label: 'Industry (Recruiter/Team)',
+                                                    icon: <Briefcase className="w-4 h-4" />,
+                                                },
+                                                {
+                                                    key: 'other' as InquiryType,
+                                                    label: 'Other',
+                                                    icon: <MessageSquare className="w-4 h-4" />,
+                                                },
+                                            ].map(({ key, label, icon }) => (
+                                                <button
+                                                    key={key}
+                                                    type="button"
+                                                    onClick={() => setForm((f) => ({ ...f, inquiry: key }))}
+                                                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-primary ${
+                                                        form.inquiry === key
+                                                            ? 'bg-primary text-primary-foreground border-primary'
+                                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                                                    }`}
+                                                    aria-pressed={form.inquiry === key}
+                                                    aria-label={label}
+                                                >
+                                                    {icon}
+                                                    {label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
                                     {/* Name */}
                                     <div>
@@ -241,7 +312,7 @@ export default function Contact() {
                                                 className={`w-full rounded-lg border px-9 py-3 focus:outline-none focus:ring-2 focus:ring-primary ${
                                                     touched.message && errors.message ? 'border-red-400' : 'border-gray-300'
                                                 }`}
-                                                placeholder="Tell me a bit about your project or question..."
+                                                placeholder="Tell me a bit about your project, research, or question..."
                                                 aria-invalid={!!(touched.message && errors.message)}
                                                 aria-describedby={touched.message && errors.message ? 'message-error' : undefined}
                                             />
@@ -278,7 +349,8 @@ export default function Contact() {
 
                                     {/* Small print */}
                                     <p className="text-xs text-gray-500">
-                                        This site uses a simple spam trap (no tracking). By submitting, you consent to being contacted about your inquiry.
+                                        This site uses a simple spam trap (no tracking). By submitting, you consent to
+                                        being contacted about your inquiry.
                                     </p>
                                 </form>
                             </div>

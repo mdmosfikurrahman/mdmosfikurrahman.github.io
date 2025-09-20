@@ -6,16 +6,16 @@ const Navigation = () => {
     const [activeSection, setActiveSection] = useState('hero');
 
     const navItems = [
-        { name: 'Home',      href: '#hero' },
-        { name: 'Skills',    href: '#skills' },
-        { name: 'Projects',  href: '#projects' },
-        { name: 'Experience',href: '#experience' },
-        { name: 'Education', href: '#education' },
-        { name: 'Research',  href: '#research' },
-        { name: 'Activities',href: '#activities' },
-        { name: 'Interests', href: '#interests' },
-        { name: 'Github',    href: '#github' },
-        { name: 'Contact',   href: '#contact' },
+        { name: 'Home',        href: '#hero' },
+        { name: 'Highlights',  href: '#highlights' },
+        { name: 'Research',    href: '#research' },
+        { name: 'Projects',    href: '#projects' },
+        { name: 'Skills',      href: '#skills' },
+        { name: 'Experience',  href: '#experience' },
+        { name: 'Education',   href: '#education' },
+        { name: 'Activities',  href: '#activities' },
+        { name: 'Interests',   href: '#interests' },
+        { name: 'Contact',     href: '#contact' },
     ];
 
     // Navigation.tsx
