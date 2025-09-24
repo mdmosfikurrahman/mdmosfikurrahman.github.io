@@ -9,6 +9,7 @@ import Education from '@/components/Education';
 import Activities from '@/components/Activities';
 import Interests from '@/components/Interests';
 import Contact from '@/components/Contact';
+import References from "@/components/References.tsx";
 
 export default function Index() {
     return (
@@ -23,7 +24,9 @@ export default function Index() {
             <Education />
             <Activities />
             <Interests />
+            <References />
             <Contact />
         </div>
     );
 }
+

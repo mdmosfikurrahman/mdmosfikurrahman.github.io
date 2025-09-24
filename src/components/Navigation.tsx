@@ -5,6 +5,7 @@ const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const navItems = [
         { name: 'Home',        href: '#hero' },
         { name: 'Highlights',  href: '#highlights' },
@@ -15,8 +16,10 @@ const Navigation = () => {
         { name: 'Education',   href: '#education' },
         { name: 'Activities',  href: '#activities' },
         { name: 'Interests',   href: '#interests' },
+        { name: 'References',  href: '#references' },
         { name: 'Contact',     href: '#contact' },
     ];
+
 
     // Navigation.tsx
     useEffect(() => {
@@ -42,7 +45,7 @@ const Navigation = () => {
 
         els.forEach(el => observer.observe(el));
         return () => observer.disconnect();
-    }, []);
+    }, [navItems]);
 
 
     const scrollToSection = (href: string) => {
