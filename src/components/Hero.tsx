@@ -96,7 +96,7 @@ export default function Hero() {
                 {/* Stats row (optional: minor copy tweak) */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-white p-4 rounded-lg shadow-md text-center">
-                        <div className="text-2xl font-bold text-primary">5+</div>
+                        <div className="text-2xl font-bold text-primary">3+</div>
                         <div className="text-sm text-gray-600">Years (Backend)</div>
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow-md text-center">
@@ -104,7 +104,7 @@ export default function Hero() {
                         <div className="text-sm text-gray-600">Publications</div>
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow-md text-center">
-                        <div className="text-2xl font-bold text-primary">5+</div>
+                        <div className="text-2xl font-bold text-primary">3+</div>
                         <div className="text-sm text-gray-600">Major Systems</div>
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow-md text-center">

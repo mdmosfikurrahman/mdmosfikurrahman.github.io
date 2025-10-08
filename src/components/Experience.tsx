@@ -44,21 +44,22 @@ const Experience = () => {
       ],
       "technologies": ["Spring Boot", "GraphQL", "JavaEE", "Oracle DB", "SOAP", "REST", "UML"],
       "level": "Junior"
-    },
-    {
-      title: "Teaching Assistant (Instructional Role)",
-      company: "Daffodil International University",
-      location: "Dhaka, Bangladesh",
-      duration: "June 2020 – April 2022",
-      description: [
-        "Assisted in teaching core computer science courses such as OOP and Data Structures",
-        "Conducted labs, prepared assignments, and mentored students",
-        "Delivered lectures independently under faculty guidance",
-        "Supported academic activities within the department"
-      ],
-      technologies: ["Java", "Data Structures", "OOP", "Academic Research"],
-      level: "Academic"
     }
+    // ,
+    // {
+    //   title: "Teaching Assistant (Instructional Role)",
+    //   company: "Daffodil International University",
+    //   location: "Dhaka, Bangladesh",
+    //   duration: "June 2020 – April 2022",
+    //   description: [
+    //     "Assisted in teaching core computer science courses such as OOP and Data Structures",
+    //     "Conducted labs, prepared assignments, and mentored students",
+    //     "Delivered lectures independently under faculty guidance",
+    //     "Supported academic activities within the department"
+    //   ],
+    //   technologies: ["Java", "Data Structures", "OOP", "Academic Research"],
+    //   level: "Academic"
+    // }
   ];
 
   return (
