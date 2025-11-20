@@ -37,8 +37,8 @@ export default function Hero() {
                         </div>
                         <div className="flex items-center justify-center gap-2">
                             <Mail className="w-4 h-4"/>
-                            <a href="mailto:mdmosfikurrahman.cse@email.com" className="hover:text-primary">
-                                mdmosfikurrahman.cse@email.com
+                            <a href="mailto:mdmosfikurrahman.cse@gmail.com" className="hover:text-primary">
+                                mdmosfikurrahman.cse@gmail.com
                             </a>
                         </div>
                     </div>
