@@ -138,8 +138,7 @@ export default function Contact() {
                                                 Let’s collaborate
                                             </CardTitle>
                                             <p className="text-gray-700">
-                                                Open to backend & platform roles, research
-                                                collaboration, and consulting.
+                                                Open to backend engineering roles, research collaborations, and impactful system-design projects.
                                             </p>
                                         </div>
 

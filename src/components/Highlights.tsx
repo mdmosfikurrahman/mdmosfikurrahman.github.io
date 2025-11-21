@@ -3,16 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Highlights() {
     const academic = [
-        '10+ publications across journals & conferences',
-        'Reviewer for multiple journals and conferences',
-        'Research focus: AI/ML, Data Science, IoT',
-        'Erasmus+ exchange (AMU, Poland)',
+        '10+ peer-reviewed publications in AI/ML, data science, and IoT',
+        'Reviewer for international journals and conferences',
+        'Research areas: applied ML, deep learning, IoT analytics',
+        'Erasmus+ research exchange at Adam Mickiewicz University (Poland)',
     ];
     const industry = [
-        'Backend architecture & microservices (Java, Spring Boot)',
-        'Secure APIs, OAuth2, PostgreSQL/Oracle optimization',
-        'Large-scale systems for gov & enterprise',
-        'Hands-on with GraphQL BFF and .NET migration',
+        'Designed scalable backend and microservices architectures using Java & Spring Boot',
+        'Developed secure APIs with OAuth2 and optimized PostgreSQL/Oracle performance',
+        'Delivered high-impact systems for government and enterprise clients',
+        'Built GraphQL BFF services and contributed to .NET → Java migrations',
     ];
 
     const Pill = ({ children }: { children: React.ReactNode }) => (

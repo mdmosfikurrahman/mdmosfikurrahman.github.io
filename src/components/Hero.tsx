@@ -46,10 +46,9 @@ export default function Hero() {
 
                 <div className="bg-white p-6 rounded-lg shadow-md mb-8">
                     <p className="text-lg text-gray-700 leading-relaxed">
-                        I design and build scalable backend systems (<strong>Java · Spring Boot · PostgreSQL</strong>)
-                        and pursue research at the intersection of <strong>AI/ML</strong> and real-world systems. I’m
-                        actively open to <strong>MS/PhD opportunities</strong> as well as <strong>industry
-                        roles</strong>.
+                        I build scalable backend systems and applied <strong>AI/ML</strong> solutions that bridge academic research
+                        with real-world engineering. Open to impactful <strong>backend roles</strong> and
+                        <strong> MS/PhD research opportunities</strong>.
                     </p>
                 </div>
 
