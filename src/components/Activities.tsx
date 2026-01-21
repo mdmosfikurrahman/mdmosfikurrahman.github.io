@@ -1,41 +1,46 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Star, Users, Mic } from 'lucide-react';
+import { techIconMap } from '@/components/TechIcons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Activities = () => {
   const activities = [
     {
       title: "Conference Speaker",
-      description: "10th IEEE International Women in Engineering (WIE) Conference on Electrical and Computer Engineering 2024 (IEEE WIECON-ECE 2024)",
-      icon: <Mic className="w-6 h-6 text-blue-600" />,
-      color: "bg-blue-100"
+      description:
+          "10th IEEE International Women in Engineering (WIE) Conference on Electrical and Computer Engineering 2024 (IEEE WIECON-ECE 2024)",
+      iconKey: "Speaker",
+      color: "bg-blue-100",
     },
     {
       title: "Guest Speaker",
-      description: "\"How to Get Started: Undergraduate Research Journey\" organized by the Computer & Programming Club, Daffodil International University",
-      icon: <Mic className="w-6 h-6 text-green-600" />,
-      color: "bg-green-100"
+      description:
+          "\"How to Get Started: Undergraduate Research Journey\" organized by the Computer & Programming Club, Daffodil International University",
+      iconKey: "Speaker",
+      color: "bg-green-100",
     },
     {
       title: "Vice President",
-      description: "Research & Career Wing (2021), Computer & Programming Club, Daffodil International University",
-      icon: <Users className="w-6 h-6 text-purple-600" />,
-      color: "bg-purple-100"
+      description:
+          "Research & Career Wing (2021), Computer & Programming Club, Daffodil International University",
+      iconKey: "Leadership",
+      color: "bg-purple-100",
     },
     {
       title: "Technical Lead",
-      description: "\"Take Off – 2020\", university-wide tech event organized by the Computer & Programming Club, Daffodil International University",
-      icon: <Star className="w-6 h-6 text-orange-600" />,
-      color: "bg-orange-100"
+      description:
+          "\"Take Off – 2020\", university-wide tech event organized by the Computer & Programming Club, Daffodil International University",
+      iconKey: "Leadership",
+      color: "bg-orange-100",
     },
     {
       title: "Organizing Member",
-      description: "Programming Contest at \"Take Off – 2019\", Computer & Programming Club, Daffodil International University",
-      icon: <Users className="w-6 h-6 text-red-600" />,
-      color: "bg-red-100"
-    }
+      description:
+          "Programming Contest at \"Take Off – 2019\", Computer & Programming Club, Daffodil International University",
+      iconKey: "Community",
+      color: "bg-red-100",
+    },
   ];
 
   const certifications = [
@@ -87,7 +92,7 @@ const Activities = () => {
               <CardHeader>
                 <CardTitle className="text-xl text-gray-900 flex items-center gap-3">
                   <div className="bg-primary/10 p-2 rounded-lg">
-                    <Star className="w-6 h-6 text-primary" />
+                    {techIconMap["Activity"]}
                   </div>
                   Extracurricular Activities
                 </CardTitle>
@@ -97,7 +102,7 @@ const Activities = () => {
                   {activities.map((activity, index) => (
                       <div key={index} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                         <div className={`p-2 rounded-lg ${activity.color}`}>
-                          {activity.icon}
+                          {techIconMap[activity.iconKey]}
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900 mb-1">{activity.title}</h4>
@@ -114,7 +119,7 @@ const Activities = () => {
               <CardHeader>
                 <CardTitle className="text-xl text-gray-900 flex items-center gap-3">
                   <div className="bg-primary/10 p-2 rounded-lg">
-                    <Star className="w-6 h-6 text-primary" />
+                    {techIconMap["Activity"]}
                   </div>
                   Professional Certifications
                 </CardTitle>

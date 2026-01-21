@@ -1,27 +1,22 @@
-
-import { Code, Database, Server, Cloud, Users, CheckCircle } from 'lucide-react';
+import { techIconMap } from "@/components/TechIcons";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Skills = () => {
   const skillCategories = [
     {
       title: "Backend Development",
-      icon: <Server className="w-8 h-8" />,
       skills: ["Java", "Spring Boot", "Spring Security", ".NET Core", "RESTful APIs", "Microservices"]
     },
     {
       title: "Frontend Development",
-      icon: <Code className="w-8 h-8" />,
       skills: ["React", "JavaScript", "TypeScript", "HTML5", "CSS3", "Thymeleaf"]
     },
     {
       title: "Database Management",
-      icon: <Database className="w-8 h-8" />,
       skills: ["PostgreSQL", "Oracle DB", "MySQL", "MongoDB", "SQL Optimization", "Database Design"]
     },
     {
       title: "DevOps & Tools",
-      icon: <Cloud className="w-8 h-8" />,
       skills: ["Docker", "Git", "CI/CD", "Maven", "Gradle", "Jenkins"]
     }
   ];
@@ -47,19 +42,23 @@ const Skills = () => {
           {skillCategories.map((category, index) => (
             <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader className="text-center">
-                <div className="bg-primary/10 p-4 rounded-lg mx-auto mb-4 w-fit">
-                  <div className="text-primary">
-                    {category.icon}
-                  </div>
+                <div className="bg-primary/10 p-4 rounded-lg mx-auto mb-4 w-fit text-primary">
+                  {techIconMap[category.title]}
                 </div>
-                <CardTitle className="text-lg text-gray-900">{category.title}</CardTitle>
+                <CardTitle className="text-lg text-gray-900">
+                  {category.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {category.skills.map((skill, skillIndex) => (
-                    <div key={skillIndex} className="text-sm text-gray-700 bg-gray-100 px-3 py-2 rounded">
-                      {skill}
-                    </div>
+                  {category.skills.map((skill) => (
+                      <div
+                          key={skill}
+                          className="flex items-center gap-2 text-sm text-gray-700 bg-gray-100 px-3 py-2 rounded"
+                      >
+                        {techIconMap[skill]}
+                        {skill}
+                      </div>
                   ))}
                 </div>
               </CardContent>
@@ -69,18 +68,21 @@ const Skills = () => {
 
         <Card className="shadow-lg">
           <CardHeader className="text-center">
-            <div className="bg-primary/10 p-4 rounded-lg mx-auto mb-4 w-fit">
-              <Users className="w-8 h-8 text-primary" />
+            <div className="bg-primary/10 p-4 rounded-lg mx-auto mb-4 w-fit text-primary">
+              {techIconMap["Workflow & Best Practices"]}
             </div>
-            <CardTitle className="text-xl text-gray-900">Workflow & Best Practices</CardTitle>
+            <CardTitle className="text-xl text-gray-900">
+              Workflow & Best Practices
+            </CardTitle>
           </CardHeader>
+
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
-              {practices.map((practice, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{practice}</span>
-                </div>
+              {practices.map((practice) => (
+                  <div key={practice} className="flex items-start gap-3">
+                    {techIconMap["Practice"]}
+                    <span className="text-gray-700">{practice}</span>
+                  </div>
               ))}
             </div>
           </CardContent>

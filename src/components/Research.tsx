@@ -1,21 +1,18 @@
-// src/components/Research.tsx
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Book, Mic, User, ExternalLink, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { techIconMap } from '@/components/TechIcons';
 
-/* ----------------------- Types ----------------------- */
 type Paper = {
     title: string;
-    venue: string; // journal or conference
+    venue: string;
     year: string | number;
     doi?: string;
 };
 
 type ReviewerRole = string;
 
-/* -------------------- Static Data -------------------- */
 const journals: Paper[] = [
     {
         title: 'Impactful e-learning framework: A new hybrid form of education',
@@ -96,9 +93,9 @@ const reviewerRoles: ReviewerRole[] = [
     'International Conference on Communication & Information Systems (2022)',
 ];
 
-/* --------------- Simple count-up animation --------------- */
 function useCountUp(target: number, duration = 900) {
     const ref = useRef<HTMLSpanElement | null>(null);
+
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
@@ -120,47 +117,40 @@ function useCountUp(target: number, duration = 900) {
     return ref;
 }
 
-/* ----------------------- UI Bits ----------------------- */
 function StatTile({
-                      icon: Icon,
+                      iconKey,
                       label,
                       value,
                       delay = 0,
                   }: {
-    icon: React.ComponentType<{ className?: string }>;
+    iconKey: string;
     label: string;
     value: number;
     delay?: number;
 }) {
     const numRef = useCountUp(value);
+
     return (
         <div
-            className={[
-                'group relative rounded-2xl p-5 sm:p-6',
-                'bg-white/60 dark:bg-white/5 backdrop-blur',
-                'ring-1 ring-inset ring-zinc-200/70 dark:ring-white/10',
-                'transition transform duration-300 hover:-translate-y-0.5 hover:shadow-lg',
-                'animate-fade-up',
-            ].join(' ')}
+            className="group relative rounded-2xl p-5 sm:p-6 bg-white/60 backdrop-blur ring-1 ring-inset ring-zinc-200/70 transition transform duration-300 hover:-translate-y-0.5 hover:shadow-lg animate-fade-up"
             style={{ animationDelay: `${delay}s` }}
             aria-label={label}
         >
             <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-indigo-400/15 ring-1 ring-inset ring-primary/20">
-                    <Icon className="h-6 w-6 text-primary" aria-hidden />
+                    {techIconMap[iconKey]}
                 </div>
                 <div>
-                    <div className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                    <div className="text-3xl font-bold tracking-tight text-zinc-900">
                         <span ref={numRef} aria-live="polite" aria-label={String(value)} />
                     </div>
-                    <div className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">{label}</div>
+                    <div className="mt-0.5 text-sm text-zinc-600">{label}</div>
                 </div>
             </div>
         </div>
     );
 }
 
-/* -------------------- Main Component -------------------- */
 export default function Research() {
     const totalPubs = journals.length + conferences.length;
 
@@ -182,7 +172,7 @@ export default function Research() {
                     <CardHeader>
                         <div className="flex items-center gap-3">
                             <div className="bg-blue-100 p-3 rounded-lg">
-                                <Book className="w-6 h-6 text-blue-600" aria-hidden />
+                                {techIconMap['Publications']}
                             </div>
                             <CardTitle className="text-xl text-gray-900">
                                 Journal Publications
@@ -206,9 +196,8 @@ export default function Research() {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-blue-600 hover:underline inline-flex items-center gap-1 mt-1"
-                                            aria-label="Open DOI in new tab"
                                         >
-                                            <ExternalLink className="w-3 h-3" aria-hidden /> DOI
+                                            {techIconMap['ExternalLink']} DOI
                                         </a>
                                     )}
                                 </li>
@@ -218,16 +207,15 @@ export default function Research() {
                 </Card>
 
                 {/* Conference Papers */}
-                <Card
-                    className="animate-fade-up shadow-lg hover:shadow-xl transition-shadow duration-300 mb-8"
-                    style={{ animationDelay: '0.05s' }}
-                >
+                <Card className="animate-fade-up shadow-lg hover:shadow-xl transition-shadow duration-300 mb-8">
                     <CardHeader>
                         <div className="flex items-center gap-3">
                             <div className="bg-green-100 p-3 rounded-lg">
-                                <Mic className="w-6 h-6 text-green-600" aria-hidden />
+                                {techIconMap['Speaker']}
                             </div>
-                            <CardTitle className="text-xl text-gray-900">Conference Papers</CardTitle>
+                            <CardTitle className="text-xl text-gray-900">
+                                Conference Papers
+                            </CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -247,9 +235,8 @@ export default function Research() {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-green-700 hover:underline inline-flex items-center gap-1 mt-1"
-                                            aria-label="Open DOI in new tab"
                                         >
-                                            <ExternalLink className="w-3 h-3" aria-hidden /> DOI
+                                            {techIconMap['ExternalLink']} DOI
                                         </a>
                                     )}
                                 </li>
@@ -259,14 +246,11 @@ export default function Research() {
                 </Card>
 
                 {/* Reviewer Roles */}
-                <Card
-                    className="animate-fade-up shadow-lg hover:shadow-xl transition-shadow duration-300"
-                    style={{ animationDelay: '0.1s' }}
-                >
+                <Card className="animate-fade-up shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <CardHeader>
                         <div className="flex items-center gap-3">
                             <div className="bg-purple-100 p-3 rounded-lg">
-                                <User className="w-6 h-6 text-purple-600" aria-hidden />
+                                {techIconMap['Peer Reviewer']}
                             </div>
                             <CardTitle className="text-xl text-gray-900">
                                 Research Contributions &amp; Reviewer Roles
@@ -280,7 +264,7 @@ export default function Research() {
                                     key={`${role}-${i}`}
                                     className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg"
                                 >
-                                    <User className="w-4 h-4 text-purple-600 mt-1 flex-shrink-0" aria-hidden />
+                                    {techIconMap['User']}
                                     <p className="text-sm text-gray-700">{role}</p>
                                 </li>
                             ))}
@@ -291,14 +275,29 @@ export default function Research() {
                 {/* Stats */}
                 <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
                     <StatTile
-                        icon={FileText}
+                        iconKey="Publications"
                         label="Total Publications"
                         value={totalPubs}
                         delay={0.2}
                     />
-                    <StatTile icon={Book} label="Journal Papers" value={journals.length} delay={0.25} />
-                    <StatTile icon={Mic} label="Conference Papers" value={conferences.length} delay={0.3} />
-                    <StatTile icon={User} label="Reviewer Roles" value={reviewerRoles.length} delay={0.35} />
+                    <StatTile
+                        iconKey="Book"
+                        label="Journal Papers"
+                        value={journals.length}
+                        delay={0.25}
+                    />
+                    <StatTile
+                        iconKey="Speaker"
+                        label="Conference Papers"
+                        value={conferences.length}
+                        delay={0.3}
+                    />
+                    <StatTile
+                        iconKey="Peer Reviewer"
+                        label="Reviewer Roles"
+                        value={reviewerRoles.length}
+                        delay={0.35}
+                    />
                 </div>
             </div>
         </section>

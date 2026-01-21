@@ -1,11 +1,10 @@
 import {useEffect, useState} from 'react';
-import {Menu, X} from 'lucide-react';
+import { techIconMap } from '@/components/TechIcons';
 
 const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const navItems = [
         { name: 'Home',        href: '#hero' },
         { name: 'Highlights',  href: '#highlights' },
@@ -96,7 +95,7 @@ const Navigation = () => {
                             onClick={() => setIsOpen(!isOpen)}
                             className="bg-gray-100 inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-200 transition-colors duration-200"
                         >
-                            {isOpen ? <X className="h-6 w-6"/> : <Menu className="h-6 w-6"/>}
+                            {isOpen ? techIconMap["Close"] : techIconMap["Menu"]}
                         </button>
                     </div>
                 </div>

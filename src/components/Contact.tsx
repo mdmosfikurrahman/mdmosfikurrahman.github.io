@@ -2,16 +2,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-    Mail,
-    User,
-    MessageSquare,
-    Loader2,
-    CheckCircle2,
-    Shield,
-    Briefcase,
-    GraduationCap,
-} from 'lucide-react';
+import { techIconMap } from '@/components/TechIcons';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -145,7 +136,7 @@ export default function Contact() {
                                         <ul className="space-y-4">
                                             <li className="flex items-center gap-3">
                                                 <div className="bg-primary/10 p-2 rounded-lg text-primary">
-                                                    <Mail className="w-5 h-5" />
+                                                    {techIconMap["Mail"]}
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-gray-600">Email</p>
@@ -156,7 +147,7 @@ export default function Contact() {
                                             </li>
                                             <li className="flex items-center gap-3">
                                                 <div className="bg-primary/10 p-2 rounded-lg text-primary">
-                                                    <Shield className="w-5 h-5" />
+                                                    {techIconMap["Privacy"]}
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-gray-600">Privacy</p>
@@ -215,27 +206,23 @@ export default function Contact() {
                                                     {
                                                         key: 'academic' as InquiryType,
                                                         label: 'Academic (Advisor/Admissions)',
-                                                        icon: (
-                                                            <GraduationCap className="w-4 h-4" />
-                                                        ),
+                                                        iconKey: 'Inquiry Academic',
                                                     },
                                                     {
                                                         key: 'industry' as InquiryType,
                                                         label: 'Industry (Recruiter/Team)',
-                                                        icon: <Briefcase className="w-4 h-4" />,
+                                                        iconKey: 'Inquiry Industry',
                                                     },
                                                     {
                                                         key: 'other' as InquiryType,
                                                         label: 'Other',
-                                                        icon: <MessageSquare className="w-4 h-4" />,
+                                                        iconKey: 'Inquiry Other',
                                                     },
-                                                ].map(({ key, label, icon }) => (
+                                                ].map(({ key, label, iconKey }) => (
                                                     <button
                                                         key={key}
                                                         type="button"
-                                                        onClick={() =>
-                                                            setForm((f) => ({ ...f, inquiry: key }))
-                                                        }
+                                                        onClick={() => setForm((f) => ({ ...f, inquiry: key }))}
                                                         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-primary ${
                                                             form.inquiry === key
                                                                 ? 'bg-primary text-primary-foreground border-primary'
@@ -244,7 +231,7 @@ export default function Contact() {
                                                         aria-pressed={form.inquiry === key}
                                                         aria-label={label}
                                                     >
-                                                        {icon}
+                                                        {techIconMap[iconKey]}
                                                         {label}
                                                     </button>
                                                 ))}
@@ -261,7 +248,7 @@ export default function Contact() {
                                             </label>
                                             <div className="relative">
                                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                                    <User className="w-4 h-4" />
+                                                    {techIconMap["User"]}
                                                 </span>
                                                 <input
                                                     id="name"
@@ -307,7 +294,7 @@ export default function Contact() {
                                             </label>
                                             <div className="relative">
                                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                                    <Mail className="w-4 h-4" />
+                                                    {techIconMap["Mail"]}
                                                 </span>
                                                 <input
                                                     id="email"
@@ -354,7 +341,7 @@ export default function Contact() {
                                             </label>
                                             <div className="relative">
                                                 <span className="absolute left-3 top-3 text-gray-400">
-                                                    <MessageSquare className="w-4 h-4" />
+                                                    {techIconMap["Message"]}
                                                 </span>
                                                 <textarea
                                                     id="message"
@@ -398,7 +385,7 @@ export default function Contact() {
                                             )}
                                             {sent && !error && (
                                                 <p className="text-sm text-green-700 flex items-center gap-2">
-                                                    <CheckCircle2 className="w-4 h-4" />
+                                                    {techIconMap["Success"]}
                                                     Message sent! I’ll get back to you soon.
                                                 </p>
                                             )}
@@ -411,9 +398,7 @@ export default function Contact() {
                                                 disabled={loading || sent}
                                                 className="inline-flex items-center gap-2"
                                             >
-                                                {loading && (
-                                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                                )}
+                                                {loading && techIconMap["Loading"]}
                                                 {sent ? 'Sent' : 'Send message'}
                                             </Button>
                                         </div>

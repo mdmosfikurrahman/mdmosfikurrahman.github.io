@@ -1,4 +1,5 @@
-import {Briefcase, Calendar, MapPin} from 'lucide-react';
+import {techIconMap} from "@/components/TechIcons";
+
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 
 const Experience = () => {
@@ -9,10 +10,10 @@ const Experience = () => {
             location: "Dhaka, Bangladesh",
             duration: "November 2024 – Present",
             description: [
-                "Architecting and developing backend systems for the Akij Air platform",
-                "Driving system modularization and technical planning initiatives",
-                "Led the TrackForce project, delivering REST APIs and SQL reporting features",
-                "Refactored legacy .NET components into scalable Java microservices"
+                "Worked on the backend foundation of an airline management platform, focusing on clean service design and long-term scalability",
+                "Gradually modularized core components by identifying clear service responsibilities and interaction boundaries",
+                "Built backend services and reporting features that support operational decision-making at scale",
+                "Collaborated closely with senior engineers to document system behavior and architectural trade-offs"
             ],
             technologies: ["Java", "Spring Boot", "PostgreSQL", "Microservices", ".NET Core"],
             level: "Mid-Senior Level"
@@ -23,10 +24,10 @@ const Experience = () => {
             location: "Dhaka, Bangladesh",
             duration: "July 2023 – October 2024",
             description: [
-                "Built scalable Spring Boot + React solutions with secure OAuth2 workflows",
-                "Optimized Oracle DB structures for performance and maintainability",
-                "Developed core modules for the NBR Customs Bond Management System",
-                "Integrated BGMEA/BKMEA data services to automate legal workflows"
+                "Developed backend services for large enterprise systems where reliability and performance were critical",
+                "Improved existing system structures by breaking down tightly coupled components into more manageable services",
+                "Contributed to nationally deployed regulatory platforms by implementing backend workflows and integrations",
+                "Paid particular attention to security, access control, and traceability within production systems"
             ],
             technologies: ["Spring Boot", "React", "Oracle DB", "OAuth2", "REST APIs"],
             level: "Mid-Level"
@@ -36,30 +37,30 @@ const Experience = () => {
             "company": "BJIT Group",
             "location": "Dhaka, Bangladesh",
             "duration": "April 2022 – June 2023",
-            "description": [
-                "Built and maintained GraphQL-based BFF (Backend for Frontend) services using Java and Spring Boot",
-                "Developed scalable APIs for Rakuten Echiba's e-commerce modules with both GraphQL and REST interfaces",
-                "Implemented GraphQL schema stitching, batching, and resolvers for optimized nested queries",
-                "Created detailed API documentation and UML diagrams to support maintainable enterprise integration"
+            description: [
+                "Worked on backend services supporting large-scale e-commerce platforms using both GraphQL and REST APIs",
+                "Focused on efficient data fetching strategies to reduce API overhead and improve client-side performance",
+                "Helped shape reusable backend patterns that simplified integration across multiple services",
+                "Regularly coordinated with overseas teams to align technical decisions with product requirements"
             ],
             "technologies": ["Spring Boot", "GraphQL", "JavaEE", "Oracle DB", "SOAP", "REST", "UML"],
             "level": "Junior"
         }
-        // ,
-        // {
-        //   title: "Teaching Assistant (Instructional Role)",
-        //   company: "Daffodil International University",
-        //   location: "Dhaka, Bangladesh",
-        //   duration: "June 2020 – April 2022",
-        //   description: [
-        //     "Assisted in teaching core computer science courses such as OOP and Data Structures",
-        //     "Conducted labs, prepared assignments, and mentored students",
-        //     "Delivered lectures independently under faculty guidance",
-        //     "Supported academic activities within the department"
-        //   ],
-        //   technologies: ["Java", "Data Structures", "OOP", "Academic Research"],
-        //   level: "Academic"
-        // }
+        ,
+        {
+            title: "Teaching Assistant (Instructional Role)",
+            company: "Daffodil International University",
+            location: "Dhaka, Bangladesh",
+            duration: "June 2020 – April 2022",
+            description: [
+                "Supported undergraduate teaching in programming-intensive courses such as OOP and Data Structures",
+                "Ran lab sessions where students translated theoretical concepts into working code",
+                "Guided students through problem-solving approaches rather than providing direct solutions",
+                "Gained early experience in academic mentoring and instructional responsibility"
+            ],
+            technologies: ["Java", "Data Structures", "OOP", "Academic Research"],
+            level: "Academic"
+        }
     ];
 
     return (
@@ -90,7 +91,7 @@ const Experience = () => {
                                         <div className="flex items-start justify-between flex-col lg:flex-row gap-4">
                                             <div className="flex items-start gap-4 flex-1">
                                                 <div className="bg-gray-100 p-3 rounded-lg">
-                                                    <Briefcase className="w-6 h-6 text-gray-700"/>
+                                                    {techIconMap["Experience"]}
                                                 </div>
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -104,11 +105,11 @@ const Experience = () => {
                                                     <p className="text-lg font-semibold text-blue-600 mb-2">{exp.company}</p>
                                                     <div className="flex items-center gap-4 text-sm text-gray-500">
                                                         <div className="flex items-center gap-1">
-                                                            <MapPin className="w-4 h-4"/>
+                                                            {techIconMap["Location"]}
                                                             <span>{exp.location}</span>
                                                         </div>
                                                         <div className="flex items-center gap-1">
-                                                            <Calendar className="w-4 h-4"/>
+                                                            {techIconMap["Calendar"]}
                                                             <span>{exp.duration}</span>
                                                         </div>
                                                     </div>
@@ -118,18 +119,19 @@ const Experience = () => {
                                     </CardHeader>
                                     <CardContent className="pt-0">
                                         <ul className="list-disc list-inside text-gray-700 mb-6 space-y-2">
-                                            {exp.description.map((point, i) => (
-                                                <li key={i}>{point}</li>
+                                            {exp.description.map((point) => (
+                                                <li key={point}>{point}</li>
                                             ))}
                                         </ul>
                                         <div className="flex flex-wrap gap-2">
-                                            {exp.technologies.map((tech, techIndex) => (
+                                            {exp.technologies.map((tech) => (
                                                 <span
-                                                    key={techIndex}
-                                                    className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-md font-medium hover:bg-gray-200 transition-colors"
+                                                    key={tech}
+                                                    className="flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-md font-medium hover:bg-gray-200 transition-colors"
                                                 >
-                          {tech}
-                        </span>
+    {techIconMap[tech] ?? null}
+                                                    {tech}
+  </span>
                                             ))}
                                         </div>
                                     </CardContent>

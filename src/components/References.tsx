@@ -1,6 +1,6 @@
 'use client';
 
-import {Mail, Phone, Quote} from 'lucide-react';
+import { techIconMap } from '@/components/TechIcons';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import React from "react";
 
@@ -121,11 +121,11 @@ export default function References() {
                             <CardContent className="pb-0">
                                 <div className="flex flex-col gap-2 text-sm text-gray-700">
                                     <div className="flex items-center gap-2">
-                                        <Phone className="w-4 h-4 text-gray-500"/>
+                                        {techIconMap["Phone"]}
                                         <span className="break-words">{ref.phone}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Mail className="w-4 h-4 text-gray-500"/>
+                                        {techIconMap["Mail"]}
                                         <a
                                             href={`mailto:${ref.email}`}
                                             className="text-primary hover:underline break-all"
@@ -139,8 +139,9 @@ export default function References() {
                             <CardContent className="flex-grow pt-4">
                                 {ref.feedback && (
                                     <div className="bg-gray-50 rounded-lg p-4 relative h-full">
-                                        <Quote
-                                            className="w-5 h-5 text-primary absolute -top-2 -left-2 bg-white rounded-full p-1 shadow-sm"/>
+                                        <div className="absolute -top-2 -left-2 bg-white rounded-full p-1 shadow-sm">
+                                            {techIconMap["Quote"]}
+                                        </div>
                                         <p className="text-base text-gray-800 leading-relaxed text-justify">
                                             {ref.feedback}
                                         </p>
