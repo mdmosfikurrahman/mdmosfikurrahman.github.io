@@ -12,7 +12,14 @@ export default function Hero() {
         >
             <div className="max-w-4xl mx-auto text-center">
                 {/* Name & Title */}
-                <div className="mb-8">
+                <div className="mb-8 flex flex-col items-center">
+
+                    {/* Profile Image */}
+                    <img
+                        src="/assets/Mosfik.png"
+                        alt="Md Mosfikur Rahman"
+                        className="w-40 h-40 md:w-48 md:h-48 rounded-full object-cover shadow-lg mb-6 border-4 border-white"
+                    />
                     <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
                         Md. Mosfikur{' '}
                         <span className="text-primary">
