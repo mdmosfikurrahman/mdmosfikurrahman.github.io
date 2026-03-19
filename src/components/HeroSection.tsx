@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { FileText, Mail, ArrowDown, Download } from "lucide-react";
-import profileAvatar from "@/assets/profile-avatar.jpg";
+import profileAvatar from "@/assets/profile-avatar.png";
 
 const HeroSection = () => {
   return (
