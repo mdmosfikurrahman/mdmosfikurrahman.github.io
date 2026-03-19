@@ -1,5 +1,5 @@
-git checkout dynamic-source
-git pull origin dynamic-source
+git checkout dynamic-source-2-2
+git pull origin dynamic-source-2-2
 
 npm install
 
@@ -18,6 +18,6 @@ Get-ChildItem -Force | Where-Object {
 Copy-Item -Recurse -Force "$env:TEMP\dist-backup\*" .
 Remove-Item -Recurse -Force "$env:TEMP\dist-backup"
 git add .
-git commit -m "Deploy from dynamic-source at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+git commit -m "Deploy from dynamic-source-2-2 at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 git push -u origin dynamic-2
-git checkout dynamic-source
+git checkout dynamic-source-2-2

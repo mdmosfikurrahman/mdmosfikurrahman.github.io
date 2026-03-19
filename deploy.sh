@@ -5,8 +5,8 @@ set -e  # Exit on error
 TMPDIR="${TMPDIR:-/tmp}"
 
 # Checkout source branch and build
-git checkout dynamic-source
-git pull origin dynamic-source
+git checkout dynamic-source-2-2
+git pull origin dynamic-source-2-2
 
 npm install
 npm run build
@@ -28,8 +28,8 @@ rm -rf "$TMPDIR/dist-backup"
 
 # Commit and push
 git add .
-git commit -m "Deploy from dynamic-source at $(date '+%Y-%m-%d %H:%M:%S')"
+git commit -m "Deploy from dynamic-source-2-2 at $(date '+%Y-%m-%d %H:%M:%S')"
 git push -u origin dynamic-2
 
 # Switch back
-git checkout dynamic-source
+git checkout dynamic-source-2-2
