@@ -79,65 +79,94 @@ const PublicationsSection = () => {
   ];
 
   const renderPub = (pub: typeof journals[0] & { note?: string }, i: number) => (
-    <motion.li
-      key={pub.doi}
-      className="border-l-2 border-border pl-5 py-3 hover:border-accent transition-colors"
-      initial={{ opacity: 0, x: -8 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.3, delay: i * 0.04 }}
-    >
-      {pub.note && (
-        <span className="inline-block text-[11px] font-semibold text-gold bg-gold-muted px-2 py-0.5 rounded-full mb-1">
+      <motion.li
+          key={pub.doi}
+          className="pl-5 py-4 border-l border-border hover:border-accent transition-all"
+          initial={{ opacity: 0, x: -10 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: i * 0.04 }}
+      >
+        {/* Award */}
+        {pub.note && (
+            <span className="inline-block text-[11px] font-medium text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full mb-2">
           {pub.note}
         </span>
-      )}
-      <p className="text-sm font-medium text-foreground leading-snug">{pub.title}</p>
-      <p className="text-xs text-muted-foreground mt-0.5">{pub.authors}</p>
-      <p className="text-xs text-muted-foreground">
-        <span className="italic">{pub.venue}</span>, {pub.year}
-      </p>
-      <a
-        href={`https://doi.org/${pub.doi}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-xs text-accent hover:underline mt-1 inline-block"
-      >
-        DOI: {pub.doi}
-      </a>
-    </motion.li>
+        )}
+
+        {/* Title */}
+        <p className="text-sm md:text-base font-medium text-foreground leading-relaxed">
+          {pub.title}
+        </p>
+
+        {/* Authors */}
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+          {pub.authors}
+        </p>
+
+        {/* Venue */}
+        <p className="text-xs text-muted-foreground mt-1">
+          <span className="italic">{pub.venue}</span>, {pub.year}
+        </p>
+
+        {/* DOI */}
+        <a
+            href={`https://doi.org/${pub.doi}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-accent hover:underline mt-2 inline-block"
+        >
+          View Paper →
+        </a>
+      </motion.li>
   );
 
   return (
-    <section id="publications" className="section-padding max-w-5xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        <p className="section-label">Publications</p>
-        <h2 className="section-title">Publication List</h2>
-        <p className="section-desc">
-          3 journal articles (Elsevier) and 7 conference papers (IEEE, Springer) — all peer-reviewed.
-        </p>
-      </motion.div>
+      <section id="publications" className="section-padding max-w-5xl mx-auto">
 
-      <div className="space-y-10">
-        <div>
-          <h3 className="font-display text-lg font-semibold text-foreground mb-4 pb-2 border-b border-border">
-            Peer-Reviewed Journal Articles
-          </h3>
-          <ul className="space-y-1">{journals.map(renderPub)}</ul>
+        {/* Header */}
+        <motion.div
+            className="mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+        >
+          <p className="section-label">Publications</p>
+
+          <h2 className="section-title">Publication List</h2>
+
+          <p className="section-desc max-w-2xl">
+            3 journal articles (Elsevier) and 7 conference papers (IEEE, Springer) — all peer-reviewed.
+          </p>
+        </motion.div>
+
+        {/* Content */}
+        <div className="space-y-12">
+
+          {/* Journals */}
+          <div>
+            <h3 className="font-display text-lg font-semibold text-foreground mb-6 pb-2 border-b border-border">
+              Peer-Reviewed Journal Articles
+            </h3>
+
+            <ul className="space-y-3">
+              {journals.map(renderPub)}
+            </ul>
+          </div>
+
+          {/* Conferences */}
+          <div>
+            <h3 className="font-display text-lg font-semibold text-foreground mb-6 pb-2 border-b border-border">
+              Conference Proceedings
+            </h3>
+
+            <ul className="space-y-3">
+              {conferences.map(renderPub)}
+            </ul>
+          </div>
+
         </div>
-        <div>
-          <h3 className="font-display text-lg font-semibold text-foreground mb-4 pb-2 border-b border-border">
-            Conference Proceedings
-          </h3>
-          <ul className="space-y-1">{conferences.map(renderPub)}</ul>
-        </div>
-      </div>
-    </section>
+      </section>
   );
 };
 

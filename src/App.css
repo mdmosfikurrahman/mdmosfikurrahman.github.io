@@ -1,23 +1,42 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== ROOT CONTAINER ===== */
 #root {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 1.5rem;
 }
 
+/* ===== GLOBAL ===== */
+body {
+  font-family: system-ui, Arial, sans-serif;
+  background-color: #0f172a; /* dark modern bg */
+  color: #e5e7eb;
+}
+
+/* ===== LOGO ===== */
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  height: 5rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
 }
 
+.logo:hover {
+  filter: drop-shadow(0 0 1.5rem #646cffaa);
+  transform: scale(1.05);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 1.5rem #61dafbaa);
+}
+
+/* ===== ANIMATION ===== */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -27,16 +46,115 @@
   }
 }
 
+/* reduce motion safe */
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
+  .spin {
     animation: logo-spin infinite 20s linear;
   }
 }
 
+/* ===== CARD ===== */
 .card {
-  padding: 2em;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 16px;
+  background: #1e293b;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: 0.3s ease;
 }
 
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* ===== TEXT ===== */
 .read-the-docs {
-  color: #888;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+/* ===== FLEX UTIL ===== */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.gap {
+  gap: 1rem;
+}
+
+/* ===== GRID UTIL ===== */
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  #root {
+    padding: 1.2rem;
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+  }
+
+  .logo {
+    height: 4rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  #root {
+    padding: 0.8rem;
+  }
+
+  .logo {
+    height: 3rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .read-the-docs {
+    font-size: 0.85rem;
+  }
 }
