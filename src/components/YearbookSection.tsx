@@ -87,7 +87,12 @@ const years: YearBlock[] = [
   {
     year: "2026 →",
     entries: [
-      { type: "future", title: "Seeking PhD Opportunities", subtitle: "Intelligent Systems · Trustworthy AI · Data-Driven Decision Making", detail: "Developing explainable, trustworthy AI systems for healthcare, cybersecurity, and smart infrastructure." },
+      {
+        type: "future",
+        title: "Research & Advanced Studies",
+        subtitle: "Artificial Intelligence · Data Science · Systems Research",
+        detail: "Focused on advancing expertise in machine learning, cybersecurity, and intelligent systems through research and industry collaboration."
+      },
     ],
   },
 ];
