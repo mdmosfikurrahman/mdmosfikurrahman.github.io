@@ -1,32 +1,29 @@
-import Navigation from '@/components/Navigation';
-import Hero from '@/components/Hero';
-import Highlights from '@/components/Highlights';
-import Research from '@/components/Research';
-import Projects from '@/components/Projects';
-import Skills from '@/components/Skills';
-import Experience from '@/components/Experience';
-import Education from '@/components/Education';
-import Activities from '@/components/Activities';
-import Interests from '@/components/Interests';
-import Contact from '@/components/Contact';
-import References from "@/components/References.tsx";
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import ResearchInterestsSection from "@/components/ResearchInterestsSection";
+import PapersDetailSection from "@/components/PapersDetailSection";
+import PublicationsSection from "@/components/PublicationsSection";
+import YearbookSection from "@/components/YearbookSection";
+import AchievementsSection from "@/components/AchievementsSection";
+import SkillsSection from "@/components/SkillsSection";
+import ContactSection from "@/components/ContactSection";
 
-export default function Index() {
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <Navigation />
-            <Hero />
-            <Highlights />
-            <Research />
-            <Projects />
-            <Skills />
-            <Experience />
-            <Education />
-            <Activities />
-            <Interests />
-            <References />
-            <Contact />
-        </div>
-    );
-}
+const Index = () => {
+  return (
+    <main className="min-h-screen bg-background">
+      <Navbar />
+      <HeroSection />
+      <AboutSection />
+      <ResearchInterestsSection />
+      <PapersDetailSection />
+      <PublicationsSection />
+      <YearbookSection />
+      <AchievementsSection />
+      <SkillsSection />
+      <ContactSection />
+    </main>
+  );
+};
 
+export default Index;
