@@ -4,7 +4,7 @@ import profileAvatar from "@/assets/profile-avatar.png";
 
 const HeroSection = () => {
   return (
-      <section className="bg-background relative min-h-screen flex items-center justify-center border-b border-border px-4 sm:px-6">
+      <section className="bg-[radial-gradient(circle_at_top,_hsl(var(--accent)/0.08),_transparent_60%)] bg-background relative min-h-screen flex items-center justify-center border-b border-border px-4 sm:px-6">
         <div className="w-full max-w-4xl mx-auto text-center">
 
           <motion.div

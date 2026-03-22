@@ -7,81 +7,81 @@
 @layer base {
   :root {
     /* ===== CORE ===== */
-    --background: 222 30% 97%;        /* slightly bluish-white (NOT normal white) */
-    --foreground: 222 55% 10%;        /* deep ink */
+    --background: 218 28% 94%;        /* deeper soft bluish-gray (NOT white) */
+    --foreground: 222 60% 9%;         /* strong ink */
 
     /* ===== SURFACES ===== */
-    --card: 222 25% 99%;
-    --card-foreground: 222 55% 10%;
+    --card: 218 22% 97%;              /* slightly lifted surface */
+    --card-foreground: 222 60% 9%;
 
-    --popover: 222 25% 99%;
-    --popover-foreground: 222 55% 10%;
+    --popover: 218 22% 97%;
+    --popover-foreground: 222 60% 9%;
 
-    /* ===== PRIMARY (INTELLIGENCE BLUE) ===== */
-    --primary: 230 60% 22%;           /* deeper, richer blue */
+    /* ===== PRIMARY (DEEP INTELLIGENCE BLUE) ===== */
+    --primary: 232 65% 20%;           /* darker + richer */
     --primary-foreground: 210 30% 98%;
 
     /* ===== SECONDARY ===== */
-    --secondary: 220 18% 94%;
-    --secondary-foreground: 222 45% 18%;
+    --secondary: 218 18% 90%;
+    --secondary-foreground: 222 40% 18%;
 
     /* ===== MUTED ===== */
-    --muted: 220 12% 92%;
-    --muted-foreground: 220 12% 42%;
+    --muted: 218 14% 88%;
+    --muted-foreground: 218 12% 40%;
 
-    /* ===== ACCENT (GOLD → SLIGHT ORANGE SHIFT) ===== */
-    --accent: 32 95% 55%;             /* 🔥 more unique than yellow gold */
-    --accent-foreground: 222 50% 10%;
+    /* ===== ACCENT (UNIQUE ORANGE-GOLD) ===== */
+    --accent: 28 92% 52%;             /* more premium than yellow */
+    --accent-foreground: 222 60% 9%;
 
     /* ===== DESTRUCTIVE ===== */
     --destructive: 0 75% 52%;
     --destructive-foreground: 0 0% 100%;
 
     /* ===== BORDERS ===== */
-    --border: 220 12% 86%;
-    --input: 220 12% 86%;
-    --ring: 32 95% 55%;
+    --border: 218 14% 82%;            /* deeper border */
+    --input: 218 14% 82%;
+    --ring: 28 92% 52%;
 
     /* ===== RADIUS ===== */
     --radius: 0.6rem;
 
     /* ===== SECTION ===== */
-    --section-alt: 220 20% 95%;
+    --section-alt: 218 20% 91%;       /* visible section separation */
 
-    /* ===== GOLD SYSTEM (SHIFTED) ===== */
-    --gold: 32 95% 55%;
-    --gold-muted: 32 60% 92%;
-    --gold-deep: 28 80% 42%;
+    /* ===== GOLD SYSTEM ===== */
+    --gold: 28 92% 52%;
+    --gold-muted: 28 60% 88%;
+    --gold-deep: 26 80% 40%;
 
     /* ===== NAVY SYSTEM ===== */
-    --navy: 230 60% 22%;
-    --navy-light: 230 35% 35%;
+    --navy: 232 65% 20%;
+    --navy-light: 232 35% 32%;
 
     /* ===== DIVIDER ===== */
-    --divider: 220 12% 84%;
+    --divider: 218 14% 80%;
 
     /* ===== TIMELINE ===== */
-    --line-education: 230 65% 55%;
-    --line-journal: 32 95% 55%;
+    --line-education: 232 70% 55%;
+    --line-journal: 28 92% 52%;
     --line-conference: 220 35% 40%;
-    --line-career: 210 25% 55%;
-    --line-award: 32 100% 50%;
-    --line-activity: 220 15% 60%;
+    --line-career: 210 25% 50%;
+    --line-award: 28 95% 48%;
+    --line-activity: 220 15% 55%;
     --line-international: 190 55% 45%;
-    --line-future: 230 60% 22%;
+    --line-future: 232 65% 20%;
 
     /* ===== SIDEBAR ===== */
-    --sidebar-background: 222 25% 99%;
-    --sidebar-foreground: 222 45% 18%;
+    --sidebar-background: 218 22% 96%;
+    --sidebar-foreground: 222 40% 18%;
 
-    --sidebar-primary: 230 60% 22%;
+    --sidebar-primary: 232 65% 20%;
     --sidebar-primary-foreground: 0 0% 100%;
 
-    --sidebar-accent: 32 95% 55%;
-    --sidebar-accent-foreground: 222 50% 10%;
+    --sidebar-accent: 28 92% 52%;
+    --sidebar-accent-foreground: 222 60% 9%;
 
-    --sidebar-border: 220 12% 86%;
-    --sidebar-ring: 32 95% 55%;
+    --sidebar-border: 218 14% 82%;
+    --sidebar-ring: 28 92% 52%;
   }
 
   .dark {
