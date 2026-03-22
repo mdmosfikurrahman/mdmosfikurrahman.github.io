@@ -1,5 +1,13 @@
-import {motion} from "framer-motion";
-import {ExternalLink} from "lucide-react";
+import {AnimatePresence, motion} from "framer-motion";
+import {ChevronDown, ExternalLink} from "lucide-react";
+import { useState } from "react";
+
+interface Props {
+    paper: PaperDetail;
+    index: number;
+    activeId: string | null;
+    setActiveId: (id: string | null) => void;
+}
 
 interface PaperDetail {
     id: string;
@@ -409,136 +417,141 @@ const papers: PaperDetail[] = [
     }
 ];
 
-const PaperDetailCard = ({ paper, index }: { paper: PaperDetail; index: number }) => (
-    <motion.article
-        className="border border-border rounded-xl p-6 md:p-7 bg-background hover:shadow-lg transition-all duration-300"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.4, delay: index * 0.05 }}
-    >
-        {/* Header */}
-        <div className="mb-4">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                {paper.type === "journal" ? "Journal Article" : "Conference Paper"} · {paper.year}
-            </p>
+const PaperDetailCard = ({paper, index, activeId, setActiveId}: Props) => {
+    const isOpen = activeId === paper.id;
 
-            <h3 className="text-lg md:text-xl font-semibold text-foreground mt-1 leading-snug">
-                {paper.title}
-            </h3>
-
-            <p className="text-xs text-muted-foreground mt-2">{paper.authors}</p>
-            <p className="text-xs italic text-muted-foreground">{paper.venue}</p>
-        </div>
-
-        {/* Abstract */}
-        <div className="mb-4">
-            <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                Abstract
-            </p>
-            <p className="text-sm text-foreground/90 leading-relaxed">
-                {paper.abstract}
-            </p>
-        </div>
-
-        {/* Problem + Challenges */}
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <div>
-                <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Problem
-                </p>
-                <p className="text-sm text-foreground/90 leading-relaxed">
-                    {paper.problem}
-                </p>
-            </div>
-
-            <div>
-                <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Challenges
-                </p>
-                <p className="text-sm text-foreground/90 leading-relaxed">
-                    {paper.challenges}
-                </p>
-            </div>
-        </div>
-
-        {/* Solution (highlighted but subtle) */}
-        <div className="mb-4 border-l-2 border-accent pl-4">
-            <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                Proposed Solution
-            </p>
-            <p className="text-sm text-foreground leading-relaxed font-medium">
-                {paper.solution}
-            </p>
-        </div>
-
-        {/* Method + Results */}
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <div>
-                <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Methodology
-                </p>
-                <p className="text-sm text-foreground/90 leading-relaxed">
-                    {paper.methodology}
-                </p>
-            </div>
-
-            <div>
-                <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Key Findings
-                </p>
-                <p className="text-sm text-foreground/90 leading-relaxed">
-                    {paper.keyFindings}
-                </p>
-            </div>
-        </div>
-
-        {/* Impact */}
-        <div className="mb-4">
-            <p className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                Impact
-            </p>
-            <p className="text-sm text-foreground/90 leading-relaxed">
-                {paper.impact}
-            </p>
-        </div>
-
-        {/* Keywords */}
-        <div className="flex flex-wrap gap-2 mb-4">
-            {paper.keywords.map((kw) => (
-                <span
-                    key={kw}
-                    className="text-[10px] px-2 py-1 rounded bg-muted text-muted-foreground"
-                >
-          {kw}
-        </span>
-            ))}
-        </div>
-
-        {/* DOI */}
-        <a
-            href={`https://doi.org/${paper.doi}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+    return (
+        <motion.article
+            className="border border-border rounded-xl bg-background overflow-hidden transition-all duration-300"
+            initial={{opacity: 0, y: 20}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+            transition={{duration: 0.4, delay: index * 0.05}}
         >
-            <ExternalLink className="w-3 h-3" />
-            View Publication
-        </a>
-    </motion.article>
-);
+            {/* HEADER */}
+            <div
+                className="p-5 cursor-pointer flex items-start justify-between gap-4"
+                onClick={() => setActiveId(isOpen ? null : paper.id)}
+            >
+                <div>
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        {paper.type === "journal" ? "Journal Article" : "Conference Paper"} · {paper.year}
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-foreground mt-1 leading-snug">
+                        {paper.title}
+                    </h3>
+
+                    <p className="text-xs text-muted-foreground mt-1">
+                        {paper.authors}
+                    </p>
+
+                    <p className="text-xs italic text-muted-foreground">
+                        {paper.venue}
+                    </p>
+                </div>
+
+                <ChevronDown
+                    className={`w-5 h-5 shrink-0 transition-transform duration-300 ${
+                        isOpen ? "rotate-180" : ""
+                    }`}
+                />
+            </div>
+
+            {/* ACCORDION BODY */}
+            <AnimatePresence initial={false}>
+                {isOpen && (
+                    <motion.div
+                        key="content"
+                        initial={{height: 0, opacity: 0}}
+                        animate={{height: "auto", opacity: 1}}
+                        exit={{height: 0, opacity: 0}}
+                        transition={{duration: 0.35, ease: "easeInOut"}}
+                        className="px-5"
+                    >
+                        <div className="pb-5 border-t border-border">
+                            {/* Abstract */}
+                            <div className="mt-4">
+                                <p className="text-xs font-semibold mb-1">Abstract</p>
+                                <p className="text-sm text-foreground/90 leading-relaxed">
+                                    {paper.abstract}
+                                </p>
+                            </div>
+
+                            {/* Problem + Challenges */}
+                            <div className="grid md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <p className="text-xs font-semibold mb-1">Problem</p>
+                                    <p className="text-sm">{paper.problem}</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs font-semibold mb-1">Challenges</p>
+                                    <p className="text-sm">{paper.challenges}</p>
+                                </div>
+                            </div>
+
+                            {/* Solution */}
+                            <div className="mt-4 border-l-2 border-accent pl-4">
+                                <p className="text-xs font-semibold mb-1">Proposed Solution</p>
+                                <p className="text-sm font-medium">
+                                    {paper.solution}
+                                </p>
+                            </div>
+
+                            {/* Method + Findings */}
+                            <div className="grid md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <p className="text-xs font-semibold mb-1">Methodology</p>
+                                    <p className="text-sm">{paper.methodology}</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs font-semibold mb-1">Key Findings</p>
+                                    <p className="text-sm">{paper.keyFindings}</p>
+                                </div>
+                            </div>
+
+                            {/* Impact */}
+                            <div className="mt-4">
+                                <p className="text-xs font-semibold mb-1">Impact</p>
+                                <p className="text-sm">{paper.impact}</p>
+                            </div>
+
+                            {/* Keywords */}
+                            <div className="flex flex-wrap gap-2 mt-4">
+                                {paper.keywords.map((kw) => (
+                                    <span
+                                        key={kw}
+                                        className="text-[10px] px-2 py-1 rounded bg-muted text-muted-foreground"
+                                    >
+                                        {kw}
+                                    </span>
+                                ))}
+                            </div>
+
+                            {/* DOI */}
+                            <a
+                                href={`https://doi.org/${paper.doi}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-accent hover:underline mt-4"
+                            >
+                                <ExternalLink className="w-3 h-3"/>
+                                View Publication
+                            </a>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.article>
+    );
+};
 
 const PapersDetailSection = () => {
     const journals = papers.filter((p) => p.type === "journal");
     const conferences = papers.filter((p) => p.type === "conference");
-
+    const [activeId, setActiveId] = useState<string | null>(null);
     return (
         <section id="research" className="section-padding bg-section-alt">
             <div className="max-w-5xl mx-auto">
@@ -563,7 +576,13 @@ const PapersDetailSection = () => {
                         </h3>
                         <div className="space-y-6">
                             {journals.map((paper, i) => (
-                                <PaperDetailCard key={paper.id} paper={paper} index={i}/>
+                                <PaperDetailCard
+                                    key={paper.id}
+                                    paper={paper}
+                                    index={i}
+                                    activeId={activeId}
+                                    setActiveId={setActiveId}
+                                />
                             ))}
                         </div>
                     </div>
@@ -574,7 +593,13 @@ const PapersDetailSection = () => {
                         </h3>
                         <div className="space-y-6">
                             {conferences.map((paper, i) => (
-                                <PaperDetailCard key={paper.id} paper={paper} index={i}/>
+                                <PaperDetailCard
+                                    key={paper.id}
+                                    paper={paper}
+                                    index={i}
+                                    activeId={activeId}
+                                    setActiveId={setActiveId}
+                                />
                             ))}
                         </div>
                     </div>
