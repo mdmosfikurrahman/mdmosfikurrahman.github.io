@@ -6,100 +6,119 @@
 
 @layer base {
   :root {
-    --background: 40 25% 97%;
-    --foreground: 222 35% 12%;
+    /* ===== CORE ===== */
+    --background: 222 30% 97%;        /* slightly bluish-white (NOT normal white) */
+    --foreground: 222 55% 10%;        /* deep ink */
 
-    --card: 40 20% 99%;
-    --card-foreground: 222 35% 12%;
+    /* ===== SURFACES ===== */
+    --card: 222 25% 99%;
+    --card-foreground: 222 55% 10%;
 
-    --popover: 40 20% 99%;
-    --popover-foreground: 222 35% 12%;
+    --popover: 222 25% 99%;
+    --popover-foreground: 222 55% 10%;
 
-    --primary: 222 45% 16%;
-    --primary-foreground: 40 25% 97%;
+    /* ===== PRIMARY (INTELLIGENCE BLUE) ===== */
+    --primary: 230 60% 22%;           /* deeper, richer blue */
+    --primary-foreground: 210 30% 98%;
 
-    --secondary: 222 15% 93%;
-    --secondary-foreground: 222 35% 12%;
+    /* ===== SECONDARY ===== */
+    --secondary: 220 18% 94%;
+    --secondary-foreground: 222 45% 18%;
 
-    --muted: 222 12% 92%;
-    --muted-foreground: 222 10% 42%;
+    /* ===== MUTED ===== */
+    --muted: 220 12% 92%;
+    --muted-foreground: 220 12% 42%;
 
-    --accent: 42 75% 48%;
-    --accent-foreground: 222 45% 12%;
+    /* ===== ACCENT (GOLD → SLIGHT ORANGE SHIFT) ===== */
+    --accent: 32 95% 55%;             /* 🔥 more unique than yellow gold */
+    --accent-foreground: 222 50% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* ===== DESTRUCTIVE ===== */
+    --destructive: 0 75% 52%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 222 15% 88%;
-    --input: 222 15% 88%;
-    --ring: 222 45% 16%;
+    /* ===== BORDERS ===== */
+    --border: 220 12% 86%;
+    --input: 220 12% 86%;
+    --ring: 32 95% 55%;
 
-    --radius: 0.5rem;
+    /* ===== RADIUS ===== */
+    --radius: 0.6rem;
 
-    /* Custom tokens */
-    --section-alt: 40 18% 95%;
-    --gold: 42 75% 48%;
-    --gold-muted: 42 40% 92%;
-    --gold-deep: 38 65% 38%;
-    --navy: 222 45% 16%;
-    --navy-light: 222 30% 28%;
-    --divider: 222 15% 85%;
+    /* ===== SECTION ===== */
+    --section-alt: 220 20% 95%;
 
-    /* Yearbook color-coded lines */
-    --line-education: 222 55% 50%;
-    --line-journal: 42 75% 48%;
-    --line-conference: 222 35% 35%;
-    --line-career: 222 20% 55%;
-    --line-award: 38 80% 50%;
-    --line-activity: 222 15% 60%;
-    --line-international: 195 55% 42%;
-    --line-future: 222 45% 16%;
+    /* ===== GOLD SYSTEM (SHIFTED) ===== */
+    --gold: 32 95% 55%;
+    --gold-muted: 32 60% 92%;
+    --gold-deep: 28 80% 42%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* ===== NAVY SYSTEM ===== */
+    --navy: 230 60% 22%;
+    --navy-light: 230 35% 35%;
+
+    /* ===== DIVIDER ===== */
+    --divider: 220 12% 84%;
+
+    /* ===== TIMELINE ===== */
+    --line-education: 230 65% 55%;
+    --line-journal: 32 95% 55%;
+    --line-conference: 220 35% 40%;
+    --line-career: 210 25% 55%;
+    --line-award: 32 100% 50%;
+    --line-activity: 220 15% 60%;
+    --line-international: 190 55% 45%;
+    --line-future: 230 60% 22%;
+
+    /* ===== SIDEBAR ===== */
+    --sidebar-background: 222 25% 99%;
+    --sidebar-foreground: 222 45% 18%;
+
+    --sidebar-primary: 230 60% 22%;
+    --sidebar-primary-foreground: 0 0% 100%;
+
+    --sidebar-accent: 32 95% 55%;
+    --sidebar-accent-foreground: 222 50% 10%;
+
+    --sidebar-border: 220 12% 86%;
+    --sidebar-ring: 32 95% 55%;
   }
 
   .dark {
-    --background: 222 35% 8%;
-    --foreground: 40 15% 92%;
-    --card: 222 30% 11%;
-    --card-foreground: 40 15% 92%;
-    --popover: 222 30% 11%;
-    --popover-foreground: 40 15% 92%;
-    --primary: 40 15% 92%;
-    --primary-foreground: 222 35% 8%;
-    --secondary: 222 20% 16%;
-    --secondary-foreground: 40 15% 92%;
-    --muted: 222 20% 16%;
-    --muted-foreground: 222 10% 55%;
-    --accent: 42 70% 50%;
-    --accent-foreground: 222 35% 8%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 20% 18%;
-    --input: 222 20% 18%;
-    --ring: 42 70% 50%;
-    --section-alt: 222 30% 10%;
-    --gold: 42 70% 50%;
-    --gold-muted: 42 25% 18%;
-    --gold-deep: 38 60% 42%;
-    --navy: 222 25% 85%;
-    --navy-light: 222 20% 70%;
-    --divider: 222 20% 20%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 225 30% 7%;         /* slightly bluish black */
+    --foreground: 210 20% 92%;
+
+    --card: 225 25% 11%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 225 25% 11%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 32 95% 55%;
+    --primary-foreground: 225 30% 7%;
+
+    --secondary: 225 20% 16%;
+    --secondary-foreground: 210 20% 92%;
+
+    --muted: 225 20% 18%;
+    --muted-foreground: 210 10% 65%;
+
+    --accent: 32 95% 55%;
+    --accent-foreground: 225 30% 7%;
+
+    --border: 225 20% 18%;
+    --ring: 32 95% 55%;
+
+    --section-alt: 225 25% 10%;
+
+    --gold: 32 95% 55%;
+    --gold-muted: 32 30% 20%;
+    --gold-deep: 28 80% 45%;
+
+    --navy: 210 20% 92%;
+    --navy-light: 210 15% 75%;
+
+    --divider: 225 20% 20%;
   }
 }
 

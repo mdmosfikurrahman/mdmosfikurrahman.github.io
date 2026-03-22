@@ -111,7 +111,7 @@ const typeConfig: Record<string, { label: string; borderClass: string }> = {
 const dotConfig: Record<string, string> = {
   education: "bg-primary/40",
   "publication-journal": "bg-accent",
-  "publication-conference": "bg-navy-light",
+  "publication-conference": "bg-accent",
   career: "bg-primary/25",
   award: "bg-gold-deep",
   activity: "bg-muted-foreground/30",
@@ -133,7 +133,7 @@ const labelConfig: Record<string, string> = {
 const YearbookSection = () => {
   return (
     <section id="journey" className="section-padding bg-section-alt">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -167,7 +167,7 @@ const YearbookSection = () => {
               </div>
 
               {/* Entries */}
-              <div className="space-y-0 border-l border-border ml-3">
+              <div className="space-y-0 border-l border-border ml-6">
                 {yearBlock.entries.map((entry, ei) => {
                   const cfg = typeConfig[entry.type];
                   return (
@@ -180,7 +180,7 @@ const YearbookSection = () => {
                       transition={{ duration: 0.25, delay: ei * 0.03 }}
                     >
                       {/* Dot */}
-                      <div className={`absolute -left-[5px] top-4 w-2 h-2 rounded-full ${dotConfig[entry.type]}`} />
+                      <div className={`absolute -left-[5px] top-4 w-2.5 h-2.5 rounded-full ${dotConfig[entry.type]}`} />
 
                       <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-sm tracking-wider uppercase ${labelConfig[entry.type]}`}>
                         {cfg.label}

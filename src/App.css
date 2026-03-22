@@ -16,8 +16,6 @@
 /* ===== GLOBAL ===== */
 body {
   font-family: system-ui, Arial, sans-serif;
-  background-color: #0f172a; /* dark modern bg */
-  color: #e5e7eb;
 }
 
 /* ===== LOGO ===== */
@@ -58,7 +56,7 @@ body {
   width: 100%;
   padding: 2rem;
   border-radius: 16px;
-  background: #1e293b;
+  background: hsl(var(--card));
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   transition: 0.3s ease;
 }

@@ -4,8 +4,7 @@ import profileAvatar from "@/assets/profile-avatar.png";
 
 const HeroSection = () => {
   return (
-      <section className="relative min-h-screen flex items-center justify-center border-b border-border px-4 sm:px-6">
-
+      <section className="bg-background relative min-h-screen flex items-center justify-center border-b border-border px-4 sm:px-6">
         <div className="w-full max-w-4xl mx-auto text-center">
 
           <motion.div
@@ -44,7 +43,7 @@ const HeroSection = () => {
               Designing and building real-world AI-driven systems
             </p>
 
-            {/* Achievements (RESPONSIVE FIXED) */}
+            {/* Achievements */}
             <div className="text-muted-foreground/70 text-xs sm:text-sm max-w-2xl mx-auto mb-8 flex flex-wrap justify-center gap-x-2 gap-y-1 px-2">
               <span>10+ Peer-Reviewed Publications</span>
               <span className="hidden sm:inline">·</span>
@@ -61,10 +60,14 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
           >
+
             {/* View Research */}
             <a
                 href="#research"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded font-medium hover:opacity-90 transition text-sm"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 
+            bg-primary text-primary-foreground px-6 py-3 rounded font-medium 
+            hover:opacity-90 transition text-sm
+            dark:bg-primary dark:hover:bg-primary/90"
             >
               View Research
               <ArrowDown className="w-4 h-4" />
@@ -75,7 +78,11 @@ const HeroSection = () => {
                 href="https://mdmosfikurrahman.github.io/cv"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded font-medium hover:opacity-90 transition text-sm"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 
+            bg-accent text-accent-foreground px-6 py-3 rounded font-medium 
+            hover:opacity-90 transition text-sm
+            dark:bg-accent/90 dark:hover:bg-accent
+            dark:shadow-[0_0_20px_hsl(var(--accent)/0.15)]"
             >
               <Download className="w-4 h-4" />
               Download CV
@@ -84,7 +91,10 @@ const HeroSection = () => {
             {/* Publications */}
             <a
                 href="#publications"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-border text-foreground px-6 py-3 rounded font-medium hover:bg-secondary transition text-sm"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 
+            border border-border text-foreground px-6 py-3 rounded font-medium 
+            hover:bg-secondary transition text-sm
+            dark:border-border dark:hover:bg-secondary/70"
             >
               <FileText className="w-4 h-4" />
               Publications
@@ -93,11 +103,14 @@ const HeroSection = () => {
             {/* Contact */}
             <a
                 href="#contact"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition px-4 py-3 text-sm font-medium"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 
+            text-muted-foreground hover:text-foreground transition px-4 py-3 text-sm font-medium
+            dark:hover:text-accent"
             >
               <Mail className="w-4 h-4" />
               Contact
             </a>
+
           </motion.div>
         </div>
       </section>
