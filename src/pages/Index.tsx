@@ -10,6 +10,7 @@ import SkillsSection from "@/components/SkillsSection";
 import ContactSection from "@/components/ContactSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import ProjectsSection from "@/components/ProjectsSection";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 const Index = () => {
   return (
@@ -26,6 +27,7 @@ const Index = () => {
       <AchievementsSection />
       <SkillsSection />
       <ContactSection />
+        <ScrollToTopButton />
     </main>
   );
 };
