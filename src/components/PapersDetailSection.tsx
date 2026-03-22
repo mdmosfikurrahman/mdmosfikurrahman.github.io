@@ -1,6 +1,6 @@
 import {AnimatePresence, motion} from "framer-motion";
 import {ChevronDown, ExternalLink} from "lucide-react";
-import { useState } from "react";
+import {useState} from "react";
 
 interface Props {
     paper: PaperDetail;
@@ -443,7 +443,16 @@ const PaperDetailCard = ({paper, index, activeId, setActiveId}: Props) => {
                     </h3>
 
                     <p className="text-xs text-muted-foreground mt-1">
-                        {paper.authors}
+                        {paper.authors.split("Md. Mosfikur Rahman").map((part, i, arr) => (
+                            <span key={i}>
+                                {part}
+                                {i < arr.length - 1 && (
+                                <span className="font-semibold text-foreground">
+                                    Md. Mosfikur Rahman
+                                </span>
+                                )}
+                            </span>
+                        ))}
                     </p>
 
                     <p className="text-xs italic text-muted-foreground">
