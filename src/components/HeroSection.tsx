@@ -89,16 +89,16 @@ const HeroSection = () => {
             </a>
 
             {/* Publications */}
-            <a
-                href="#publications"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 
-            border border-border text-foreground px-6 py-3 rounded font-medium 
-            hover:bg-secondary transition text-sm
-            dark:border-border dark:hover:bg-secondary/70"
-            >
-              <FileText className="w-4 h-4" />
-              Publications
-            </a>
+            {/*<a*/}
+            {/*    href="#publications"*/}
+            {/*    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 */}
+            {/*border border-border text-foreground px-6 py-3 rounded font-medium */}
+            {/*hover:bg-secondary transition text-sm*/}
+            {/*dark:border-border dark:hover:bg-secondary/70"*/}
+            {/*>*/}
+            {/*  <FileText className="w-4 h-4" />*/}
+            {/*  Publications*/}
+            {/*</a>*/}
 
             {/* Contact */}
             <a
