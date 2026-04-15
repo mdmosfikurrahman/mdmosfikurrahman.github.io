@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -13,16 +12,27 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: '1.5rem',
 			screens: {
-				'2xl': '1400px'
+				'2xl': '1180px'
 			}
 		},
 		extend: {
 			fontFamily: {
-				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				serif: ['Fraunces', 'Times New Roman', 'serif'],
+				mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+				display: ['Fraunces', 'Times New Roman', 'serif'],
 			},
 			colors: {
+				paper: 'hsl(var(--paper))',
+				'paper-deep': 'hsl(var(--paper-deep))',
+				ink: 'hsl(var(--ink))',
+				'ink-soft': 'hsl(var(--ink-soft))',
+				whisper: 'hsl(var(--whisper))',
+				rule: 'hsl(var(--rule))',
+				'rule-soft': 'hsl(var(--rule-soft))',
+
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -46,6 +56,8 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
+					deep: 'hsl(var(--accent-deep))',
+					wash: 'hsl(var(--accent-wash))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
@@ -57,11 +69,17 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				}
 			},
+			fontSize: {
+				'2xs': ['0.6875rem', { lineHeight: '1rem' }],
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
-			}
+			},
+			maxWidth: {
+				prose: '68ch',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

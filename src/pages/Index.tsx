@@ -1,35 +1,27 @@
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
-import ResearchInterestsSection from "@/components/ResearchInterestsSection";
-import PapersDetailSection from "@/components/PapersDetailSection";
-import PublicationsSection from "@/components/PublicationsSection";
-import YearbookSection from "@/components/YearbookSection";
-import AchievementsSection from "@/components/AchievementsSection";
-import SkillsSection from "@/components/SkillsSection";
-import ContactSection from "@/components/ContactSection";
-import ExperienceSection from "@/components/ExperienceSection";
-import ProjectsSection from "@/components/ProjectsSection";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
+import Hero from "@/components/sections/Hero";
+import NowSection from "@/components/sections/NowSection";
+import SelectedWork from "@/components/sections/SelectedWork";
+import ResearchStrip from "@/components/sections/ResearchStrip";
+import YearbookStrip from "@/components/sections/YearbookStrip";
+import SkillsMatrix from "@/components/sections/SkillsMatrix";
+import Correspondence from "@/components/sections/Correspondence";
 
-const Index = () => {
+export default function Index() {
   return (
-    <main className="min-h-screen bg-background">
-      <Navbar />
-      <HeroSection />
-      <AboutSection />
-      <ResearchInterestsSection />
-      <PapersDetailSection />
-        {/*<ExperienceSection />*/}
-        {/*<ProjectsSection />*/}
-        {/*<PublicationsSection />*/}
-      <YearbookSection />
-      <AchievementsSection />
-      <SkillsSection />
-      <ContactSection />
-        <ScrollToTopButton />
-    </main>
+    <>
+      <SiteHeader />
+      <main>
+        <Hero />
+        <NowSection />
+        <SelectedWork />
+        <ResearchStrip />
+        <YearbookStrip />
+        <SkillsMatrix />
+        <Correspondence />
+      </main>
+      <SiteFooter />
+    </>
   );
-};
-
-export default Index;
+}
