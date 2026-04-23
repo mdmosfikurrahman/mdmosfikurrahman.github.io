@@ -16,28 +16,37 @@ if (!(Test-Path "node_modules")) {
 Write-Host "Building project..."
 npm run build
 
-# Copy dist to temp
+# Prepare clean temp folder
 if (Test-Path $BUILD_PATH) {
     Remove-Item -Recurse -Force $BUILD_PATH
 }
-Copy-Item -Recurse -Force .\dist $BUILD_PATH
+New-Item -ItemType Directory -Path $BUILD_PATH | Out-Null
+
+# Copy ONLY dist contents (not the dist folder itself)
+Copy-Item -Recurse -Force ".\dist\*" $BUILD_PATH
 
 # --- TARGET BRANCH ---
 git checkout dynamic-2
 
-Write-Host "Cleaning branch..."
+Write-Host "Cleaning branch completely..."
+
+# Remove all tracked files
 git rm -rf . > $null 2>&1
 
-# Copy only build output
-Write-Host "Copying build files..."
+# Remove ALL untracked files (this is the missing piece)
+git clean -fdx
+
+# Copy ONLY build output
+Write-Host "Copying dist content..."
 Copy-Item -Recurse -Force "$BUILD_PATH\*" .
 
+# Cleanup temp
 Remove-Item -Recurse -Force $BUILD_PATH
 
 # Stage everything
 git add -A
 
-# Commit if changes exist
+# Commit if needed
 if (git diff --cached --quiet) {
     Write-Host "No changes to commit."
 } else {
