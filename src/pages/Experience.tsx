@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { roles, projects, education, talksAndService } from "@/lib/content";
@@ -9,7 +10,104 @@ function fmt(iso: string) {
   return d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 }
 
+const SECTIONS = [
+  { id: "employment", label: "Employment" },
+  { id: "projects", label: "Projects" },
+  { id: "education", label: "Education" },
+  { id: "talks", label: "Talks & service" },
+] as const;
+
+const SCROLL_OFFSET = 112; // sticky header (56) + sub-nav (~48) + breathing room
+
+function useActiveSection() {
+  const [active, setActive] = useState<string>(SECTIONS[0].id);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      let current: string = SECTIONS[0].id;
+      for (const s of SECTIONS) {
+        const el = document.getElementById(s.id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top + y;
+        if (top - SCROLL_OFFSET - 8 <= y) {
+          current = s.id;
+        } else {
+          break;
+        }
+      }
+      setActive(current);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash && SECTIONS.some((s) => s.id === hash)) {
+      requestAnimationFrame(() => scrollToSection(hash));
+    }
+  }, []);
+
+  return active;
+}
+
+function scrollToSection(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  window.scrollTo({ top: y, behavior: "smooth" });
+  history.replaceState(null, "", `#${id}`);
+}
+
+function ExperienceNav({ active }: { active: string }) {
+  return (
+    <nav
+      aria-label="Experience sections"
+      className="sticky top-14 z-30 border-b rule bg-paper/90 backdrop-blur-md"
+    >
+      <div className="shell">
+        <ul className="flex overflow-x-auto no-scrollbar -mx-1">
+          {SECTIONS.map((s) => {
+            const isActive = active === s.id;
+            return (
+              <li key={s.id}>
+                <a
+                  href={`#${s.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(s.id);
+                  }}
+                  className={[
+                    "inline-flex items-baseline gap-2 px-3 md:px-4 py-3 font-mono text-[11px] uppercase tracking-[0.16em] whitespace-nowrap transition-colors",
+                    isActive ? "text-ink" : "text-muted-foreground hover:text-ink",
+                  ].join(" ")}
+                  aria-current={isActive ? "true" : undefined}
+                >
+                  <span className="relative">
+                    <span>{s.label}</span>
+                    {isActive && (
+                      <span className="absolute -bottom-[13px] left-0 right-0 h-[2px] bg-accent" />
+                    )}
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </nav>
+  );
+}
+
 export default function Experience() {
+  const active = useActiveSection();
+
   return (
     <>
       <SiteHeader />
@@ -24,15 +122,40 @@ export default function Experience() {
               A full record of where I have worked, what I have shipped, and what else I
               have spent time on. Dates are ISO; everything is verifiable.
             </p>
+
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3">
+              {[
+                { k: "Employment", v: roles.length },
+                { k: "Projects", v: projects.length },
+                { k: "Education", v: education.length },
+                { k: "Talks & service", v: talksAndService.length },
+              ].map((s) => (
+                <button
+                  key={s.k}
+                  onClick={() => {
+                    const id = SECTIONS.find((x) => x.label === s.k)?.id;
+                    if (id) scrollToSection(id);
+                  }}
+                  className="text-left flex items-baseline gap-3 hover:text-accent transition-colors"
+                >
+                  <span className="font-display text-3xl leading-none">{s.v}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    {s.k}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </header>
 
-        {/* Roles */}
-        <section className="border-b rule-soft">
+        <ExperienceNav active={active} />
+
+        {/* Employment */}
+        <section id="employment" className="border-b rule-soft scroll-mt-28">
           <div className="shell py-16">
             <div className="mg">
               <div>
-                <p className="mg-label">01 — Employment</p>
+                <p className="mg-label">01 · Employment</p>
               </div>
               <ol className="min-w-0 space-y-14">
                 {roles.map((r) => (
@@ -44,7 +167,7 @@ export default function Experience() {
                         </a>
                       </h2>
                       <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground whitespace-nowrap">
-                        {fmt(r.from)} — {fmt(r.to)}
+                        {fmt(r.from)} – {fmt(r.to)}
                       </span>
                     </div>
                     <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
@@ -78,11 +201,11 @@ export default function Experience() {
         </section>
 
         {/* Projects */}
-        <section className="border-b rule-soft bg-paper-deep/40">
+        <section id="projects" className="border-b rule-soft bg-paper-deep/40 scroll-mt-28">
           <div className="shell py-16">
             <div className="mg">
               <div>
-                <p className="mg-label">02 — Projects</p>
+                <p className="mg-label">02 · Projects</p>
               </div>
               <ol className="min-w-0 divide-y rule-soft border-y rule-soft">
                 {projects.map((p, i) => (
@@ -124,11 +247,11 @@ export default function Experience() {
         </section>
 
         {/* Education */}
-        <section className="border-b rule-soft">
+        <section id="education" className="border-b rule-soft scroll-mt-28">
           <div className="shell py-16">
             <div className="mg">
               <div>
-                <p className="mg-label">03 — Education</p>
+                <p className="mg-label">03 · Education</p>
               </div>
               <ol className="min-w-0 divide-y rule-soft border-y rule-soft">
                 {education.map((e) => (
@@ -147,7 +270,7 @@ export default function Experience() {
                       </p>
                     </div>
                     <span className="font-mono text-[11px] text-muted-foreground whitespace-nowrap">
-                      {fmt(e.from)} — {fmt(e.to)}
+                      {fmt(e.from)} – {fmt(e.to)}
                     </span>
                   </li>
                 ))}
@@ -157,11 +280,11 @@ export default function Experience() {
         </section>
 
         {/* Talks & service */}
-        <section className="border-b rule-soft bg-paper-deep/40">
+        <section id="talks" className="border-b rule-soft bg-paper-deep/40 scroll-mt-28">
           <div className="shell py-16">
             <div className="mg">
               <div>
-                <p className="mg-label">04 — Talks &amp; service</p>
+                <p className="mg-label">04 · Talks &amp; service</p>
               </div>
               <ol className="min-w-0 divide-y rule-soft border-y rule-soft">
                 {talksAndService.map((t, i) => (

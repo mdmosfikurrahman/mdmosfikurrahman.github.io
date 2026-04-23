@@ -4,7 +4,6 @@ import Hero from "@/components/sections/Hero";
 import NowSection from "@/components/sections/NowSection";
 import SelectedWork from "@/components/sections/SelectedWork";
 import ResearchStrip from "@/components/sections/ResearchStrip";
-import YearbookStrip from "@/components/sections/YearbookStrip";
 import SkillsMatrix from "@/components/sections/SkillsMatrix";
 import Correspondence from "@/components/sections/Correspondence";
 
@@ -17,7 +16,6 @@ export default function Index() {
         <NowSection />
         <SelectedWork />
         <ResearchStrip />
-        <YearbookStrip />
         <SkillsMatrix />
         <Correspondence />
       </main>

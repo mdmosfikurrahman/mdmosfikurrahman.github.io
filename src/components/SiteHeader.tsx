@@ -6,7 +6,8 @@ const nav = [
   { to: "/", label: "Index" },
   { to: "/experience", label: "Experience" },
   { to: "/publications", label: "Publications" },
-  { to: "/yearbook", label: "Yearbook" },
+  { to: "/about", label: "About" },
+  { to: "/play", label: "Play" },
 ];
 
 export default function SiteHeader() {
@@ -36,8 +37,13 @@ export default function SiteHeader() {
       <div className="shell flex items-center justify-between h-14">
         <Link
           to="/"
+          onClick={() => {
+            if (loc.pathname === "/") {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
           className="font-display text-[17px] leading-none tracking-tight hover:text-accent transition-colors"
-          aria-label="Md. Mosfikur Rahman — home"
+          aria-label="Md. Mosfikur Rahman, home"
         >
           Md. Mosfikur Rahman
         </Link>

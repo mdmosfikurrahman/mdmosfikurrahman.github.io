@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Award } from "lucide-react";
 import { publications, doiUrl, formatAuthors, reviewerFor } from "@/lib/content";
 
 export default function ResearchStrip() {
@@ -16,10 +17,10 @@ export default function ResearchStrip() {
               Research &amp; service
             </h2>
             <p className="mt-4 text-sm text-muted-foreground max-w-[13rem] leading-relaxed">
-              Ten peer-reviewed papers across ML, IoT, and information security. Seven journals and conferences where I have served as reviewer.
+              Ten peer-reviewed papers across ML, IoT, and information security, including one IEEE Best Paper. Each opens into a research dossier with abstract, methodology, findings, and impact.
             </p>
             <Link to="/publications" className="a-arrow text-sm mt-5 inline-block">
-              Complete list <span className="arw">→</span>
+              Open bibliography <span className="arw">→</span>
             </Link>
           </div>
 
@@ -32,6 +33,16 @@ export default function ResearchStrip() {
                     <div className="flex items-baseline gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       <span>{p.year}</span>
                       <span className="h-px flex-1 bg-rule-soft translate-y-[-2px]" />
+                      {p.award && (
+                        <span
+                          className="inline-flex items-center gap-1 px-1.5 py-0.5 border rule-soft bg-[hsl(var(--accent-wash))]"
+                          style={{ color: "hsl(var(--accent-deep))" }}
+                          title={p.award}
+                        >
+                          <Award className="w-3 h-3" aria-hidden />
+                          Best paper
+                        </span>
+                      )}
                       <span>{p.type}</span>
                     </div>
                     <h3 className="mt-2 font-serif-body text-[1.075rem] md:text-[1.15rem] leading-snug text-ink text-pretty">

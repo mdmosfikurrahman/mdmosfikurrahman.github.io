@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText } from "lucide-react";
 import { profile, preamble, figures } from "@/lib/content";
-import avatar from "@/assets/profile-avatar.png";
+
+const avatar = "/profile-avatar.png";
 
 type Channel = {
   Icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
@@ -90,8 +91,8 @@ export default function Hero() {
               <Link to="/publications" className="a-arrow">
                 Publications <span className="arw">→</span>
               </Link>
-              <Link to="/yearbook" className="a-arrow">
-                Yearbook <span className="arw">→</span>
+              <Link to="/about" className="a-arrow">
+                About <span className="arw">→</span>
               </Link>
               <a className="a-arrow" href={`mailto:${profile.email}`}>
                 Write <span className="arw">→</span>
@@ -103,31 +104,33 @@ export default function Hero() {
           <aside className="col-span-12 md:col-span-4 flex flex-col">
             <figure className="relative mx-auto md:mx-0 w-[220px] md:w-full max-w-[280px]">
               <div className="absolute -inset-2 border rule rotate-[-3deg] bg-paper-deep/50" aria-hidden />
-              <div className="relative overflow-hidden border rule bg-paper-deep">
+              <div className="relative overflow-hidden border rule bg-paper-deep shadow-[0_1px_0_hsl(var(--ink)/0.04),0_12px_28px_-18px_hsl(var(--ink)/0.35)]">
                 <img
                   src={avatar}
                   alt="Portrait of Md. Mosfikur Rahman"
-                  className="w-full h-auto block grayscale contrast-[1.1] brightness-[0.98] mix-blend-multiply dark:mix-blend-screen dark:invert-[0.02]"
+                  className="w-full h-auto block"
+                  style={{
+                    filter:
+                      "sepia(0.38) saturate(0.82) contrast(0.92) brightness(0.98) hue-rotate(-4deg)",
+                  }}
                   loading="eager"
                 />
-                <div
-                  className="absolute inset-0 pointer-events-none"
+                <span
+                  className="absolute inset-0 pointer-events-none mix-blend-soft-light"
                   style={{
-                    backgroundImage:
-                      "radial-gradient(hsl(var(--ink) / 0.22) 1px, transparent 1px)",
-                    backgroundSize: "5px 5px",
-                    mixBlendMode: "multiply",
-                    opacity: 0.35,
+                    background:
+                      "linear-gradient(180deg, rgba(110,70,40,0.12) 0%, rgba(110,70,40,0) 45%, rgba(30,20,10,0.18) 100%)",
                   }}
                   aria-hidden
                 />
+                <span className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-ink/25 to-transparent pointer-events-none" aria-hidden />
                 <span className="absolute top-2 left-2 font-mono text-[9px] uppercase tracking-[0.22em] text-paper bg-ink/80 px-1.5 py-0.5">
                   Fig. 01
                 </span>
               </div>
               <figcaption className="mt-4 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground leading-relaxed">
-                Md. Mosfikur Rahman <br />
-                Engineer · Researcher · Architect
+                {profile.name} <br />
+                {profile.role}
               </figcaption>
             </figure>
 

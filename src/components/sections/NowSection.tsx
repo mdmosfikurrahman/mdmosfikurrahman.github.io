@@ -36,7 +36,7 @@ export default function NowSection() {
                     </a>
                   </h3>
                   <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-muted-foreground whitespace-nowrap">
-                    {fmt(r.from)} — {fmt(r.to)}
+                    {fmt(r.from)} – {fmt(r.to)}
                   </span>
                 </div>
                 <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">

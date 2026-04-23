@@ -110,7 +110,7 @@ function ChannelCard({
               {c.prompt}
             </span>
             <span className="block font-serif-body italic text-[13px] text-muted-foreground mt-0.5">
-              — {c.whisper}
+              {c.whisper}
             </span>
           </span>
           <span
@@ -186,9 +186,9 @@ export default function Correspondence() {
             <h2 className="font-display text-3xl md:text-[2.75rem] lg:text-[3.25rem] leading-[1.02] tracking-[-0.02em] mt-3 text-balance">
               If something here is useful,{" "}
               <span className="italic font-light text-muted-foreground">or you wish to build something together</span>
-              {" — "}
+              {", "}
               <a
-                className="text-accent underline decoration-accent/40 decoration-1 underline-offset-[6px] hover:decoration-accent transition-colors whitespace-nowrap"
+                className="text-accent no-underline hover:opacity-80 transition-opacity whitespace-nowrap"
                 href={`mailto:${profile.email}`}
               >
                 write to me
@@ -197,11 +197,11 @@ export default function Correspondence() {
             </h2>
 
             <p className="mt-6 font-serif-body text-[1rem] md:text-[1.075rem] leading-[1.65] text-ink-soft max-w-[42ch]">
-              I reply within forty-eight hours, usually sooner. Based in Dhaka —{" "}
+              I reply within forty-eight hours, usually sooner. Based in Dhaka{" "}
               <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                GMT+6
-              </span>{" "}
-              — and happy to discuss backend architecture, applied ML, or research collaboration.
+                (GMT+6)
+              </span>
+              , and happy to discuss backend architecture, applied ML, or research collaboration.
             </p>
 
             <div className="mt-8 pt-5 border-t rule">
