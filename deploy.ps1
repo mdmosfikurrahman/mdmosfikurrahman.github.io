@@ -30,10 +30,10 @@ git checkout dynamic-2
 
 Write-Host "Cleaning branch completely..."
 
-# Remove all tracked files
-git rm -rf . > $null 2>&1
+# Remove tracked files (safe even if empty)
+git rm -rf . 2>$null
 
-# Remove ALL untracked files (this is the missing piece)
+# Remove ALL untracked files
 git clean -fdx
 
 # Copy ONLY build output
