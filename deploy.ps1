@@ -1,9 +1,8 @@
-$ErrorActionPreference = 'Stop'  # Exit on error
+$ErrorActionPreference = 'Stop'
 
-# Ensure TMP is set, default to $env:TEMP
 $TMP = if ($env:TMPDIR) { $env:TMPDIR } else { $env:TEMP }
 
-# Checkout source branch and build
+# --- SOURCE ---
 git checkout dynamic-source-2
 git pull origin dynamic-source-2
 
@@ -13,24 +12,29 @@ npm run build
 # Backup dist
 Copy-Item -Recurse -Force .\dist "$TMP\dist-backup"
 
-# Switch to target branch
+# --- TARGET ---
 git checkout dynamic-2
 git pull origin dynamic-2
 
-# Remove everything except .git and .idea
+# Remove everything except .git
 Get-ChildItem -Force | Where-Object {
-    $_.Name -ne '.git' -and
-    $_.Name -ne '.idea'
+    $_.Name -ne '.git'
 } | Remove-Item -Recurse -Force
 
-# Restore dist backup
+# Restore dist
 Copy-Item -Recurse -Force "$TMP\dist-backup\*" .
 Remove-Item -Recurse -Force "$TMP\dist-backup"
 
-# Commit and push
+# Ignore .idea permanently
+".idea/" | Out-File -Encoding utf8 -Append .gitignore
+
+# Remove .idea if previously tracked
+git rm -r --cached .idea 2>$null
+
+# Commit & push
 git add .
 git commit -m "Deploy from dynamic-source-2 at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 git push -u origin dynamic-2
 
-# Switch back
+# Back to source
 git checkout dynamic-source-2
