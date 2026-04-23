@@ -1,61 +1,36 @@
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Stop'  # Exit on error
 
+# Ensure TMP is set, default to $env:TEMP
 $TMP = if ($env:TMPDIR) { $env:TMPDIR } else { $env:TEMP }
-$BUILD_PATH = "$TMP\deploy-dist"
 
-Write-Host "Starting ultra-clean deployment..."
-
-# --- SOURCE BRANCH ---
+# Checkout source branch and build
 git checkout dynamic-source-2
+git pull origin dynamic-source-2
 
-if (!(Test-Path "node_modules")) {
-    Write-Host "Installing dependencies..."
-    npm install --prefer-offline --no-audit --progress=false
-}
-
-Write-Host "Building project..."
+npm install
 npm run build
 
-# Prepare clean temp folder
-if (Test-Path $BUILD_PATH) {
-    Remove-Item -Recurse -Force $BUILD_PATH
-}
-New-Item -ItemType Directory -Path $BUILD_PATH | Out-Null
+# Backup dist
+Copy-Item -Recurse -Force .\dist "$TMP\dist-backup"
 
-# Copy ONLY dist contents (not the dist folder itself)
-Copy-Item -Recurse -Force ".\dist\*" $BUILD_PATH
-
-# --- TARGET BRANCH ---
+# Switch to target branch
 git checkout dynamic-2
+git pull origin dynamic-2
 
-Write-Host "Cleaning branch completely..."
+# Remove everything except .git and .idea
+Get-ChildItem -Force | Where-Object {
+    $_.Name -ne '.git' -and
+    $_.Name -ne '.idea'
+} | Remove-Item -Recurse -Force
 
-# Remove tracked files (safe even if empty)
-git rm -rf . 2>$null
+# Restore dist backup
+Copy-Item -Recurse -Force "$TMP\dist-backup\*" .
+Remove-Item -Recurse -Force "$TMP\dist-backup"
 
-# Remove ALL untracked files
-git clean -fdx
-
-# Copy ONLY build output
-Write-Host "Copying dist content..."
-Copy-Item -Recurse -Force "$BUILD_PATH\*" .
-
-# Cleanup temp
-Remove-Item -Recurse -Force $BUILD_PATH
-
-# Stage everything
-git add -A
-
-# Commit if needed
-if (git diff --cached --quiet) {
-    Write-Host "No changes to commit."
-} else {
-    $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    git commit -m "Deploy build at $timestamp"
-    git push origin dynamic-2 --force
-}
+# Commit and push
+git add .
+git commit -m "Deploy from dynamic-source-2 at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+git push -u origin dynamic-2
 
 # Switch back
 git checkout dynamic-source-2
-
-Write-Host "Deployment completed successfully."
