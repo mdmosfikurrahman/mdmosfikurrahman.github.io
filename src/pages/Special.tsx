@@ -6,6 +6,10 @@ import WordUnscramble from "@/components/puzzles/WordUnscramble";
 import TicTacToe from "@/components/puzzles/TicTacToe";
 import GuessNumber from "@/components/puzzles/GuessNumber";
 import LightsOut from "@/components/puzzles/LightsOut";
+import MemoryMatch from "@/components/puzzles/MemoryMatch";
+import SlidingPuzzle from "@/components/puzzles/SlidingPuzzle";
+import Hangman from "@/components/puzzles/Hangman";
+import SimonSays from "@/components/puzzles/SimonSays";
 
 type Puzzle = {
   key: string;
@@ -38,6 +42,30 @@ const PUZZLES: Puzzle[] = [
     name: "Lights Out",
     note: "Click a tile to flip it and its neighbours. Turn every light off.",
     Component: LightsOut,
+  },
+  {
+    key: "memorymatch",
+    name: "Memory Match",
+    note: "Flip two cards. Match the glyphs. Clear the table.",
+    Component: MemoryMatch,
+  },
+  {
+    key: "sliding",
+    name: "Sliding Tiles",
+    note: "The fifteen puzzle. Slide tiles into order, one to fifteen.",
+    Component: SlidingPuzzle,
+  },
+  {
+    key: "hangman",
+    name: "Hangman",
+    note: "Guess the word, one letter at a time. Six wrong guesses and the gallows.",
+    Component: Hangman,
+  },
+  {
+    key: "simon",
+    name: "Simon Says",
+    note: "Watch the sequence and repeat it. Each round adds one step.",
+    Component: SimonSays,
   },
 ];
 
@@ -75,8 +103,9 @@ export default function Special() {
             </h1>
             <p className="mt-5 max-w-prose font-serif-body text-[1.075rem] leading-[1.6] text-ink-soft">
               A short puzzle, different on every reload. For when you need a minute
-              before the résumé speaks again. Four in rotation: word scramble,
-              tic-tac-toe, a number between one and a hundred, and lights out.
+              before the résumé speaks again. Eight in rotation: word scramble,
+              tic-tac-toe, a number between one and a hundred, lights out, memory
+              match, sliding tiles, hangman, and simon says.
             </p>
           </div>
         </header>
