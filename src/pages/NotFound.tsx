@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function NotFound() {
   const loc = useLocation();
@@ -16,16 +16,10 @@ export default function NotFound() {
           </code>{" "}
           is not catalogued on this site. If you believe it should be, please write.
         </p>
-        <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-          <Link className="a-arrow" to="/">
-            Back to index <span className="arw">→</span>
-          </Link>
-          <Link className="a-arrow" to="/publications">
-            Publications <span className="arw">→</span>
-          </Link>
-          <Link className="a-arrow" to="/experience">
-            Experience <span className="arw">→</span>
-          </Link>
+        <div className="mt-8">
+          <a className="a-arrow" href="/">
+            Return to the front cover <span className="arw">→</span>
+          </a>
         </div>
       </section>
     </main>
