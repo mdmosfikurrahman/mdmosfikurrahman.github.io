@@ -31,26 +31,29 @@ function Write-Step {
     Write-Host ">> $Message" -ForegroundColor Cyan
 }
 
-function Remove-WorkingTreeExceptGit {
-    # Remove every entry in the working directory except .git.
-    # Use ForEach-Object so a single locked file surfaces a clear error.
-    Get-ChildItem -Force -LiteralPath '.' |
-        Where-Object { $_.Name -ne '.git' } |
-        ForEach-Object {
-            Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction Stop
-        }
+function Clear-TrackedWorkingTree {
+    # Remove every tracked file from the index and working tree, but leave
+    # untracked / gitignored items (node_modules, locked binaries, etc.) alone.
+    # Avoids the Windows "esbuild.exe is locked" failure during deploys.
+    git rm -rf --quiet . 2>$null
+    # `git rm` on an orphan/empty index returns non-zero; treat as success.
+    $LASTEXITCODE = 0
 }
 
-function Ensure-GitignoreLine {
-    param([string]$Path, [string]$Line)
-    if (-not (Test-Path -LiteralPath $Path)) {
-        Set-Content -LiteralPath $Path -Value $Line -Encoding ascii
-        return
-    }
-    $existing = Get-Content -LiteralPath $Path -ErrorAction SilentlyContinue
-    if ($existing -notcontains $Line) {
-        Add-Content -LiteralPath $Path -Value $Line -Encoding ascii
-    }
+function Write-DeployGitignore {
+    # Deploy branch carries built artifacts at the repo root. Make sure nothing
+    # from the source toolchain (node_modules, leftover dist/, IDE folders)
+    # accidentally gets committed when we `git add -A`.
+    @(
+        'node_modules/'
+        'dist/'
+        '.idea/'
+        '.vscode/'
+        '.claude/'
+        '.DS_Store'
+        'Thumbs.db'
+        '*.log'
+    ) | Set-Content -LiteralPath '.gitignore' -Encoding ascii
 }
 
 # -----------------------------------------------------------------------------
@@ -86,7 +89,20 @@ New-Item -ItemType Directory -Path $BackupDir | Out-Null
 Copy-Item -Path '.\dist\*' -Destination $BackupDir -Recurse -Force
 
 # -----------------------------------------------------------------------------
-# 3. Switch to the target (deploy) branch
+# 3. Stash any uncommitted source-branch edits so checkout is clean
+# -----------------------------------------------------------------------------
+$Stashed = $false
+$dirtyOutput = git status --porcelain
+if ($LASTEXITCODE -ne 0) { throw "git status failed (exit $LASTEXITCODE)" }
+if ($dirtyOutput) {
+    Write-Step "Stashing uncommitted source-branch changes"
+    git stash push -u -m "deploy-autostash-$(Get-Date -Format yyyyMMddHHmmss)" | Out-Null
+    Assert-LastExit "git stash failed"
+    $Stashed = $true
+}
+
+# -----------------------------------------------------------------------------
+# 4. Switch to the target (deploy) branch
 # -----------------------------------------------------------------------------
 Write-Step "Switching to $TargetBranch"
 
@@ -123,8 +139,8 @@ if ($localExists) {
 # -----------------------------------------------------------------------------
 # 4. Replace working tree with the built dist
 # -----------------------------------------------------------------------------
-Write-Step "Wiping working tree (preserving .git) and restoring dist"
-Remove-WorkingTreeExceptGit
+Write-Step "Removing previously deployed files and restoring fresh dist"
+Clear-TrackedWorkingTree
 
 # Copy backup contents into repo root.
 Copy-Item -Path (Join-Path $BackupDir '*') -Destination '.' -Recurse -Force
@@ -132,12 +148,8 @@ Copy-Item -Path (Join-Path $BackupDir '*') -Destination '.' -Recurse -Force
 # Clean up backup.
 Remove-Item -LiteralPath $BackupDir -Recurse -Force
 
-# Make sure .idea/ stays out of the deploy branch.
-Ensure-GitignoreLine -Path '.gitignore' -Line '.idea/'
-
-# Untrack .idea if it had ever slipped in. --ignore-unmatch keeps exit code 0.
-git rm -r --cached --ignore-unmatch --quiet .idea 2>$null
-$LASTEXITCODE = 0
+# Write a fresh .gitignore tuned for the deploy branch.
+Write-DeployGitignore
 
 # -----------------------------------------------------------------------------
 # 5. Commit & push (handle the no-change case)
@@ -162,11 +174,17 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 # -----------------------------------------------------------------------------
-# 6. Return to the source branch
+# 6. Return to the source branch and restore any stash
 # -----------------------------------------------------------------------------
 Write-Step "Returning to $SourceBranch"
 git checkout $SourceBranch
 Assert-LastExit "Failed to return to $SourceBranch"
+
+if ($Stashed) {
+    Write-Step "Restoring stashed source-branch changes"
+    git stash pop
+    Assert-LastExit "git stash pop failed (resolve manually with 'git stash list')"
+}
 
 Write-Host ""
 Write-Host "Deploy complete." -ForegroundColor Green
