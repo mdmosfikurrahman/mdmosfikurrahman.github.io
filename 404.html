@@ -47,6 +47,21 @@
       })();
     </script>
 
+    <!-- Unknown route → skip the entry/welcome gate and mount React directly. -->
+    <script>
+      (function () {
+        var KNOWN = ['/', '/experience', '/publications', '/about', '/play', '/cv', '/resume', '/publication-list', '/yearbook'];
+        var path = window.location.pathname.replace(/\/+$/, '') || '/';
+        if (KNOWN.indexOf(path) === -1) {
+          window.__entryClicked = true;
+          document.documentElement.classList.add('skip-entry');
+        }
+      })();
+    </script>
+    <style>
+      html.skip-entry .site-entry { display: none !important; }
+    </style>
+
     <!-- Inline content guards, active from first paint (before React mounts). -->
     <script>
       (function () {
@@ -99,7 +114,7 @@
         detectDevtools();
       })();
     </script>
-  <script type="module" crossorigin src="/assets/index-DX3QmYIe.js"></script>
+  <script type="module" crossorigin src="/assets/index-7ZvLEBow.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index--wlxQI_e.css">
 </head>
 
