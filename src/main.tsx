@@ -20,6 +20,11 @@ const mountApp = () => {
 };
 
 const handOff = () => {
+  // Unknown route: entry gate is hidden via .skip-entry — mount immediately, no fade.
+  if (document.documentElement.classList.contains("skip-entry")) {
+    mountApp();
+    return;
+  }
   const entry = document.querySelector<HTMLElement>(".site-entry");
   if (entry) {
     entry.style.transition = `opacity ${FADE_MS}ms ease-out`;

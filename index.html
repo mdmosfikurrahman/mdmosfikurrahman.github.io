@@ -47,6 +47,21 @@
       })();
     </script>
 
+    <!-- Unknown route → skip the entry/welcome gate and mount React directly. -->
+    <script>
+      (function () {
+        var KNOWN = ['/', '/experience', '/publications', '/about', '/play', '/cv', '/resume', '/publication-list', '/yearbook'];
+        var path = window.location.pathname.replace(/\/+$/, '') || '/';
+        if (KNOWN.indexOf(path) === -1) {
+          window.__entryClicked = true;
+          document.documentElement.classList.add('skip-entry');
+        }
+      })();
+    </script>
+    <style>
+      html.skip-entry .site-entry { display: none !important; }
+    </style>
+
     <!-- Inline content guards, active from first paint (before React mounts). -->
     <script>
       (function () {
