@@ -9,7 +9,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchRemoteTemplate, isRemoteConfigured } from "./templateRemote";
 
-export type TemplateId = "broadsheet" | "surveillance";
+export type TemplateId =
+  | "folio"
+  | "broadsheet"
+  | "surveillance"
+  | "minimal"
+  | "animus"
+  | "inception"
+  | "heist"
+  | "chess"
+  | "tenet";
 
 export type TemplateMeta = {
   id: TemplateId;
@@ -22,6 +31,15 @@ export type TemplateMeta = {
 };
 
 export const TEMPLATES: TemplateMeta[] = [
+  {
+    id: "folio",
+    name: "Folio",
+    tagline: "clean · professional · no theatre",
+    description:
+      "The default. Neutral grays, single slate-indigo accent, Inter sans-serif, hairline borders, traditional resume-style layout. Reads as the work of a senior engineer who has nothing to prove with decoration.",
+    era: "MMXXVI / 00",
+    family: "default · professional",
+  },
   {
     id: "broadsheet",
     name: "Broadsheet",
@@ -40,15 +58,69 @@ export const TEMPLATES: TemplateMeta[] = [
     era: "MMXXVI / II",
     family: "terminal · HUD",
   },
+  {
+    id: "minimal",
+    name: "Minimal",
+    tagline: "whitespace · inter · one calm accent",
+    description:
+      "Stripped to essentials. Heavy whitespace, Inter throughout, hairline borders, a single deep-cyan accent used sparingly. No watermark, no boot, no glitch — just type, space, and the work itself.",
+    era: "MMXXVI / III",
+    family: "modern · editorial",
+  },
+  {
+    id: "animus",
+    name: "Animus Codex",
+    tagline: "assassin's creed · brotherhood codex",
+    description:
+      "Memories of an engineer, replayed through the Animus. Cyan scan-grid HUD over parchment dossiers, Cinzel for headings, Roman-numeral memory IDs, and a soft DNA-helix watermark.",
+    era: "MMXXVI / IV",
+    family: "codex · animus",
+  },
+  {
+    id: "inception",
+    name: "Inception Blueprint",
+    tagline: "drafting paper · cold blue ink · level 01",
+    description:
+      "Architectural drafting plates. Cream paper, cold-blue ink hairlines, Penrose-stair ornaments, nested 'LEVEL n' framing. Plays into 'backend architect' literally.",
+    era: "MMXXVI / V",
+    family: "blueprint · architect",
+  },
+  {
+    id: "heist",
+    name: "The Heist Plan",
+    tagline: "money heist · whiteboard · operation in motion",
+    description:
+      "Cork-board planning surface. Bold black + Dalí crimson + cream, sticky-note tags, hand-written annotations, every project framed as 'OPERATION · IN MOTION'.",
+    era: "MMXXVI / VI",
+    family: "heist · operation",
+  },
+  {
+    id: "chess",
+    name: "Endgame",
+    tagline: "8×8 grid · serif · algebraic notation",
+    description:
+      "Tournament-bulletin gravity. 8×8 grid underlay, Crimson Pro serif, muted gold accent, algebraic-notation section labels (e4 · About, Nf3 · Work). Calm, deliberate, FIDE-press serious.",
+    era: "MMXXVI / VII",
+    family: "endgame · grandmaster",
+  },
+  {
+    id: "tenet",
+    name: "Tenet",
+    tagline: "inversion · palindrome · time both ways",
+    description:
+      "Cool blue ↔ warm red palindrome palette. Time-stamps shown both forward and reversed, mirrored section labels, occasional inverted ornaments. Restrained — not a gimmick.",
+    era: "MMXXVI / VIII",
+    family: "inversion · time",
+  },
 ];
 
 const KEY = "portfolio.template";
 
 export function readTemplate(): TemplateId {
-  if (typeof window === "undefined") return "surveillance";
+  if (typeof window === "undefined") return "folio";
   const stored = window.localStorage.getItem(KEY);
   if (stored && TEMPLATES.some((t) => t.id === stored)) return stored as TemplateId;
-  return "surveillance";
+  return "folio";
 }
 
 export function writeTemplate(t: TemplateId) {

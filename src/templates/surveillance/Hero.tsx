@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, type LucideIcon } from "lucide-react";
 import { profile, preamble, figures } from "@/lib/content";
+import { localIsoLocal, localTzLabel } from "@/lib/clock";
 
 const avatar = "/profile-avatar.png";
 
@@ -20,10 +21,8 @@ const channels: Channel[] = [
 ];
 
 export default function Hero() {
-  const today = new Date()
-    .toISOString()
-    .replace("T", " ")
-    .slice(0, 19) + " UTC";
+  const now = new Date();
+  const today = `${localIsoLocal(now)} ${localTzLabel(now)}`;
   const serial = "0xA17F-7321-DHK";
 
   return (

@@ -76,8 +76,12 @@ export async function fetchRemoteTemplate(): Promise<RemoteState | null> {
     // JSONBin v3 returns { record: <yourPayload>, metadata: {...} }
     const record = (json?.record ?? json) as { template?: string; updatedAt?: string };
     const t = record?.template;
-    if (t === "broadsheet" || t === "surveillance") {
-      return { template: t, updatedAt: record.updatedAt };
+    const valid: ReadonlyArray<TemplateId> = [
+      "folio", "broadsheet", "surveillance", "minimal",
+      "animus", "inception", "heist", "chess", "tenet",
+    ];
+    if (typeof t === "string" && (valid as readonly string[]).includes(t)) {
+      return { template: t as TemplateId, updatedAt: record.updatedAt };
     }
     return null;
   } catch {

@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import { localTzLabel } from "@/lib/clock";
 
 const nav = [
   { to: "/", label: "Index",        code: "00" },
@@ -33,9 +34,10 @@ export default function SiteHeader() {
     return () => clearInterval(id);
   }, []);
 
-  const hh = String(now.getUTCHours()).padStart(2, "0");
-  const mm = String(now.getUTCMinutes()).padStart(2, "0");
-  const ss = String(now.getUTCSeconds()).padStart(2, "0");
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  const tzLabel = localTzLabel(now);
 
   const faction = theme === "dark" ? "MACHINE" : "SAMARITAN";
   const factionOther = theme === "dark" ? "SAMARITAN" : "MACHINE";
@@ -61,7 +63,7 @@ export default function SiteHeader() {
           <span className="font-mono text-[10px] uppercase tracking-[0.22em]"
                 style={{ color: "hsl(var(--ink))" }}>
             {hh}:{mm}:<span style={{ color: "hsl(var(--accent))" }}>{ss}</span>
-            <span className="opacity-50 ml-2">UTC</span>
+            <span className="opacity-50 ml-2">{tzLabel}</span>
           </span>
 
           <span className="hidden md:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em]"

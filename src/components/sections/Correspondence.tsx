@@ -1,9 +1,26 @@
 import { useTemplate } from "@/lib/template";
+import CorrespondenceFolio from "@/templates/folio/Correspondence";
 import CorrespondenceBroadsheet from "@/templates/broadsheet/Correspondence";
 import CorrespondenceSurveillance from "@/templates/surveillance/Correspondence";
+import CorrespondenceMinimal from "@/templates/minimal/Correspondence";
+import CorrespondenceAnimus from "@/templates/animus/Correspondence";
+import CorrespondenceInception from "@/templates/inception/Correspondence";
+import CorrespondenceHeist from "@/templates/heist/Correspondence";
+import CorrespondenceChess from "@/templates/chess/Correspondence";
+import CorrespondenceTenet from "@/templates/tenet/Correspondence";
 
 export default function Correspondence() {
   const { template } = useTemplate();
-  if (template === "broadsheet") return <CorrespondenceBroadsheet />;
-  return <CorrespondenceSurveillance />;
+  switch (template) {
+    case "broadsheet":   return <CorrespondenceBroadsheet />;
+    case "surveillance": return <CorrespondenceSurveillance />;
+    case "minimal":      return <CorrespondenceMinimal />;
+    case "animus":       return <CorrespondenceAnimus />;
+    case "inception":    return <CorrespondenceInception />;
+    case "heist":        return <CorrespondenceHeist />;
+    case "chess":        return <CorrespondenceChess />;
+    case "tenet":        return <CorrespondenceTenet />;
+    case "folio":
+    default:             return <CorrespondenceFolio />;
+  }
 }

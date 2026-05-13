@@ -14,7 +14,7 @@ import {
 
 // Lightweight passcode gate. Not real auth — just keeps the casual visitor
 // away from the template console.
-const ADMIN_PASS = "machine";
+const ADMIN_PASS = "EpDe#F16!";
 const UNLOCK_KEY = "portfolio.admin.unlocked";
 
 function isUnlocked() {
@@ -40,7 +40,7 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (val.trim().toLowerCase() === ADMIN_PASS) {
+    if (val === ADMIN_PASS) {
       window.localStorage.setItem(UNLOCK_KEY, "1");
       onUnlock();
     } else {
@@ -103,10 +103,13 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t flex items-center justify-between text-[12.5px]"
+          <div className="mt-6 pt-5 border-t flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[12.5px]"
                style={{ borderColor: "hsl(var(--a-border))", color: "hsl(var(--a-ink-muted))" }}>
-            <span>Tip · press <kbd className="a-code">Shift</kbd> <kbd className="a-code">T</kbd> <kbd className="a-code">T</kbd> anywhere</span>
-            <Link to="/" className="hover:underline" style={{ color: "hsl(var(--a-ink-soft))" }}>
+            <span className="inline-flex flex-wrap items-center gap-x-1.5 gap-y-1">
+              Tip · press <kbd className="a-code">Shift</kbd> <kbd className="a-code">T</kbd> <kbd className="a-code">T</kbd> anywhere
+            </span>
+            <Link to="/" className="hover:underline whitespace-nowrap"
+                  style={{ color: "hsl(var(--a-ink-soft))" }}>
               ← Back to site
             </Link>
           </div>
@@ -206,11 +209,11 @@ function Picker() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Link to="/" className="a-btn a-btn-ghost">
+          <div className="flex items-center gap-2 ml-auto sm:ml-0">
+            <Link to="/" className="a-btn a-btn-ghost text-[13px] sm:text-[14px]">
               View site
             </Link>
-            <button onClick={logout} className="a-btn a-btn-danger">
+            <button onClick={logout} className="a-btn a-btn-danger text-[13px] sm:text-[14px]">
               Log out
             </button>
           </div>
@@ -219,7 +222,7 @@ function Picker() {
         {/* Hero */}
         <section className="mt-10 md:mt-14">
           <p className="a-label">Templates</p>
-          <h1 className="mt-2 text-[40px] md:text-[56px] font-semibold tracking-[-0.025em] leading-[1.05]"
+          <h1 className="mt-2 text-[28px] sm:text-[36px] md:text-[56px] font-semibold tracking-[-0.025em] leading-[1.08] md:leading-[1.05] text-balance"
               style={{ color: "hsl(var(--a-ink))" }}>
             Pick the skin for your portfolio.
           </h1>
@@ -474,22 +477,24 @@ function RemoteSyncPanel({
           )}
         </div>
 
-        <div className="flex items-stretch gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-stretch gap-2">
           <input
             type={showKey ? "text" : "password"}
             value={masterKey}
             onChange={(e) => onMasterKeyChange(e.target.value)}
             placeholder={hasEnvMasterKey() ? "•••• (using .env value)" : "$2a$10$…"}
-            className="a-input"
+            className="a-input min-w-0 flex-1"
             autoComplete="off"
             spellCheck={false}
           />
-          <button type="button" onClick={onToggleShowKey} className="a-btn a-btn-ghost">
-            {showKey ? "Hide" : "Show"}
-          </button>
-          <button type="button" onClick={() => onMasterKeyChange("")} className="a-btn a-btn-danger">
-            Clear
-          </button>
+          <div className="flex items-stretch gap-2">
+            <button type="button" onClick={onToggleShowKey} className="a-btn a-btn-ghost flex-1 sm:flex-none">
+              {showKey ? "Hide" : "Show"}
+            </button>
+            <button type="button" onClick={() => onMasterKeyChange("")} className="a-btn a-btn-danger flex-1 sm:flex-none">
+              Clear
+            </button>
+          </div>
         </div>
         <p className="mt-2 text-[12.5px] leading-[1.5]"
            style={{ color: "hsl(var(--a-ink-muted))" }}>
@@ -548,87 +553,242 @@ function StatField({ label, children }: { label: string; children: ReactNode }) 
 }
 
 // ----------------------------------------------------------------------------
-// Template preview swatches — these intentionally LOOK like the target template
-// so you can compare at a glance, even from the admin's neutral palette.
+// Template preview swatches — keyed by id, no narrowing chain.
+// Each preview intentionally LOOKS like the target template so you can
+// compare at a glance from the admin's neutral palette.
 // ----------------------------------------------------------------------------
-function Preview({ id }: { id: TemplateId }) {
-  if (id === "broadsheet") {
-    return (
-      <div
-        className="mt-4 rounded-[10px] overflow-hidden relative"
-        style={{
-          height: 132,
-          background: "linear-gradient(180deg, hsl(40 22% 96%) 0%, hsl(40 18% 93%) 100%)",
-          border: "1px solid hsl(40 14% 86%)",
-        }}
-      >
-        <span className="absolute top-3 left-4 text-[9px] uppercase tracking-[0.22em]"
-              style={{ color: "hsl(220 6% 42%)", fontFamily: "JetBrains Mono, monospace" }}>
-          13 May 2026 · No. I
-        </span>
-        <div
-          className="absolute left-4 right-4 top-10"
-          style={{
-            fontFamily: "Fraunces, serif",
-            fontSize: 24,
-            lineHeight: 1.04,
-            color: "hsl(220 14% 10%)",
-            letterSpacing: "-0.025em",
-          }}
-        >
-          Engineer <em style={{ color: "hsl(220 6% 42%)", fontWeight: 300 }}>by craft.</em>
-        </div>
-        <span className="absolute bottom-3 left-4 right-4 h-px"
-              style={{ background: "hsl(40 12% 80%)" }} />
-        <span className="absolute bottom-3 left-4 text-[9px] uppercase tracking-[0.22em]"
-              style={{ color: "hsl(16 62% 42%)", fontFamily: "JetBrains Mono, monospace" }}>
-          ── SELECTED WORK
-        </span>
-      </div>
-    );
-  }
 
-  // Surveillance preview
-  return (
-    <div
-      className="mt-4 rounded-[10px] overflow-hidden relative"
-      style={{
-        height: 132,
-        background: "hsl(24 18% 5%)",
-        backgroundImage:
-          "repeating-linear-gradient(0deg, hsl(38 92% 64% / 0.07) 0 1px, transparent 1px 3px)",
-        border: "1px solid hsl(24 14% 12%)",
-      }}
-    >
-      <span className="absolute top-3 left-4 text-[9px] uppercase tracking-[0.22em] flex items-center gap-1.5"
-            style={{ color: "hsl(0 85% 60%)", fontFamily: "JetBrains Mono, monospace" }}>
-        <span className="inline-block w-1.5 h-1.5 rounded-full"
-              style={{ background: "hsl(145 80% 55%)" }} />
-        LIVE · FEED 14221
-      </span>
-      <div
-        className="absolute left-4 right-4 top-10"
-        style={{
-          fontFamily: "IBM Plex Mono, monospace",
-          fontSize: 17,
-          fontWeight: 600,
-          lineHeight: 1.12,
-          color: "hsl(38 92% 64%)",
-          letterSpacing: "-0.01em",
-        }}
-      >
-        <span style={{ color: "hsl(0 85% 60%)" }}>&gt; </span>MD. MOSFIKUR RAHMAN
-      </div>
-      <span className="absolute top-3 right-3 w-3 h-3"
-            style={{ borderTop: "2px solid hsl(0 85% 60%)", borderRight: "2px solid hsl(0 85% 60%)" }} />
-      <span className="absolute bottom-3 left-3 w-3 h-3"
-            style={{ borderBottom: "2px solid hsl(0 85% 60%)", borderLeft: "2px solid hsl(0 85% 60%)" }} />
-      <span className="absolute bottom-3 right-4 text-[9px] uppercase tracking-[0.22em]"
-            style={{ color: "hsl(38 30% 60%)", fontFamily: "JetBrains Mono, monospace" }}>
-        OPERATOR <span style={{ color: "hsl(0 85% 60%)" }}>MACHINE</span>
-      </span>
+const PreviewFolio = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{ height: 132, background: "#ffffff", border: "1px solid #e4e4e7" }}>
+    <span className="absolute top-3 left-4 text-[11px] font-medium"
+          style={{ color: "#2543b0", fontFamily: "Inter, sans-serif" }}>
+      Backend architect · Dhaka
+    </span>
+    <div className="absolute left-4 right-4 top-9"
+         style={{
+           fontFamily: "Inter, sans-serif",
+           fontSize: 21, fontWeight: 600, lineHeight: 1.08,
+           color: "#14181f", letterSpacing: "-0.025em",
+         }}>
+      Md. Mosfikur Rahman
     </div>
-  );
+    <span className="absolute bottom-3 left-4 right-4 h-px" style={{ background: "#e4e4e7" }} />
+    <span className="absolute bottom-3 left-4 text-[11px]"
+          style={{ color: "#6b7280", fontFamily: "Inter, sans-serif" }}>
+      Experience · Publications · About
+    </span>
+  </div>
+);
+
+const PreviewAnimus = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{ height: 132, background: "#0b1b2c", border: "1px solid #173249" }}>
+    <span className="absolute top-3 left-4 text-[9.5px] uppercase tracking-[0.32em]"
+          style={{ color: "#22d3ee", fontFamily: "Cinzel, serif", fontWeight: 600 }}>
+      ✦ Memory Block 0001
+    </span>
+    <div className="absolute left-4 right-4 top-9 uppercase"
+         style={{ fontFamily: "Cinzel, serif", fontSize: 17, fontWeight: 600, letterSpacing: "0.02em", color: "#a5e9f5" }}>
+      MD. MOSFIKUR RAHMAN
+    </div>
+    <span className="absolute top-3 right-3 w-3 h-3" style={{ border: "1px solid #22d3ee", borderRight: 0, borderBottom: 0 }} />
+    <span className="absolute bottom-3 left-3 w-3 h-3" style={{ border: "1px solid #22d3ee", borderLeft: 0, borderTop: 0 }} />
+    <span className="absolute bottom-3 right-4 text-[9.5px] uppercase tracking-[0.22em]"
+          style={{ color: "#5fa3b8", fontFamily: "Cinzel, serif" }}>
+      ✦ Sync 100%
+    </span>
+  </div>
+);
+
+const PreviewInception = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{
+         height: 132,
+         background: "#f6f0e6",
+         backgroundImage: "linear-gradient(rgba(20,30,60,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(20,30,60,0.05) 1px, transparent 1px)",
+         backgroundSize: "12px 12px, 12px 12px",
+         border: "1px solid #d8d2c4",
+       }}>
+    <span className="absolute top-3 left-4 text-[10px] uppercase tracking-[0.22em]"
+          style={{ color: "#2563eb", fontFamily: "JetBrains Mono, monospace" }}>
+      ▾ Level 01 · Surface
+    </span>
+    <div className="absolute left-4 right-4 top-9"
+         style={{ fontFamily: "Inter, sans-serif", fontSize: 22, fontWeight: 600, letterSpacing: "-0.03em", color: "#14233c" }}>
+      We build the levels.
+    </div>
+    <span className="absolute bottom-3 left-4 text-[10px] uppercase tracking-[0.22em]"
+          style={{ color: "#2563eb", fontFamily: "JetBrains Mono, monospace" }}>
+      plate 01 / 04 · scale 1:1
+    </span>
+  </div>
+);
+
+const PreviewHeist = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{ height: 132, background: "#f4ebdd", border: "1px solid #cdc3b1" }}>
+    <span aria-hidden className="absolute hidden md:block"
+          style={{ top: "30%", left: "-10%", right: "-10%", height: 2, background: "#c01a1a", transform: "rotate(-8deg)", opacity: 0.4 }} />
+    <span className="absolute top-3 left-4 text-[10.5px] uppercase tracking-[0.28em]"
+          style={{ color: "#c01a1a", fontFamily: "Inter, sans-serif", fontWeight: 700 }}>
+      ● Operation 01
+    </span>
+    <div className="absolute left-4 right-4 top-9 uppercase"
+         style={{ fontFamily: "Inter, sans-serif", fontSize: 19, fontWeight: 800, letterSpacing: "-0.035em", color: "#0a0a0a" }}>
+      BACKEND, <span style={{ color: "#c01a1a" }}>EXECUTED.</span>
+    </div>
+    <span className="absolute bottom-3 right-4"
+          style={{ fontFamily: "Caveat, cursive", color: "#c01a1a", fontSize: 18, fontWeight: 600 }}>
+      Bella Ciao
+    </span>
+  </div>
+);
+
+const PreviewChess = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{
+         height: 132,
+         background: "#faf6e9",
+         backgroundImage: "linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)",
+         backgroundSize: "28px 28px",
+         border: "1px solid #d8d0b6",
+       }}>
+    <span className="absolute top-3 left-4 text-[12px]"
+          style={{ color: "#a47e1a", fontFamily: "JetBrains Mono, monospace" }}>
+      ♔ 1.e4 · Opening
+    </span>
+    <div className="absolute left-4 right-4 top-9"
+         style={{ fontFamily: "Crimson Pro, Georgia, serif", fontSize: 24, fontWeight: 600, letterSpacing: "-0.015em", color: "#0a0a0a" }}>
+      Md. Mosfikur Rahman
+    </div>
+    <span className="absolute bottom-3 left-4"
+          style={{ fontFamily: "Crimson Pro, serif", fontStyle: "italic", fontSize: 13, color: "#6b6b6b" }}>
+      playing the long game.
+    </span>
+  </div>
+);
+
+const PreviewTenet = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{ height: 132, background: "#eef1f7", border: "1px solid #cdd2dc" }}>
+    <span className="absolute top-3 left-4 text-[10px] uppercase tracking-[0.18em]"
+          style={{ color: "#1d6cb0", fontFamily: "JetBrains Mono, monospace" }}>
+      ◐ Forward · 2026
+    </span>
+    <span className="absolute top-3 right-4 text-[10px] uppercase tracking-[0.18em]"
+          style={{ color: "#c63a13", fontFamily: "JetBrains Mono, monospace" }}>
+      6202 · Reversed ◑
+    </span>
+    <div className="absolute left-4 right-4 top-9"
+         style={{ fontFamily: "Inter, sans-serif", fontSize: 19, fontWeight: 600, letterSpacing: "-0.03em" }}>
+      <span style={{ color: "#1d6cb0" }}>Designed</span>{" "}
+      <span style={{ color: "#0a0a0a" }}>forward.</span><br />
+      <span style={{ color: "#c63a13" }}>Reviewed</span>{" "}
+      <span style={{ color: "#0a0a0a" }}>backward.</span>
+    </div>
+  </div>
+);
+
+const PreviewMinimal = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{ height: 132, background: "#fafaf9", border: "1px solid #e4e4e7" }}>
+    <span className="absolute top-3 left-4 text-[11px] font-medium"
+          style={{ color: "#0e7490", fontFamily: "Inter, system-ui, sans-serif" }}>
+      Backend architect · Dhaka
+    </span>
+    <div className="absolute left-4 right-4 top-9"
+         style={{
+           fontFamily: "Inter, system-ui, sans-serif",
+           fontSize: 22, fontWeight: 600, lineHeight: 1.05,
+           color: "#0c0d10", letterSpacing: "-0.03em",
+         }}>
+      Hi, I'm Mosfikur.
+    </div>
+    <span className="absolute bottom-3 left-4 right-4 h-px" style={{ background: "#e4e4e7" }} />
+    <span className="absolute bottom-3 left-4 text-[11px]"
+          style={{ color: "#71717a", fontFamily: "Inter, system-ui, sans-serif" }}>
+      Work · Writing · About
+    </span>
+  </div>
+);
+
+const PreviewBroadsheet = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{
+         height: 132,
+         background: "linear-gradient(180deg, hsl(40 22% 96%) 0%, hsl(40 18% 93%) 100%)",
+         border: "1px solid hsl(40 14% 86%)",
+       }}>
+    <span className="absolute top-3 left-4 text-[9px] uppercase tracking-[0.22em]"
+          style={{ color: "hsl(220 6% 42%)", fontFamily: "JetBrains Mono, monospace" }}>
+      13 May 2026 · No. I
+    </span>
+    <div className="absolute left-4 right-4 top-10"
+         style={{
+           fontFamily: "Fraunces, serif",
+           fontSize: 24, lineHeight: 1.04,
+           color: "hsl(220 14% 10%)", letterSpacing: "-0.025em",
+         }}>
+      Engineer <em style={{ color: "hsl(220 6% 42%)", fontWeight: 300 }}>by craft.</em>
+    </div>
+    <span className="absolute bottom-3 left-4 right-4 h-px"
+          style={{ background: "hsl(40 12% 80%)" }} />
+    <span className="absolute bottom-3 left-4 text-[9px] uppercase tracking-[0.22em]"
+          style={{ color: "hsl(16 62% 42%)", fontFamily: "JetBrains Mono, monospace" }}>
+      ── SELECTED WORK
+    </span>
+  </div>
+);
+
+const PreviewSurveillance = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{
+         height: 132,
+         background: "hsl(24 18% 5%)",
+         backgroundImage:
+           "repeating-linear-gradient(0deg, hsl(38 92% 64% / 0.07) 0 1px, transparent 1px 3px)",
+         border: "1px solid hsl(24 14% 12%)",
+       }}>
+    <span className="absolute top-3 left-4 text-[9px] uppercase tracking-[0.22em] flex items-center gap-1.5"
+          style={{ color: "hsl(0 85% 60%)", fontFamily: "JetBrains Mono, monospace" }}>
+      <span className="inline-block w-1.5 h-1.5 rounded-full"
+            style={{ background: "hsl(145 80% 55%)" }} />
+      LIVE · FEED 14221
+    </span>
+    <div className="absolute left-4 right-4 top-10"
+         style={{
+           fontFamily: "IBM Plex Mono, monospace",
+           fontSize: 17, fontWeight: 600, lineHeight: 1.12,
+           color: "hsl(38 92% 64%)", letterSpacing: "-0.01em",
+         }}>
+      <span style={{ color: "hsl(0 85% 60%)" }}>&gt; </span>MD. MOSFIKUR RAHMAN
+    </div>
+    <span className="absolute top-3 right-3 w-3 h-3"
+          style={{ borderTop: "2px solid hsl(0 85% 60%)", borderRight: "2px solid hsl(0 85% 60%)" }} />
+    <span className="absolute bottom-3 left-3 w-3 h-3"
+          style={{ borderBottom: "2px solid hsl(0 85% 60%)", borderLeft: "2px solid hsl(0 85% 60%)" }} />
+    <span className="absolute bottom-3 right-4 text-[9px] uppercase tracking-[0.22em]"
+          style={{ color: "hsl(38 30% 60%)", fontFamily: "JetBrains Mono, monospace" }}>
+      OPERATOR <span style={{ color: "hsl(0 85% 60%)" }}>MACHINE</span>
+    </span>
+  </div>
+);
+
+const PREVIEWS: Record<TemplateId, ReactNode> = {
+  folio:        PreviewFolio,
+  broadsheet:   PreviewBroadsheet,
+  surveillance: PreviewSurveillance,
+  minimal:      PreviewMinimal,
+  animus:       PreviewAnimus,
+  inception:    PreviewInception,
+  heist:        PreviewHeist,
+  chess:        PreviewChess,
+  tenet:        PreviewTenet,
+};
+
+function Preview({ id }: { id: TemplateId }) {
+  return <>{PREVIEWS[id] ?? PreviewFolio}</>;
 }
 
 // ----------------------------------------------------------------------------

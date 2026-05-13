@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import { localHms, localIsoLocal, localTzLabel } from "@/lib/clock";
 
 const SESSION_KEY = "poi.booted";
 
 type Line = { text: string; delay: number; tag?: "ok" | "warn" | "crit" };
 
 function machineLines(now: Date): Line[] {
-  const t = now.toUTCString().replace("GMT", "UTC");
+  const t = `${localIsoLocal(now)} ${localTzLabel(now)}`;
   return [
     { text: "> initialising kernel ...................... OK", delay: 110, tag: "ok" },
     { text: "> mounting /surveillance ................... OK", delay: 90, tag: "ok" },
@@ -25,7 +26,7 @@ function machineLines(now: Date): Line[] {
 }
 
 function samaritanLines(now: Date): Line[] {
-  const t = now.toUTCString().replace("GMT", "UTC");
+  const t = `${localIsoLocal(now)} ${localTzLabel(now)}`;
   return [
     { text: "[NORTHERN LIGHTS] handshake ............... ACK", delay: 100, tag: "ok" },
     { text: "[NL] node 0xA17F online", delay: 80, tag: "ok" },
@@ -153,7 +154,7 @@ export default function BootSequence() {
           <div className="mt-5 h-px w-full" style={{ background: "hsl(var(--rule))" }} />
           <div className="mt-3 flex items-center justify-between text-[10px] tracking-[0.22em] uppercase opacity-70">
             <span>press any key to skip</span>
-            <span>{new Date().toUTCString().slice(17, 25)} UTC</span>
+            <span>{localHms()} {localTzLabel()}</span>
           </div>
         </div>
       </div>

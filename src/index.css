@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cinzel:wght@400;500;600;700;800&family=Crimson+Pro:ital,wght@0,300..900;1,300..900&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -511,6 +511,597 @@
     60%  { clip-path: polygon(0 74%, 100% 74%, 100% 88%, 0 88%); }
     80%  { clip-path: polygon(0 42%, 100% 42%, 100% 58%, 0 58%); }
     100% { clip-path: polygon(0 0%, 100% 0%, 100% 12%, 0 12%); }
+  }
+}
+
+/* =====================================================================
+   TEMPLATE: MINIMAL   (jsonbin.io-inspired — whitespace + one accent)
+   light = off-white, near-black ink, deep cyan accent
+   dark  = near-black, near-white ink, brighter cyan accent
+   ===================================================================== */
+@layer base {
+  .template-minimal {
+    --paper:        40 16% 98%;
+    --paper-deep:   40 14% 95%;
+    --paper-glass:  0 0% 100%;
+    --ink:          222 18% 8%;
+    --ink-soft:     222 10% 28%;
+    --muted:        222 6% 46%;
+    --whisper:      222 4% 62%;
+    --rule:         222 10% 88%;
+    --rule-soft:    222 12% 94%;
+
+    --accent:       192 88% 32%;   /* deep cyan */
+    --accent-deep:  192 92% 24%;
+    --accent-wash:  192 70% 94%;
+
+    --signal-pos:   158 70% 38%;
+    --signal-warn:  30 90% 50%;
+    --signal-crit:  0 70% 50%;
+
+    --radius: 0.5rem;
+    --scan-opacity: 0;
+    --grid-opacity: 0;
+  }
+  .template-minimal.dark {
+    --paper:        220 14% 6%;
+    --paper-deep:   220 12% 10%;
+    --paper-glass:  220 14% 7%;
+    --ink:          220 10% 96%;
+    --ink-soft:     220 8% 78%;
+    --muted:        220 6% 56%;
+    --whisper:      220 4% 38%;
+    --rule:         220 8% 18%;
+    --rule-soft:    220 8% 14%;
+
+    --accent:       190 92% 56%;
+    --accent-deep:  190 88% 48%;
+    --accent-wash:  190 50% 14%;
+
+    --signal-pos:   158 68% 50%;
+    --signal-warn:  32 92% 58%;
+    --signal-crit:  0 78% 60%;
+  }
+}
+
+/* =====================================================================
+   MINIMAL — font defaults + component overrides
+   ===================================================================== */
+@layer base {
+  .template-minimal body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv11", "ss01", "ss03";
+    letter-spacing: -0.005em;
+  }
+  .template-minimal .font-display {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .template-minimal .font-serif-body {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+  }
+}
+
+@layer components {
+  /* Minimal section kicker — small, no rule, accent text */
+  .template-minimal .sig {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .template-minimal .sig::before {
+    content: "";
+    display: inline-block;
+    width: 1.25rem;
+    height: 1px;
+    background: hsl(var(--accent));
+    flex-shrink: 0;
+  }
+
+  .template-minimal .mg-label {
+    @apply text-[12px] font-medium tracking-[0.02em];
+    color: hsl(var(--muted));
+    text-transform: none;
+  }
+
+  /* Minimal links — subtle underline, accent on hover */
+  .template-minimal .a {
+    color: hsl(var(--ink));
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--rule));
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+  .template-minimal .a:hover {
+    color: hsl(var(--accent));
+    text-decoration-color: hsl(var(--accent));
+  }
+
+  /* Minimal arrow link */
+  .template-minimal .a-arrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    letter-spacing: -0.005em;
+    color: hsl(var(--ink));
+  }
+  .template-minimal .a-arrow:hover { color: hsl(var(--accent)); }
+}
+
+/* =====================================================================
+   TEMPLATE: FOLIO  (clean, professional default — no theatre)
+   ===================================================================== */
+@layer base {
+  .template-folio {
+    --paper:        0 0% 100%;
+    --paper-deep:   220 14% 97%;
+    --paper-glass:  0 0% 100%;
+    --ink:          220 24% 10%;
+    --ink-soft:     220 12% 28%;
+    --muted:        220 8% 44%;
+    --whisper:      220 6% 60%;
+    --rule:         220 14% 90%;
+    --rule-soft:    220 14% 95%;
+    --accent:       222 60% 38%;       /* deep slate-indigo */
+    --accent-deep:  222 65% 28%;
+    --accent-wash:  222 50% 96%;
+    --signal-pos:   158 62% 38%;
+    --signal-warn:  32 80% 48%;
+    --signal-crit:  0 70% 50%;
+    --radius: 0.375rem;
+  }
+  .template-folio.dark {
+    --paper:        220 16% 8%;
+    --paper-deep:   220 14% 11%;
+    --paper-glass:  220 16% 7%;
+    --ink:          220 10% 96%;
+    --ink-soft:     220 8% 80%;
+    --muted:        220 6% 58%;
+    --whisper:      220 4% 42%;
+    --rule:         220 10% 20%;
+    --rule-soft:    220 10% 15%;
+    --accent:       222 80% 70%;
+    --accent-deep:  222 75% 60%;
+    --accent-wash:  222 35% 18%;
+  }
+  .template-folio body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .template-folio .font-display {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .template-folio .font-serif-body { font-family: 'Inter', system-ui, sans-serif; }
+}
+@layer components {
+  .template-folio .sig {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .template-folio .sig::before {
+    content: "";
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: hsl(var(--accent));
+    flex-shrink: 0;
+  }
+  .template-folio .mg-label {
+    @apply text-[12.5px] font-medium;
+    color: hsl(var(--muted));
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .template-folio .a-arrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14.5px;
+    letter-spacing: -0.005em;
+  }
+}
+
+/* =====================================================================
+   TEMPLATE: ANIMUS CODEX  (Assassin's Creed)
+   light = parchment + cyan scan; dark = animus blue + glowing cyan
+   ===================================================================== */
+@layer base {
+  .template-animus {
+    --paper:        215 30% 96%;
+    --paper-deep:   215 25% 91%;
+    --paper-glass:  215 30% 98%;
+    --ink:          220 60% 10%;
+    --ink-soft:     220 30% 24%;
+    --muted:        215 15% 45%;
+    --whisper:      215 10% 60%;
+    --rule:         215 20% 80%;
+    --rule-soft:    215 22% 88%;
+    --accent:       190 88% 36%;
+    --accent-deep:  195 85% 28%;
+    --accent-wash:  190 70% 92%;
+    --signal-pos:   158 70% 38%;
+    --signal-warn:  35 90% 48%;
+    --signal-crit:  0 70% 48%;
+    --radius: 0.125rem;
+  }
+  .template-animus.dark {
+    --paper:        220 50% 5%;
+    --paper-deep:   220 45% 8%;
+    --paper-glass:  220 50% 4%;
+    --ink:          190 75% 80%;
+    --ink-soft:     190 50% 64%;
+    --muted:        215 20% 52%;
+    --whisper:      215 14% 36%;
+    --rule:         215 25% 18%;
+    --rule-soft:    215 25% 13%;
+    --accent:       190 95% 62%;
+    --accent-deep:  195 90% 52%;
+    --accent-wash:  195 50% 14%;
+  }
+  .template-animus body { font-family: 'Inter', system-ui, sans-serif; }
+  .template-animus .font-display {
+    font-family: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .template-animus .font-serif-body {
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.005em;
+  }
+}
+@layer components {
+  .template-animus .sig {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-weight: 600;
+  }
+  .template-animus .sig::before {
+    content: "✦";
+    color: hsl(var(--accent));
+    font-weight: 400;
+    opacity: 0.7;
+  }
+  .template-animus .mg-label {
+    @apply text-[11px] uppercase tracking-[0.22em];
+    color: hsl(var(--accent));
+    font-family: 'Cinzel', serif;
+  }
+}
+
+/* =====================================================================
+   TEMPLATE: INCEPTION BLUEPRINT
+   ===================================================================== */
+@layer base {
+  .template-inception {
+    --paper:        35 25% 95%;
+    --paper-deep:   35 20% 91%;
+    --paper-glass:  35 25% 97%;
+    --ink:          215 50% 18%;
+    --ink-soft:     215 30% 32%;
+    --muted:        215 15% 50%;
+    --whisper:      215 10% 65%;
+    --rule:         215 18% 78%;
+    --rule-soft:    215 20% 86%;
+    --accent:       210 75% 40%;
+    --accent-deep:  215 80% 30%;
+    --accent-wash:  210 60% 92%;
+    --signal-pos:   158 60% 38%;
+    --signal-warn:  35 80% 48%;
+    --signal-crit:  0 65% 48%;
+    --radius: 0;
+  }
+  .template-inception.dark {
+    --paper:        215 28% 8%;
+    --paper-deep:   215 24% 11%;
+    --paper-glass:  215 28% 6%;
+    --ink:          35 25% 88%;
+    --ink-soft:     35 14% 72%;
+    --muted:        215 10% 52%;
+    --whisper:      215 8% 38%;
+    --rule:         215 14% 22%;
+    --rule-soft:    215 14% 17%;
+    --accent:       200 92% 62%;
+    --accent-deep:  205 88% 52%;
+    --accent-wash:  210 50% 16%;
+  }
+  .template-inception body {
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.005em;
+  }
+  .template-inception .font-display {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .template-inception .font-serif-body { font-family: 'Inter', system-ui, sans-serif; }
+}
+@layer components {
+  .template-inception .sig {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .template-inception .sig::before {
+    content: "▾";
+    font-family: ui-monospace, monospace;
+    color: hsl(var(--accent));
+  }
+  .template-inception .mg-label {
+    @apply text-[11px] uppercase tracking-[0.22em];
+    color: hsl(var(--accent));
+    font-family: 'JetBrains Mono', monospace;
+  }
+  /* Blueprint hairline ornament */
+  .template-inception .bp-hair {
+    background-image:
+      linear-gradient(to right,
+        hsl(var(--accent)) 0,
+        hsl(var(--accent)) 8px,
+        transparent 8px,
+        transparent 14px);
+    background-size: 14px 1px;
+    background-repeat: repeat-x;
+    background-position: 0 50%;
+    height: 1px;
+  }
+}
+
+/* =====================================================================
+   TEMPLATE: HEIST PLAN (Money Heist)
+   ===================================================================== */
+@layer base {
+  .template-heist {
+    --paper:        38 25% 95%;
+    --paper-deep:   38 20% 89%;
+    --paper-glass:  38 28% 97%;
+    --ink:          0 0% 7%;
+    --ink-soft:     0 0% 22%;
+    --muted:        0 0% 42%;
+    --whisper:      0 0% 60%;
+    --rule:         38 14% 76%;
+    --rule-soft:    38 16% 86%;
+    --accent:       358 78% 46%;
+    --accent-deep:  358 80% 36%;
+    --accent-wash:  358 70% 94%;
+    --signal-pos:   158 60% 38%;
+    --signal-warn:  35 85% 48%;
+    --signal-crit:  358 80% 46%;
+    --radius: 0.125rem;
+  }
+  .template-heist.dark {
+    --paper:        0 0% 5%;
+    --paper-deep:   0 0% 9%;
+    --paper-glass:  0 0% 4%;
+    --ink:          38 32% 92%;
+    --ink-soft:     38 16% 78%;
+    --muted:        0 0% 55%;
+    --whisper:      0 0% 38%;
+    --rule:         0 0% 18%;
+    --rule-soft:    0 0% 13%;
+    --accent:       358 85% 60%;
+    --accent-deep:  358 80% 50%;
+    --accent-wash:  358 50% 18%;
+  }
+  .template-heist body { font-family: 'Inter', system-ui, sans-serif; }
+  .template-heist .font-display {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+  .template-heist .font-serif-body { font-family: 'Inter', system-ui, sans-serif; }
+  .template-heist .font-script {
+    font-family: 'Caveat', 'Patrick Hand', cursive;
+    font-weight: 600;
+  }
+}
+@layer components {
+  .template-heist .sig {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .template-heist .sig::before {
+    content: "";
+    width: 2.25rem;
+    height: 2px;
+    background: hsl(var(--accent));
+  }
+  .template-heist .mg-label {
+    @apply text-[11px] uppercase tracking-[0.22em];
+    color: hsl(var(--accent));
+    font-weight: 700;
+  }
+  /* "Red yarn" connector line */
+  .template-heist .yarn {
+    height: 2px;
+    background: hsl(var(--accent));
+    box-shadow: 0 0 6px hsl(var(--accent) / 0.35);
+  }
+}
+
+/* =====================================================================
+   TEMPLATE: CHESS GRANDMASTER (Endgame)
+   ===================================================================== */
+@layer base {
+  .template-chess {
+    --paper:        38 22% 96%;
+    --paper-deep:   38 18% 92%;
+    --paper-glass:  38 22% 98%;
+    --ink:          0 0% 8%;
+    --ink-soft:     0 0% 26%;
+    --muted:        0 0% 46%;
+    --whisper:      0 0% 60%;
+    --rule:         0 0% 78%;
+    --rule-soft:    0 0% 88%;
+    --accent:       38 70% 40%;
+    --accent-deep:  38 75% 30%;
+    --accent-wash:  38 60% 92%;
+    --signal-pos:   158 50% 36%;
+    --signal-warn:  35 75% 46%;
+    --signal-crit:  0 60% 46%;
+    --radius: 0;
+  }
+  .template-chess.dark {
+    --paper:        0 0% 8%;
+    --paper-deep:   0 0% 12%;
+    --paper-glass:  0 0% 6%;
+    --ink:          38 22% 94%;
+    --ink-soft:     38 12% 78%;
+    --muted:        0 0% 55%;
+    --whisper:      0 0% 38%;
+    --rule:         0 0% 22%;
+    --rule-soft:    0 0% 17%;
+    --accent:       38 80% 62%;
+    --accent-deep:  38 75% 52%;
+    --accent-wash:  38 40% 18%;
+  }
+  .template-chess body {
+    font-family: 'Crimson Pro', 'Georgia', serif;
+    font-feature-settings: "lnum", "tnum";
+    font-size: 17px;
+    letter-spacing: -0.005em;
+  }
+  .template-chess .font-display {
+    font-family: 'Crimson Pro', 'Georgia', serif;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .template-chess .font-serif-body { font-family: 'Crimson Pro', 'Georgia', serif; }
+}
+@layer components {
+  .template-chess .sig {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .template-chess .sig::before {
+    content: "♔";
+    font-family: 'Crimson Pro', serif;
+    color: hsl(var(--accent));
+    font-size: 14px;
+    line-height: 1;
+  }
+  .template-chess .mg-label {
+    @apply text-[12px];
+    color: hsl(var(--muted));
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: none;
+    letter-spacing: 0.06em;
+  }
+  /* Squares grid backdrop */
+  .template-chess .squares-bg {
+    background-image:
+      linear-gradient(hsl(var(--ink) / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--ink) / 0.025) 1px, transparent 1px);
+    background-size: 56px 56px, 56px 56px;
+  }
+}
+
+/* =====================================================================
+   TEMPLATE: TENET (inversion / palindrome)
+   ===================================================================== */
+@layer base {
+  .template-tenet {
+    --paper:        215 35% 96%;
+    --paper-deep:   215 30% 92%;
+    --paper-glass:  215 35% 98%;
+    --ink:          220 60% 8%;
+    --ink-soft:     220 30% 24%;
+    --muted:        215 14% 46%;
+    --whisper:      215 10% 62%;
+    --rule:         215 18% 82%;
+    --rule-soft:    215 22% 88%;
+    --accent:       200 90% 38%;       /* cool / inverting */
+    --accent-deep:  205 92% 28%;
+    --accent-wash:  200 70% 92%;
+    --signal-pos:   200 90% 38%;
+    --signal-warn:  35 92% 48%;
+    --signal-crit:  12 88% 48%;        /* warm / red — palindrome counter */
+    --radius: 0;
+  }
+  .template-tenet.dark {
+    --paper:        220 50% 6%;
+    --paper-deep:   220 45% 9%;
+    --paper-glass:  220 50% 5%;
+    --ink:          215 30% 90%;
+    --ink-soft:     215 18% 72%;
+    --muted:        215 12% 52%;
+    --whisper:      215 10% 38%;
+    --rule:         215 22% 18%;
+    --rule-soft:    215 22% 14%;
+    --accent:       195 95% 62%;
+    --accent-deep:  200 90% 52%;
+    --accent-wash:  200 60% 14%;
+    --signal-crit:  12 95% 62%;
+  }
+  .template-tenet body {
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.005em;
+  }
+  .template-tenet .font-display {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .template-tenet .font-serif-body { font-family: 'Inter', system-ui, sans-serif; }
+}
+@layer components {
+  .template-tenet .sig {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .template-tenet .sig::before { content: "◐"; }
+  .template-tenet .sig::after  {
+    content: "◑";
+    color: hsl(var(--signal-crit));
+  }
+  .template-tenet .mg-label {
+    @apply text-[11px] uppercase tracking-[0.22em];
+    color: hsl(var(--accent));
+    font-family: 'JetBrains Mono', monospace;
   }
 }
 
