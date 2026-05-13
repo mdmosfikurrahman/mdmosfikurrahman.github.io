@@ -36,6 +36,9 @@
     <meta name="google-site-verification" content="5smukTT1zEJgw0PUtKOQDFYAp9jSjpTFs99A_uqNIpc" />
 
     <script>
+      // Apply both `theme` (dark) and `portfolio.template` to <html> before
+      // the entry gate paints, so the welcome screen matches the active
+      // template (Broadsheet vs Surveillance) and theme on first frame.
       (function () {
         try {
           var stored = localStorage.getItem('theme');
@@ -44,6 +47,14 @@
             : window.matchMedia('(prefers-color-scheme: dark)').matches;
           if (dark) document.documentElement.classList.add('dark');
         } catch (_) {}
+        try {
+          var tpl = localStorage.getItem('portfolio.template');
+          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet'];
+          if (ALLOWED.indexOf(tpl) === -1) tpl = 'folio';
+          document.documentElement.classList.add('template-' + tpl);
+        } catch (_) {
+          document.documentElement.classList.add('template-folio');
+        }
       })();
     </script>
 
@@ -114,8 +125,8 @@
         detectDevtools();
       })();
     </script>
-  <script type="module" crossorigin src="/assets/index-ybghoUMG.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CScPm1Gn.css">
+  <script type="module" crossorigin src="/assets/index-Ck5a9B9T.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CLGpa3IY.css">
 </head>
 
 <body>
@@ -152,15 +163,61 @@
             display: grid;
             place-items: center;
             padding: 24px;
-            background: #f4efe6;
-            color: #16181d;
-            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
             z-index: 9999;
             isolation: isolate;
         }
-        html.dark .site-entry { background: #121316; color: #e6e0d0; }
+        /* ----- Broadsheet entry palette ----- */
+        html.template-broadsheet .site-entry {
+            background: #f4efe6;
+            color: #16181d;
+            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+        }
+        html.template-broadsheet.dark .site-entry { background: #121316; color: #e6e0d0; }
 
-        /* Engineering grid + glyph watermark (matches SiteWatermark post-mount). */
+        /* ----- Surveillance entry palette ----- */
+        /* Light = Samaritan (cool clinical white, deep navy + red accent) */
+        html.template-surveillance .site-entry {
+            background: #eef0f3;
+            color: #0c1320;
+            font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+            background-image:
+              repeating-linear-gradient(0deg,
+                rgba(12,19,32,0.045) 0 1px,
+                transparent 1px 3px);
+        }
+        /* Dark = The Machine (amber phosphor on near-black) */
+        html.template-surveillance.dark .site-entry {
+            background: #0a0907;
+            color: #f3c769;
+            background-image:
+              repeating-linear-gradient(0deg,
+                rgba(243,199,105,0.07) 0 1px,
+                transparent 1px 3px);
+        }
+
+        /* ----- Folio entry palette (clean professional default) ----- */
+        html.template-folio .site-entry {
+            background: #ffffff;
+            color: #14181f;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        html.template-folio.dark .site-entry {
+            background: #0d1117;
+            color: #f3f5f8;
+        }
+
+        /* ----- Minimal entry palette (jsonbin-style calm) ----- */
+        html.template-minimal .site-entry {
+            background: #fafaf9;
+            color: #0c0d10;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        html.template-minimal.dark .site-entry {
+            background: #0a0a0a;
+            color: #fafafa;
+        }
+
+        /* Watermark layer — shared shell, template-specific backdrop. */
         .site-entry__watermark {
             position: absolute;
             inset: 0;
@@ -169,7 +226,8 @@
             overflow: hidden;
             color: inherit;
         }
-        .site-entry__watermark::before {
+        /* Broadsheet: engineering grid + glyph watermark. */
+        html.template-broadsheet .site-entry__watermark::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -180,9 +238,20 @@
                 linear-gradient(currentColor 1px, transparent 1px),
                 linear-gradient(90deg, currentColor 1px, transparent 1px);
             background-size: 16px 16px, 16px 16px, 64px 64px, 64px 64px;
-            mix-blend-mode: normal;
             filter: opacity(0.035);
         }
+        /* Surveillance: pixel surveillance grid. */
+        html.template-surveillance .site-entry__watermark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(currentColor 1px, transparent 1px),
+                linear-gradient(90deg, currentColor 1px, transparent 1px);
+            background-size: 32px 32px, 32px 32px;
+            filter: opacity(0.08);
+        }
+        /* Broadsheet glyphs visible; hidden for surveillance. */
         .sew {
             position: absolute;
             color: inherit;
@@ -195,6 +264,41 @@
         @media (max-width: 768px) {
             .sew { display: none; }
         }
+        html.template-surveillance .sew { display: none; }
+        html.template-broadsheet .se-reticle,
+        html.template-broadsheet .se-corner { display: none; }
+
+        /* Surveillance reticles, pinned at corners. */
+        .se-reticle {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            opacity: 0.20;
+            color: inherit;
+        }
+        .se-reticle--tl { top: 28px;    left: 28px; }
+        .se-reticle--br { bottom: 28px; right: 28px; }
+        @media (max-width: 768px) {
+            .se-reticle { width: 40px; height: 40px; opacity: 0.16; }
+            .se-reticle--tl { top: 16px; left: 16px; }
+            .se-reticle--br { bottom: 16px; right: 16px; }
+        }
+
+        /* Surveillance corner brackets around stage. */
+        .se-corner {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-color: currentColor;
+            border-style: solid;
+            border-width: 0;
+        }
+        html.template-surveillance.dark .se-corner { color: #ff6b3a; }
+        html.template-surveillance:not(.dark) .se-corner { color: #d63c3c; }
+        .se-corner--tl { top: -16px; left: -16px;  border-top-width: 2px; border-left-width: 2px; }
+        .se-corner--tr { top: -16px; right: -16px; border-top-width: 2px; border-right-width: 2px; }
+        .se-corner--bl { bottom: -16px; left: -16px;  border-bottom-width: 2px; border-left-width: 2px; }
+        .se-corner--br { bottom: -16px; right: -16px; border-bottom-width: 2px; border-right-width: 2px; }
 
         .site-entry__stage {
             position: relative;
@@ -240,11 +344,14 @@
             font-size: 10px;
             letter-spacing: 0.3em;
             text-transform: uppercase;
-            color: #b8552a;
             opacity: 0;
             animation: se-fade 600ms ease-out 120ms forwards;
         }
-        html.dark .site-entry__folio { color: #d1784a; }
+        /* Folio color per template */
+        html.template-broadsheet .site-entry__folio { color: #b8552a; }
+        html.template-broadsheet.dark .site-entry__folio { color: #d1784a; }
+        html.template-surveillance:not(.dark) .site-entry__folio { color: #d63c3c; }
+        html.template-surveillance.dark .site-entry__folio { color: #ff6b3a; }
 
         .site-entry__name {
             font-size: clamp(30px, 6vw, 54px);
@@ -257,28 +364,54 @@
             transform: translateY(10px);
             animation: se-name 1100ms cubic-bezier(.2,.7,.2,1) 320ms forwards;
         }
+        /* Surveillance: mono name, uppercase, tighter tracking, phosphor glow */
+        html.template-surveillance .site-entry__name {
+            font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+        }
+        html.template-surveillance.dark .site-entry__name {
+            text-shadow: 0 0 12px rgba(243, 199, 105, 0.35),
+                         0 0 24px rgba(243, 199, 105, 0.18);
+        }
 
         .site-entry__rule {
             width: 0;
             height: 1.5px;
-            background: #b8552a;
             border-radius: 1px;
             animation: se-rule 1800ms cubic-bezier(.25,1,.5,1) 720ms forwards;
         }
-        html.dark .site-entry__rule { background: #d1784a; }
+        html.template-broadsheet .site-entry__rule { background: #b8552a; }
+        html.template-broadsheet.dark .site-entry__rule { background: #d1784a; }
+        html.template-surveillance:not(.dark) .site-entry__rule { background: #d63c3c; }
+        html.template-surveillance.dark .site-entry__rule { background: #ff6b3a; }
 
         .site-entry__tagline {
-            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-            font-style: italic;
             font-size: clamp(13px, 1.6vw, 16px);
-            color: #5a5a5a;
             text-align: center;
             max-width: 44ch;
             line-height: 1.5;
             opacity: 0;
             animation: se-fade 700ms ease-out 1800ms forwards;
         }
-        html.dark .site-entry__tagline { color: #a0a0a0; }
+        /* Broadsheet tagline: serif italic, soft grey */
+        html.template-broadsheet .site-entry__tagline {
+            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+            font-style: italic;
+            color: #5a5a5a;
+        }
+        html.template-broadsheet.dark .site-entry__tagline { color: #a0a0a0; }
+        /* Surveillance tagline: mono, uppercase, muted */
+        html.template-surveillance .site-entry__tagline {
+            font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: clamp(11px, 1.3vw, 13px);
+            line-height: 1.6;
+        }
+        html.template-surveillance:not(.dark) .site-entry__tagline { color: #4a5366; }
+        html.template-surveillance.dark .site-entry__tagline { color: #b08652; }
 
         .site-entry__dots {
             display: inline-flex;
@@ -288,11 +421,13 @@
             font-size: 11px;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: #7a7a7a;
             opacity: 0;
             animation: se-fade 500ms ease-out 2500ms forwards;
         }
-        html.dark .site-entry__dots { color: #9a9a9a; }
+        html.template-broadsheet .site-entry__dots { color: #7a7a7a; }
+        html.template-broadsheet.dark .site-entry__dots { color: #9a9a9a; }
+        html.template-surveillance:not(.dark) .site-entry__dots { color: #5a6478; }
+        html.template-surveillance.dark .site-entry__dots { color: #b08652; }
 
         .site-entry__dot {
             display: inline-block;
@@ -310,8 +445,6 @@
             margin-top: 14px;
             padding: 12px 26px;
             background: transparent;
-            color: #16181d;
-            border: 1px solid #16181d;
             font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
             font-size: 11px;
             letter-spacing: 0.22em;
@@ -320,25 +453,437 @@
             opacity: 0;
             transform: translateY(8px);
             pointer-events: none;
-            transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+            transition: background 180ms ease, color 180ms ease, transform 180ms ease, border-color 180ms ease;
             animation: se-enter 700ms cubic-bezier(.2,.7,.2,1) 3200ms forwards;
+            border: 1px solid currentColor;
         }
-        .site-entry__enter:hover {
-            background: #16181d;
-            color: #f4efe6;
+        /* Broadsheet enter button: inverts on hover */
+        html.template-broadsheet .site-entry__enter { color: #16181d; border-color: #16181d; }
+        html.template-broadsheet .site-entry__enter:hover { background: #16181d; color: #f4efe6; }
+        html.template-broadsheet .site-entry__enter:focus-visible {
+            outline: 2px solid #b8552a; outline-offset: 3px;
         }
-        .site-entry__enter:focus-visible {
-            outline: 2px solid #b8552a;
-            outline-offset: 3px;
+        html.template-broadsheet.dark .site-entry__enter { color: #e6e0d0; border-color: #e6e0d0; }
+        html.template-broadsheet.dark .site-entry__enter:hover { background: #e6e0d0; color: #121316; }
+
+        /* Surveillance enter button: accent-bordered, fills on hover */
+        html.template-surveillance:not(.dark) .site-entry__enter {
+            color: #d63c3c;
+            border-color: #d63c3c;
         }
-        html.dark .site-entry__enter { color: #e6e0d0; border-color: #e6e0d0; }
-        html.dark .site-entry__enter:hover { background: #e6e0d0; color: #121316; }
+        html.template-surveillance:not(.dark) .site-entry__enter:hover {
+            background: #d63c3c;
+            color: #f4f5f8;
+        }
+        html.template-surveillance:not(.dark) .site-entry__enter:focus-visible {
+            outline: 2px solid #d63c3c; outline-offset: 3px;
+        }
+        html.template-surveillance.dark .site-entry__enter {
+            color: #ff6b3a;
+            border-color: #ff6b3a;
+        }
+        html.template-surveillance.dark .site-entry__enter:hover {
+            background: #ff6b3a;
+            color: #0a0907;
+            box-shadow: 0 0 24px rgba(255, 107, 58, 0.35);
+        }
+        html.template-surveillance.dark .site-entry__enter:focus-visible {
+            outline: 2px solid #ff6b3a; outline-offset: 3px;
+        }
         .site-entry__enter .se-arrow {
             display: inline-block;
             margin-left: 10px;
             transition: transform 200ms cubic-bezier(.2,.7,.2,1);
         }
         .site-entry__enter:hover .se-arrow { transform: translateX(4px); }
+
+        /* Toggle copy variants based on the active template class.
+           Only the active template's variant span is visible. */
+        .se-enter-folio, .se-enter-broadsheet, .se-enter-surveillance,
+        .se-enter-minimal, .se-enter-animus, .se-enter-inception,
+        .se-enter-heist, .se-enter-chess, .se-enter-tenet,
+        .se-label-folio, .se-label-broadsheet, .se-label-surveillance,
+        .se-label-minimal, .se-label-animus, .se-label-inception,
+        .se-label-heist, .se-label-chess, .se-label-tenet { display: none; }
+
+        html.template-folio        .se-enter-folio,
+        html.template-folio        .se-label-folio,
+        html.template-broadsheet   .se-enter-broadsheet,
+        html.template-broadsheet   .se-label-broadsheet,
+        html.template-surveillance .se-enter-surveillance,
+        html.template-surveillance .se-label-surveillance,
+        html.template-minimal      .se-enter-minimal,
+        html.template-minimal      .se-label-minimal,
+        html.template-animus       .se-enter-animus,
+        html.template-animus       .se-label-animus,
+        html.template-inception    .se-enter-inception,
+        html.template-inception    .se-label-inception,
+        html.template-heist        .se-enter-heist,
+        html.template-heist        .se-label-heist,
+        html.template-chess        .se-enter-chess,
+        html.template-chess        .se-label-chess,
+        html.template-tenet        .se-enter-tenet,
+        html.template-tenet        .se-label-tenet { display: inline; }
+
+        /* ----- Hide broadsheet-only and surveillance-only decoration for the
+                "clean" templates (folio, minimal, animus, inception, heist,
+                chess, tenet) ----- */
+        html.template-folio      .site-entry__watermark::before,
+        html.template-folio      .sew,
+        html.template-folio      .se-reticle,
+        html.template-folio      .se-corner,
+        html.template-minimal    .site-entry__watermark::before,
+        html.template-minimal    .sew,
+        html.template-minimal    .se-reticle,
+        html.template-minimal    .se-corner,
+        html.template-animus     .site-entry__watermark::before,
+        html.template-animus     .sew,
+        html.template-animus     .se-corner,
+        html.template-inception  .site-entry__watermark::before,
+        html.template-inception  .sew,
+        html.template-inception  .se-reticle,
+        html.template-inception  .se-corner,
+        html.template-heist      .site-entry__watermark::before,
+        html.template-heist      .sew,
+        html.template-heist      .se-reticle,
+        html.template-heist      .se-corner,
+        html.template-chess      .site-entry__watermark::before,
+        html.template-chess      .sew,
+        html.template-chess      .se-reticle,
+        html.template-chess      .se-corner,
+        html.template-tenet      .site-entry__watermark::before,
+        html.template-tenet      .sew,
+        html.template-tenet      .se-reticle,
+        html.template-tenet      .se-corner { display: none; }
+
+        /* ----- Folio entry: clean Inter, indigo accent, rounded button ----- */
+        html.template-folio .site-entry__folio {
+            color: #2543b0;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 12px;
+            letter-spacing: 0;
+            text-transform: none;
+            font-weight: 500;
+        }
+        html.template-folio.dark .site-entry__folio { color: #93a8ff; }
+        html.template-folio .site-entry__name {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+        html.template-folio .site-entry__rule { background: #2543b0; opacity: 0.6; }
+        html.template-folio.dark .site-entry__rule { background: #93a8ff; }
+        html.template-folio .site-entry__tagline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-style: normal;
+            color: #4b5563;
+        }
+        html.template-folio.dark .site-entry__tagline { color: #b3b9c5; }
+        html.template-folio .site-entry__dots {
+            font-family: 'Inter', system-ui, sans-serif;
+            letter-spacing: 0;
+            text-transform: none;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        html.template-folio.dark .site-entry__dots { color: #9aa0ac; }
+        html.template-folio .site-entry__enter {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            color: #ffffff;
+            background: #2543b0;
+            border-color: #2543b0;
+        }
+        html.template-folio .site-entry__enter:hover {
+            background: #1a3596;
+            border-color: #1a3596;
+        }
+        html.template-folio.dark .site-entry__enter {
+            background: #93a8ff;
+            border-color: #93a8ff;
+            color: #0d1117;
+        }
+        html.template-folio.dark .site-entry__enter:hover {
+            background: #b5c1ff;
+            border-color: #b5c1ff;
+        }
+        html.template-folio .site-entry__theme {
+            border-radius: 8px;
+            border-color: rgba(0,0,0,0.1);
+        }
+        html.template-folio.dark .site-entry__theme {
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        /* ----- Animus entry: Cinzel headline, cyan accent ----- */
+        html.template-animus .site-entry__folio {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 0.32em;
+            color: #0e7490;
+        }
+        html.template-animus.dark .site-entry__folio { color: #67e8f9; }
+        html.template-animus .site-entry__name {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        html.template-animus .site-entry__rule { background: #0e7490; }
+        html.template-animus.dark .site-entry__rule { background: #22d3ee; }
+        html.template-animus .site-entry__tagline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-style: normal;
+            color: #475569;
+        }
+        html.template-animus.dark .site-entry__tagline { color: #94a3b8; }
+        html.template-animus .site-entry__enter {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.18em;
+            color: #0e7490;
+            border-color: #0e7490;
+        }
+        html.template-animus .site-entry__enter:hover {
+            background: #0e7490;
+            color: #f1f5f9;
+        }
+        html.template-animus.dark .site-entry__enter {
+            color: #67e8f9;
+            border-color: #67e8f9;
+        }
+        html.template-animus.dark .site-entry__enter:hover {
+            background: #22d3ee;
+            color: #0a0907;
+        }
+
+        /* ----- Inception entry: mono+blue, no decoration ----- */
+        html.template-inception .site-entry__folio {
+            color: #2563eb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+        }
+        html.template-inception.dark .site-entry__folio { color: #93c5fd; }
+        html.template-inception .site-entry__name {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+        html.template-inception .site-entry__rule { background: #2563eb; }
+        html.template-inception.dark .site-entry__rule { background: #93c5fd; }
+        html.template-inception .site-entry__tagline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-style: normal;
+            color: #475569;
+        }
+        html.template-inception.dark .site-entry__tagline { color: #94a3b8; }
+        html.template-inception .site-entry__enter {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.12em;
+            color: #14181f;
+            border-color: #14181f;
+        }
+        html.template-inception .site-entry__enter:hover { background: #14181f; color: #f3f4f6; }
+        html.template-inception.dark .site-entry__enter { color: #f3f5f8; border-color: #f3f5f8; }
+        html.template-inception.dark .site-entry__enter:hover { background: #f3f5f8; color: #0d1117; }
+
+        /* ----- Heist entry: bold sans + red, dramatic ----- */
+        html.template-heist .site-entry { background: #f7f3eb; color: #0a0a0a; font-family: 'Inter', system-ui, sans-serif; }
+        html.template-heist.dark .site-entry { background: #0a0a0a; color: #f7f3eb; }
+        html.template-heist .site-entry__folio {
+            color: #c01a1a;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+        }
+        html.template-heist.dark .site-entry__folio { color: #ef4444; }
+        html.template-heist .site-entry__name {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            text-transform: uppercase;
+        }
+        html.template-heist .site-entry__rule { background: #c01a1a; }
+        html.template-heist.dark .site-entry__rule { background: #ef4444; }
+        html.template-heist .site-entry__tagline {
+            font-family: 'Caveat', cursive;
+            font-style: normal;
+            font-size: clamp(18px, 2.4vw, 22px);
+            font-weight: 600;
+            color: #c01a1a;
+        }
+        html.template-heist.dark .site-entry__tagline { color: #ef4444; }
+        html.template-heist .site-entry__enter {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            background: #c01a1a;
+            color: #f7f3eb;
+            border-color: #c01a1a;
+        }
+        html.template-heist .site-entry__enter:hover { background: #8a1212; border-color: #8a1212; }
+        html.template-heist.dark .site-entry__enter {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #0a0a0a;
+        }
+        html.template-heist.dark .site-entry__enter:hover { background: #f87171; border-color: #f87171; }
+
+        /* ----- Chess entry: serif elegance ----- */
+        html.template-chess .site-entry { font-family: 'Crimson Pro', Georgia, serif; }
+        html.template-chess .site-entry__folio {
+            font-family: 'JetBrains Mono', monospace;
+            color: #a47e1a;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: none;
+        }
+        html.template-chess.dark .site-entry__folio { color: #e6b94f; }
+        html.template-chess .site-entry__name {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+        }
+        html.template-chess .site-entry__rule { background: #a47e1a; }
+        html.template-chess.dark .site-entry__rule { background: #e6b94f; }
+        html.template-chess .site-entry__tagline {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-style: italic;
+            color: #555;
+        }
+        html.template-chess.dark .site-entry__tagline { color: #c9c0a7; }
+        html.template-chess .site-entry__dots {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.06em;
+            text-transform: none;
+        }
+        html.template-chess .site-entry__enter {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: none;
+            font-size: 15px;
+            color: #0a0a0a;
+            border-color: #0a0a0a;
+        }
+        html.template-chess .site-entry__enter:hover { background: #0a0a0a; color: #f4efdf; }
+        html.template-chess.dark .site-entry__enter { color: #efe5c6; border-color: #efe5c6; }
+        html.template-chess.dark .site-entry__enter:hover { background: #efe5c6; color: #0a0a0a; }
+
+        /* ----- Tenet entry: dual accents, mirrored small print ----- */
+        html.template-tenet .site-entry__folio {
+            font-family: 'JetBrains Mono', monospace;
+            color: #1d6cb0;
+            font-size: 11px;
+            letter-spacing: 0.16em;
+        }
+        html.template-tenet.dark .site-entry__folio { color: #67e8f9; }
+        html.template-tenet .site-entry__name {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+        }
+        html.template-tenet .site-entry__rule { background: #1d6cb0; }
+        html.template-tenet.dark .site-entry__rule { background: #67e8f9; }
+        html.template-tenet .site-entry__tagline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-style: normal;
+            color: #475569;
+        }
+        html.template-tenet.dark .site-entry__tagline { color: #94a3b8; }
+        html.template-tenet .site-entry__enter {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.16em;
+            color: #1d6cb0;
+            border-color: #1d6cb0;
+        }
+        html.template-tenet .site-entry__enter:hover { background: #1d6cb0; color: #f1f5f9; }
+        html.template-tenet.dark .site-entry__enter { color: #67e8f9; border-color: #67e8f9; }
+        html.template-tenet.dark .site-entry__enter:hover { background: #22d3ee; color: #0a0907; }
+
+        /* ----- Minimal entry: typography overrides ----- */
+        html.template-minimal .site-entry__watermark::before,
+        html.template-minimal .sew,
+        html.template-minimal .se-reticle,
+        html.template-minimal .se-corner { display: none; }
+
+        html.template-minimal .site-entry__folio { color: #0e7490; font-size: 12px; letter-spacing: 0; text-transform: none; font-family: inherit; font-weight: 500; }
+        html.template-minimal.dark .site-entry__folio { color: #06b6d4; }
+
+        html.template-minimal .site-entry__name {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+        }
+
+        html.template-minimal .site-entry__rule {
+            background: #0e7490;
+            opacity: 0.6;
+        }
+        html.template-minimal.dark .site-entry__rule { background: #06b6d4; }
+
+        html.template-minimal .site-entry__tagline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-style: normal;
+            color: #525860;
+            font-size: clamp(14px, 1.6vw, 16px);
+        }
+        html.template-minimal.dark .site-entry__tagline { color: #a1a1aa; }
+
+        html.template-minimal .site-entry__dots {
+            font-family: 'Inter', system-ui, sans-serif;
+            letter-spacing: 0;
+            text-transform: none;
+            font-size: 13px;
+            color: #71717a;
+        }
+        html.template-minimal.dark .site-entry__dots { color: #a1a1aa; }
+
+        html.template-minimal .site-entry__enter {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            color: #ffffff;
+            background: #0e7490;
+            border-color: #0e7490;
+        }
+        html.template-minimal .site-entry__enter:hover {
+            background: #155e75;
+            border-color: #155e75;
+            color: #ffffff;
+        }
+        html.template-minimal .site-entry__enter:focus-visible {
+            outline: 2px solid #06b6d4;
+            outline-offset: 3px;
+        }
+        html.template-minimal.dark .site-entry__enter {
+            background: #06b6d4;
+            border-color: #06b6d4;
+            color: #0a0a0a;
+        }
+        html.template-minimal.dark .site-entry__enter:hover {
+            background: #22d3ee;
+            border-color: #22d3ee;
+        }
+
+        html.template-minimal .site-entry__theme {
+            border-radius: 8px;
+            border-color: rgba(0,0,0,0.1);
+        }
+        html.template-minimal.dark .site-entry__theme {
+            border-color: rgba(255,255,255,0.15);
+        }
 
         @keyframes se-fade {
             from { opacity: 0; }
@@ -379,6 +924,24 @@
         }
     </style>
     <div class="site-entry" role="dialog" aria-label="Welcome to the portfolio of Md. Mosfikur Rahman">
+        <!-- Surveillance-only corner reticles. Hidden under broadsheet via CSS. -->
+        <svg class="se-reticle se-reticle--tl" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <circle cx="30" cy="30" r="22" />
+            <circle cx="30" cy="30" r="2" fill="currentColor" />
+            <line x1="30" y1="2"  x2="30" y2="14" />
+            <line x1="30" y1="46" x2="30" y2="58" />
+            <line x1="2"  y1="30" x2="14" y2="30" />
+            <line x1="46" y1="30" x2="58" y2="30" />
+        </svg>
+        <svg class="se-reticle se-reticle--br" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <circle cx="30" cy="30" r="22" />
+            <circle cx="30" cy="30" r="2" fill="currentColor" />
+            <line x1="30" y1="2"  x2="30" y2="14" />
+            <line x1="30" y1="46" x2="30" y2="58" />
+            <line x1="2"  y1="30" x2="14" y2="30" />
+            <line x1="46" y1="30" x2="58" y2="30" />
+        </svg>
+
         <div class="site-entry__watermark" aria-hidden="true">
             <svg class="sew sew--sine" viewBox="0 0 180 110" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="10" x2="18" y2="100" />
@@ -441,6 +1004,12 @@
         </button>
 
         <div class="site-entry__stage">
+            <!-- Surveillance-only corner brackets around the stage. -->
+            <span class="se-corner se-corner--tl" aria-hidden="true"></span>
+            <span class="se-corner se-corner--tr" aria-hidden="true"></span>
+            <span class="se-corner se-corner--bl" aria-hidden="true"></span>
+            <span class="se-corner se-corner--br" aria-hidden="true"></span>
+
             <h1 class="site-entry__name">Md. Mosfikur Rahman</h1>
             <div class="site-entry__rule" aria-hidden="true"></div>
             <p class="site-entry__tagline">
@@ -450,10 +1019,27 @@
                 <span class="site-entry__dot"></span>
                 <span class="site-entry__dot"></span>
                 <span class="site-entry__dot"></span>
-                <span class="site-entry__label">Press ready</span>
+                <span class="site-entry__label se-label-broadsheet">Press ready</span>
+                <span class="se-label-surveillance">Awaiting access</span>
+                <span class="se-label-minimal">Ready</span>
+                <span class="se-label-folio">Ready</span>
+                <span class="se-label-animus">Synchronising</span>
+                <span class="se-label-inception">Blueprint loaded</span>
+                <span class="se-label-heist">In motion</span>
+                <span class="se-label-chess">Clock started</span>
+                <span class="se-label-tenet">Inverted &amp; forward</span>
             </div>
             <button id="siteEntryEnter" type="button" class="site-entry__enter">
-                Turn the page<span class="se-arrow" aria-hidden="true">→</span>
+                <span class="se-enter-broadsheet">Turn the page</span>
+                <span class="se-enter-surveillance">Grant access</span>
+                <span class="se-enter-minimal">Enter site</span>
+                <span class="se-enter-folio">Enter</span>
+                <span class="se-enter-animus">Begin Memory</span>
+                <span class="se-enter-inception">Open the blueprint</span>
+                <span class="se-enter-heist">Run the plan</span>
+                <span class="se-enter-chess">1.e4</span>
+                <span class="se-enter-tenet">Forward / Reverse</span>
+                <span class="se-arrow" aria-hidden="true">→</span>
             </button>
         </div>
     </div>
@@ -463,6 +1049,10 @@
         if (btn) {
           btn.addEventListener('click', function () {
             window.__entryClicked = true;
+            // The entry gate already served as the welcome animation.
+            // Mark the surveillance boot as already-played so it doesn't
+            // stack on top if the remote later flips the template.
+            try { sessionStorage.setItem('poi.booted', '1'); } catch (_) {}
             window.dispatchEvent(new Event('entry-enter'));
           });
           // Focus the button once it becomes interactive so Enter key activates it.
