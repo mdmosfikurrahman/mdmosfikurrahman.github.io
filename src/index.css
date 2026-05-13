@@ -1,27 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================================
+   GLOBAL TOKENS — fallback layer (Samaritan / surveillance defaults)
+   ===================================================================== */
 @layer base {
   :root {
-    /* Paper & ink: warm ivory over cold white, deep charcoal over pure black */
-    --paper:        40 22% 96%;
-    --paper-deep:   40 18% 93%;
-    --ink:          220 14% 10%;
-    --ink-soft:     220 10% 24%;
-    --muted:        220 6% 42%;
-    --whisper:      220 6% 58%;
-    --rule:         40 12% 80%;
-    --rule-soft:    40 14% 88%;
+    /* Default = surveillance/Samaritan light. Overridden per .template-* below. */
+    --paper:        220 30% 96%;
+    --paper-deep:   220 24% 92%;
+    --paper-glass:  220 30% 98%;
+    --ink:          220 60% 8%;
+    --ink-soft:     220 35% 22%;
+    --muted:        220 16% 42%;
+    --whisper:      220 12% 58%;
+    --rule:         220 24% 78%;
+    --rule-soft:    220 24% 86%;
 
-    /* Single accent: burnt sienna / oxblood rust. Not orange. */
-    --accent:       16 62% 42%;
-    --accent-deep:  14 68% 32%;
-    --accent-wash:  18 55% 92%;
+    --accent:       0 75% 48%;
+    --accent-deep:  0 78% 38%;
+    --accent-wash:  0 60% 94%;
 
-    /* Tokens shadcn/radix expect */
+    --signal-pos:   210 90% 42%;
+    --signal-warn:  35 92% 48%;
+    --signal-crit:  0 82% 50%;
+
     --background: var(--paper);
     --foreground: var(--ink);
     --card: var(--paper);
@@ -39,14 +45,44 @@
     --border: var(--rule);
     --input: var(--rule);
     --ring: var(--accent);
-    --radius: 0.25rem;
+    --radius: 0px;
 
-    --selection-bg: var(--accent-wash);
+    --scan-opacity: 0.035;
+    --grid-opacity: 0.07;
   }
+}
 
-  .dark {
+/* =====================================================================
+   TEMPLATE: BROADSHEET   (the original — newspaper / serif / paper)
+   ===================================================================== */
+@layer base {
+  .template-broadsheet {
+    --paper:        40 22% 96%;
+    --paper-deep:   40 18% 93%;
+    --paper-glass:  40 22% 98%;
+    --ink:          220 14% 10%;
+    --ink-soft:     220 10% 24%;
+    --muted:        220 6% 42%;
+    --whisper:      220 6% 58%;
+    --rule:         40 12% 80%;
+    --rule-soft:    40 14% 88%;
+
+    --accent:       16 62% 42%;
+    --accent-deep:  14 68% 32%;
+    --accent-wash:  18 55% 92%;
+
+    --signal-pos:   145 50% 35%;
+    --signal-warn:  35 70% 45%;
+    --signal-crit:  0 60% 45%;
+
+    --radius: 0.25rem;
+    --scan-opacity: 0;
+    --grid-opacity: 0;
+  }
+  .template-broadsheet.dark {
     --paper:        220 10% 7%;
     --paper-deep:   220 12% 10%;
+    --paper-glass:  220 10% 6%;
     --ink:          40 16% 88%;
     --ink-soft:     40 12% 76%;
     --muted:        40 6% 58%;
@@ -60,6 +96,62 @@
   }
 }
 
+/* =====================================================================
+   TEMPLATE: SURVEILLANCE  (Person of Interest)
+       light = Samaritan (clinical white)
+       dark  = The Machine (amber on black)
+   ===================================================================== */
+@layer base {
+  .template-surveillance {
+    --paper:        220 30% 96%;
+    --paper-deep:   220 24% 92%;
+    --paper-glass:  220 30% 98%;
+    --ink:          220 60% 8%;
+    --ink-soft:     220 35% 22%;
+    --muted:        220 16% 42%;
+    --whisper:      220 12% 58%;
+    --rule:         220 24% 78%;
+    --rule-soft:    220 24% 86%;
+
+    --accent:       0 75% 48%;
+    --accent-deep:  0 78% 38%;
+    --accent-wash:  0 60% 94%;
+
+    --signal-pos:   210 90% 42%;
+    --signal-warn:  35 92% 48%;
+    --signal-crit:  0 82% 50%;
+
+    --radius: 0px;
+    --scan-opacity: 0.035;
+    --grid-opacity: 0.07;
+  }
+  .template-surveillance.dark {
+    --paper:        24 18% 5%;
+    --paper-deep:   24 14% 8%;
+    --paper-glass:  24 18% 4%;
+    --ink:          38 92% 64%;
+    --ink-soft:     38 65% 52%;
+    --muted:        38 30% 44%;
+    --whisper:      38 18% 32%;
+    --rule:         38 50% 22%;
+    --rule-soft:    38 40% 14%;
+
+    --accent:       0 85% 60%;
+    --accent-deep:  0 78% 50%;
+    --accent-wash:  0 50% 14%;
+
+    --signal-pos:   145 80% 55%;
+    --signal-warn:  38 95% 58%;
+    --signal-crit:  0 90% 60%;
+
+    --scan-opacity: 0.07;
+    --grid-opacity: 0.10;
+  }
+}
+
+/* =====================================================================
+   BASE — global rules that apply across every template
+   ===================================================================== */
 @layer base {
   *,
   *::before,
@@ -80,7 +172,6 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 
-    /* Content hardening: block text selection, image drag, callouts. */
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -88,9 +179,7 @@
     -webkit-touch-callout: none;
   }
 
-  input,
-  textarea,
-  [contenteditable="true"] {
+  input, textarea, [contenteditable="true"] {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
@@ -103,7 +192,6 @@
     -webkit-touch-callout: none;
   }
 
-  /* Blur overlay applied when devtools open / window blurs / PrintScreen. */
   body.guards-blur > *:not(.site-splash) {
     filter: blur(14px) saturate(0.4);
     transition: filter 160ms ease-out;
@@ -118,7 +206,6 @@
     z-index: 9998;
   }
 
-  /* Block print-to-PDF / physical print. */
   @media print {
     html, body {
       display: none !important;
@@ -130,38 +217,60 @@
     background: hsl(var(--accent-wash));
     color: hsl(var(--ink));
   }
-
   .dark ::selection {
     background: hsl(var(--accent) / 0.35);
     color: hsl(var(--ink));
   }
 
-  /* Fraunces optical axis for display sizes */
-  .font-display {
+  /* --- Font face defaults: broadsheet --- */
+  .template-broadsheet body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .template-broadsheet .font-display {
     font-family: 'Fraunces', 'Times New Roman', serif;
     font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
     font-feature-settings: "ss01", "ss02", "cv11";
     letter-spacing: -0.02em;
   }
-
-  .font-serif-body {
+  .template-broadsheet .font-serif-body {
     font-family: 'Fraunces', 'Times New Roman', serif;
     font-variation-settings: "opsz" 14, "SOFT" 50, "WONK" 0;
   }
 
+  /* --- Font face defaults: surveillance (mono-first) --- */
+  .template-surveillance body {
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-feature-settings: "zero", "ss01", "ss03", "tnum";
+  }
+  .template-surveillance .font-display {
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .template-surveillance .font-serif-body {
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+  }
+
   .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
     font-feature-settings: "zero", "ss01";
+  }
+  .font-machine {
+    font-family: 'Share Tech Mono', 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.04em;
   }
 }
 
+/* =====================================================================
+   COMPONENT UTILITIES — shell + grid + mg + rule (shared geometry)
+   ===================================================================== */
 @layer components {
-  /* Page shell: asymmetric broadsheet grid, centered container */
   .shell {
     @apply mx-auto w-full max-w-[1180px] px-5 sm:px-6 md:px-10 lg:px-14;
   }
 
-  /* Marginalia-friendly two-column layout on wide screens */
   .mg {
     @apply grid gap-6 md:gap-10;
     grid-template-columns: 1fr;
@@ -176,27 +285,15 @@
     .mg { column-gap: 4rem; }
   }
 
-  /* Section label in the margin */
-  .mg-label {
-    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground;
-  }
+  .rule { border-color: hsl(var(--rule)); }
+  .rule-soft { border-color: hsl(var(--rule-soft)); }
 
-  .rule {
-    border-color: hsl(var(--rule));
-  }
-
-  .rule-soft {
-    border-color: hsl(var(--rule-soft));
-  }
-
-  /* Inline annotation: small caps, muted */
   .sc {
     font-variant-caps: all-small-caps;
     letter-spacing: 0.08em;
     font-weight: 500;
   }
 
-  /* Link treatment: underlined from the bottom, accent on hover */
   .a {
     color: hsl(var(--ink));
     text-decoration: underline;
@@ -210,7 +307,6 @@
     text-decoration-color: hsl(var(--accent));
   }
 
-  /* Arrow link */
   .a-arrow {
     @apply inline-flex items-baseline gap-1.5;
     color: hsl(var(--ink));
@@ -219,15 +315,24 @@
     display: inline-block;
     transition: transform 200ms cubic-bezier(.2,.7,.2,1);
   }
-  .a-arrow:hover {
-    color: hsl(var(--accent));
+  .a-arrow:hover { color: hsl(var(--accent)); }
+  .a-arrow:hover .arw { transform: translateX(3px); }
+
+  .hr-hair {
+    border: 0;
+    border-top: 1px solid hsl(var(--rule));
   }
-  .a-arrow:hover .arw {
-    transform: translateX(3px);
+}
+
+/* =====================================================================
+   COMPONENT UTILITIES — broadsheet-specific
+   ===================================================================== */
+@layer components {
+  .template-broadsheet .mg-label {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground;
   }
 
-  /* Section kicker: accent rule + uppercase label */
-  .sig {
+  .template-broadsheet .sig {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.22em;
@@ -238,7 +343,7 @@
     gap: 0.75rem;
     font-weight: 500;
   }
-  .sig::before {
+  .template-broadsheet .sig::before {
     content: "";
     display: inline-block;
     width: 1.75rem;
@@ -246,29 +351,494 @@
     background: hsl(var(--accent));
     flex-shrink: 0;
   }
+}
 
-  /* Hairline horizontal rule */
-  .hr-hair {
-    border: 0;
-    border-top: 1px solid hsl(var(--rule));
+/* =====================================================================
+   COMPONENT UTILITIES — surveillance-specific
+   ===================================================================== */
+@layer components {
+  .template-surveillance .mg-label {
+    @apply font-mono text-[10px] uppercase tracking-[0.22em];
+    color: hsl(var(--accent));
+  }
+
+  .template-surveillance .sig {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-weight: 600;
+  }
+  .template-surveillance .sig::before {
+    content: "//";
+    display: inline-block;
+    color: hsl(var(--accent));
+    opacity: 0.6;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  /* Tracking-bracket primitives — used only in surveillance components */
+  .template-surveillance .bracket {
+    position: relative;
+    padding: 0.875rem 1rem;
+  }
+  .template-surveillance .bracket::before,
+  .template-surveillance .bracket::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid hsl(var(--accent));
+    pointer-events: none;
+    transition: width 220ms ease, height 220ms ease, border-color 220ms ease;
+  }
+  .template-surveillance .bracket::before {
+    top: 0; left: 0; border-right: 0; border-bottom: 0;
+  }
+  .template-surveillance .bracket::after {
+    bottom: 0; right: 0; border-left: 0; border-top: 0;
+  }
+  .template-surveillance .bracket-quad {
+    position: relative;
+  }
+  .template-surveillance .bracket-quad::before,
+  .template-surveillance .bracket-quad::after,
+  .template-surveillance .bracket-quad > .br-tr,
+  .template-surveillance .bracket-quad > .br-bl {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid hsl(var(--accent));
+    pointer-events: none;
+  }
+  .template-surveillance .bracket-quad::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+  .template-surveillance .bracket-quad::after  { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+  .template-surveillance .bracket-quad > .br-tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+  .template-surveillance .bracket-quad > .br-bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+  .template-surveillance .bracket-quad:hover::before,
+  .template-surveillance .bracket-quad:hover::after,
+  .template-surveillance .bracket-quad:hover > .br-tr,
+  .template-surveillance .bracket-quad:hover > .br-bl {
+    width: 18px; height: 18px;
+  }
+
+  /* HUD blink-dot, pill, glitch, caret, typed — all live only in surveillance.
+     Defined globally because they are namespaced enough by class name. */
+  .blink-dot {
+    display: inline-block;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: hsl(var(--accent));
+    box-shadow: 0 0 6px hsl(var(--accent) / 0.7);
+    animation: hud-blink 1.6s infinite ease-in-out;
+  }
+  .blink-dot.pos { background: hsl(var(--signal-pos)); box-shadow: 0 0 6px hsl(var(--signal-pos) / 0.7); }
+  .blink-dot.warn { background: hsl(var(--signal-warn)); box-shadow: 0 0 6px hsl(var(--signal-warn) / 0.7); }
+  .blink-dot.crit { background: hsl(var(--signal-crit)); box-shadow: 0 0 6px hsl(var(--signal-crit) / 0.7); }
+  @keyframes hud-blink {
+    0%, 60%, 100% { opacity: 1; }
+    70%, 90%      { opacity: 0.25; }
+  }
+
+  .caret::after {
+    content: "_";
+    display: inline-block;
+    margin-left: 0.15em;
+    animation: caret-blink 1s steps(2) infinite;
+  }
+  @keyframes caret-blink { 50% { opacity: 0; } }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.18rem 0.5rem;
+    border: 1px solid hsl(var(--accent) / 0.6);
+    color: hsl(var(--accent));
+    background: hsl(var(--accent) / 0.06);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .pill.solid {
+    background: hsl(var(--accent));
+    color: hsl(var(--paper));
+    border-color: hsl(var(--accent));
+  }
+  .pill.muted {
+    border-color: hsl(var(--rule));
+    color: hsl(var(--muted));
+    background: transparent;
+  }
+
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .glitch::before {
+    color: hsl(var(--accent));
+    transform: translate(1.5px, 0);
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    clip-path: polygon(0 12%, 100% 12%, 100% 38%, 0 38%);
+    animation: glitch-shift 3.6s infinite steps(1);
+  }
+  .glitch::after {
+    color: hsl(var(--signal-pos));
+    transform: translate(-1.5px, 0);
+    mix-blend-mode: screen;
+    opacity: 0.45;
+    clip-path: polygon(0 62%, 100% 62%, 100% 88%, 0 88%);
+    animation: glitch-shift 4.2s infinite steps(1) reverse;
+  }
+  @keyframes glitch-shift {
+    0%   { clip-path: polygon(0 12%, 100% 12%, 100% 38%, 0 38%); }
+    20%  { clip-path: polygon(0 28%, 100% 28%, 100% 52%, 0 52%); }
+    40%  { clip-path: polygon(0 8%, 100% 8%, 100% 22%, 0 22%); }
+    60%  { clip-path: polygon(0 74%, 100% 74%, 100% 88%, 0 88%); }
+    80%  { clip-path: polygon(0 42%, 100% 42%, 100% 58%, 0 58%); }
+    100% { clip-path: polygon(0 0%, 100% 0%, 100% 12%, 0 12%); }
   }
 }
 
+/* =====================================================================
+   ADMIN SHELL — a fully independent aesthetic for /admin/* pages.
+   Deliberately ignores the active template; admin always looks the same.
+   "Studio" palette: warm cream, white cards, deep violet accent, Inter.
+   ===================================================================== */
+@layer components {
+  .admin-shell {
+    /* Hard-overrides — these win against template-* declarations because
+       .admin-shell is the deepest selector applied at the page root. */
+    --a-bg:           36 30% 96%;
+    --a-bg-deep:      36 24% 92%;
+    --a-surface:      0 0% 100%;
+    --a-ink:          222 22% 12%;
+    --a-ink-soft:     222 12% 32%;
+    --a-ink-muted:    222 8% 52%;
+    --a-ink-faint:    222 6% 72%;
+    --a-border:       36 16% 86%;
+    --a-border-strong:36 12% 76%;
+    --a-accent:       248 78% 60%;
+    --a-accent-deep:  248 72% 50%;
+    --a-accent-wash:  248 80% 96%;
+    --a-success:      163 76% 38%;
+    --a-warn:         32 86% 48%;
+    --a-danger:       0 70% 56%;
+
+    /* Override the global tokens so any incidental child still looks right. */
+    --paper: var(--a-bg);
+    --paper-deep: var(--a-bg-deep);
+    --paper-glass: var(--a-surface);
+    --ink: var(--a-ink);
+    --ink-soft: var(--a-ink-soft);
+    --muted: var(--a-ink-muted);
+    --whisper: var(--a-ink-faint);
+    --rule: var(--a-border);
+    --rule-soft: var(--a-border);
+    --accent: var(--a-accent);
+    --accent-deep: var(--a-accent-deep);
+    --accent-wash: var(--a-accent-wash);
+    --signal-pos: var(--a-success);
+    --signal-warn: var(--a-warn);
+    --signal-crit: var(--a-danger);
+    --radius: 0.75rem;
+
+    color: hsl(var(--a-ink));
+    background: hsl(var(--a-bg));
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    letter-spacing: 0;
+    min-height: 100vh;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Decorative gradient orb in the background — soft, very subtle. */
+  .admin-shell::before {
+    content: "";
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 620px;
+    height: 620px;
+    background:
+      radial-gradient(closest-side,
+        hsl(var(--a-accent) / 0.16),
+        hsl(var(--a-accent) / 0.04) 55%,
+        transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(8px);
+  }
+  .admin-shell::after {
+    content: "";
+    position: absolute;
+    bottom: -10%;
+    left: -10%;
+    width: 480px;
+    height: 480px;
+    background:
+      radial-gradient(closest-side,
+        hsl(163 76% 50% / 0.10),
+        transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(8px);
+  }
+
+  /* Card surface */
+  .a-card {
+    background: hsl(var(--a-surface));
+    border: 1px solid hsl(var(--a-border));
+    border-radius: 16px;
+    box-shadow:
+      0 1px 2px hsl(222 22% 12% / 0.04),
+      0 8px 32px hsl(222 22% 12% / 0.05);
+  }
+  .a-card-flat {
+    background: hsl(var(--a-surface));
+    border: 1px solid hsl(var(--a-border));
+    border-radius: 12px;
+  }
+
+  /* Buttons */
+  .a-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 10px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    transition: background 160ms ease, color 160ms ease,
+                border-color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+  }
+  .a-btn:active { transform: translateY(1px); }
+
+  .a-btn-primary {
+    background: hsl(var(--a-accent));
+    color: white;
+  }
+  .a-btn-primary:hover {
+    background: hsl(var(--a-accent-deep));
+    box-shadow: 0 6px 18px hsl(var(--a-accent) / 0.32);
+  }
+
+  .a-btn-ghost {
+    background: transparent;
+    color: hsl(var(--a-ink-soft));
+    border-color: hsl(var(--a-border));
+  }
+  .a-btn-ghost:hover {
+    color: hsl(var(--a-ink));
+    border-color: hsl(var(--a-border-strong));
+    background: hsl(var(--a-bg-deep));
+  }
+
+  .a-btn-danger {
+    background: transparent;
+    color: hsl(var(--a-danger));
+    border-color: transparent;
+  }
+  .a-btn-danger:hover {
+    background: hsl(var(--a-danger) / 0.08);
+  }
+
+  /* Inputs */
+  .a-input {
+    width: 100%;
+    background: hsl(var(--a-bg));
+    border: 1px solid hsl(var(--a-border));
+    border-radius: 10px;
+    padding: 0.75rem 0.875rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    color: hsl(var(--a-ink));
+    outline: none;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+  .a-input::placeholder { color: hsl(var(--a-ink-faint)); }
+  .a-input:focus {
+    border-color: hsl(var(--a-accent));
+    box-shadow: 0 0 0 3px hsl(var(--a-accent) / 0.15);
+    background: hsl(var(--a-surface));
+  }
+  .a-input.is-invalid {
+    border-color: hsl(var(--a-danger));
+    box-shadow: 0 0 0 3px hsl(var(--a-danger) / 0.15);
+  }
+
+  /* Labels */
+  .a-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(var(--a-ink-muted));
+  }
+
+  /* Inline mono code chip */
+  .a-code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    background: hsl(var(--a-bg-deep));
+    border: 1px solid hsl(var(--a-border));
+    border-radius: 6px;
+    padding: 1px 6px;
+    color: hsl(var(--a-ink));
+  }
+
+  /* Status chips */
+  .a-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1;
+    border: 1px solid transparent;
+  }
+  .a-chip-success {
+    background: hsl(var(--a-success) / 0.10);
+    color: hsl(var(--a-success));
+  }
+  .a-chip-warn {
+    background: hsl(var(--a-warn) / 0.10);
+    color: hsl(var(--a-warn));
+  }
+  .a-chip-danger {
+    background: hsl(var(--a-danger) / 0.10);
+    color: hsl(var(--a-danger));
+  }
+  .a-chip-neutral {
+    background: hsl(var(--a-bg-deep));
+    color: hsl(var(--a-ink-soft));
+    border-color: hsl(var(--a-border));
+  }
+  .a-chip-accent {
+    background: hsl(var(--a-accent-wash));
+    color: hsl(var(--a-accent-deep));
+  }
+
+  /* Dot indicator */
+  .a-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
+/* =====================================================================
+   UTILITIES — halftone, scanlines, surveillance grid, glows
+   ===================================================================== */
 @layer utilities {
   .text-balance { text-wrap: balance; }
-  .text-pretty { text-wrap: pretty; }
+  .text-pretty  { text-wrap: pretty; }
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; }
 
-  /* Halftone dotted pattern for subtle hero backdrop */
-  .halftone {
+  /* Broadsheet halftone (the original dotted pattern). */
+  .template-broadsheet .halftone {
     background-image: radial-gradient(hsl(var(--ink) / 0.08) 1px, transparent 1px);
     background-size: 14px 14px;
   }
-
-  .halftone-faint {
+  .template-broadsheet .halftone-faint {
     background-image: radial-gradient(hsl(var(--ink) / 0.05) 1px, transparent 1px);
     background-size: 18px 18px;
+  }
+
+  /* Surveillance halftone = scanlines. */
+  .template-surveillance .halftone {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        hsl(var(--ink) / var(--scan-opacity)) 0px,
+        hsl(var(--ink) / var(--scan-opacity)) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+  }
+  .template-surveillance .halftone-faint {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        hsl(var(--ink) / 0.025) 0px,
+        hsl(var(--ink) / 0.025) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+  }
+
+  .surveillance-grid {
+    background-image:
+      linear-gradient(hsl(var(--ink) / var(--grid-opacity)) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--ink) / var(--grid-opacity)) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px;
+  }
+
+  .text-glow {
+    text-shadow:
+      0 0 8px hsl(var(--accent) / 0.35),
+      0 0 18px hsl(var(--accent) / 0.18);
+  }
+  .text-glow-soft {
+    text-shadow: 0 0 6px hsl(var(--ink) / 0.25);
+  }
+
+  /* Scanline overlay — only applies under surveillance template. */
+  .scan-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9997;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        hsl(var(--ink) / var(--scan-opacity)) 0px,
+        hsl(var(--ink) / var(--scan-opacity)) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    mix-blend-mode: multiply;
+  }
+  .template-surveillance.dark .scan-overlay { mix-blend-mode: screen; }
+
+  .crt-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9996;
+    background:
+      radial-gradient(ellipse at center, transparent 55%, hsl(var(--paper) / 0.85) 130%);
+  }
+  .template-surveillance.dark .crt-vignette {
+    background:
+      radial-gradient(ellipse at center, transparent 55%, hsl(0 0% 0% / 0.75) 130%);
   }
 }
