@@ -49,9 +49,13 @@
         } catch (_) {}
         try {
           var tpl = localStorage.getItem('portfolio.template');
-          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet','keynote'];
+          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet','keynote','keynote-tech','keynote-talk'];
           if (ALLOWED.indexOf(tpl) === -1) tpl = 'folio';
           document.documentElement.classList.add('template-' + tpl);
+          // keynote-* share one visual system — keep the base class on too.
+          if (tpl === 'keynote-tech' || tpl === 'keynote-talk') {
+            document.documentElement.classList.add('template-keynote');
+          }
         } catch (_) {
           document.documentElement.classList.add('template-folio');
         }
@@ -125,8 +129,8 @@
         detectDevtools();
       })();
     </script>
-  <script type="module" crossorigin src="/assets/index-Djn3gdvI.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CVVt4Wef.css">
+  <script type="module" crossorigin src="/assets/index-VTgImvIs.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Bz2RQCy7.css">
 </head>
 
 <body>
