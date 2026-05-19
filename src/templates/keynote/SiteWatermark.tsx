@@ -11,6 +11,8 @@ import { useTheme } from "@/hooks/useTheme";
 import { profile } from "@/lib/content";
 import { SLIDES } from "./slides";
 
+const DECK = SLIDES;
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const variants = {
@@ -24,7 +26,7 @@ export default function KeynoteDeck() {
   const { theme, toggle } = useTheme();
   const [[index, dir], setState] = useState<[number, number]>([0, 0]);
   const touchX = useRef<number | null>(null);
-  const total = SLIDES.length;
+  const total = DECK.length;
 
   const go = useCallback((to: number, d: number) => {
     setState(([cur]) => {
@@ -84,7 +86,7 @@ export default function KeynoteDeck() {
 
   if (!onHome) return null;
 
-  const slide = SLIDES[index];
+  const slide = DECK[index];
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden"
