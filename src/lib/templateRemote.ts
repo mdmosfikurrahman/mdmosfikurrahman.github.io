@@ -78,7 +78,7 @@ export async function fetchRemoteTemplate(): Promise<RemoteState | null> {
     const t = record?.template;
     const valid: ReadonlyArray<TemplateId> = [
       "folio", "broadsheet", "surveillance", "minimal",
-      "animus", "inception", "heist", "chess", "tenet",
+      "animus", "inception", "heist", "chess", "tenet", "keynote",
     ];
     if (typeof t === "string" && (valid as readonly string[]).includes(t)) {
       return { template: t as TemplateId, updatedAt: record.updatedAt };
