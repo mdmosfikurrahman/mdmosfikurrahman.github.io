@@ -179,7 +179,8 @@ function SkillsSlide() {
 }
 
 /* ── Section divider ────────────────────────────────────────────────── */
-function Divider({ kicker, title, sub }: { kicker: string; title: string; sub: string }) {
+function Divider({ kicker, title, sub, verifyHref }:
+  { kicker: string; title: string; sub: string; verifyHref?: string }) {
   return (
     <div className="text-center">
       <p className="sig justify-center">{kicker}</p>
@@ -188,6 +189,13 @@ function Divider({ kicker, title, sub }: { kicker: string; title: string; sub: s
         <span className="kn-mark">{title}</span>
       </h2>
       <p className="mt-6 text-[clamp(1rem,1.5vw,1.3rem)]" style={{ color: "hsl(var(--ink-soft))" }}>{sub}</p>
+      {verifyHref && (
+        <a href={verifyHref} target="_blank" rel="noreferrer"
+           className="mt-5 inline-flex items-center gap-1.5 text-[13px] font-semibold"
+           style={{ color: "hsl(var(--accent))" }}>
+          Verify on Google Scholar <ArrowUpRight size={14} strokeWidth={2.2} />
+        </a>
+      )}
     </div>
   );
 }
@@ -313,6 +321,14 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
           )}
           <span className="kn-pill px-3 py-1 tabular-nums">{p.year}</span>
           <span className="kn-pill px-3 py-1 uppercase tracking-[0.12em]">{p.type}</span>
+          {typeof p.citations === "number" && p.citations > 0 && (
+            <a href={profile.links.scholar} target="_blank" rel="noreferrer"
+               className="inline-flex items-center gap-1.5 px-3 py-1 font-semibold rounded-full tabular-nums"
+               style={{ background: "hsl(var(--accent-wash))", color: "hsl(var(--accent-deep))" }}
+               title="Cited by — verify on Google Scholar">
+              {p.citations} citation{p.citations === 1 ? "" : "s"}
+            </a>
+          )}
           {p.award && (
             <span className="inline-flex items-center gap-1 px-3 py-1 font-semibold rounded-full"
                   style={{ background: "hsl(var(--accent-wash))", color: "hsl(var(--accent-deep))" }} title={p.award}>
@@ -660,6 +676,7 @@ const orderedPubs = [...publications].sort((a, b) => {
   return b.year - a.year;                     // tie-break: newest first
 });
 const firstAuthorCount = publications.filter(isFirstAuthor).length;
+const totalCitations = publications.reduce((n, p) => n + (p.citations ?? 0), 0);
 
 // Narrative arc: who I am → academic foundation → current role →
 // the research body (the core) → research credibility → engineering depth →
@@ -671,7 +688,8 @@ export const SLIDES: DeckSlide[] = [
   {
     label: "Research",
     render: () => <Divider kicker="Section" title="Research"
-      sub={`${publications.length} peer-reviewed papers · ${firstAuthorCount} as first author · 1 IEEE best paper.`} />,
+      sub={`${publications.length} peer-reviewed papers · ${firstAuthorCount} as first author · ${totalCitations} citations · 1 IEEE best paper.`}
+      verifyHref={profile.links.scholar} />,
   },
   ...orderedPubs.map((p, i): DeckSlide => ({
     label: `Paper · ${p.year}`,

@@ -43,12 +43,14 @@ export default function KeynoteDeck() {
   const onWheel = useCallback((e: WheelEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     const down = e.deltaY > 0;
-    const atTop = el.scrollTop <= 0;
-    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
-    if ((down && !atBottom) || (!down && !atTop)) return; // let it scroll
-    if (Math.abs(e.deltaY) < 6 || wheelLock.current) return;
+    // Only defer to internal scrolling when the slide actually overflows.
+    const overflowing = el.scrollHeight - el.clientHeight > 8;
+    const atTop = el.scrollTop <= 2;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+    if (overflowing && ((down && !atBottom) || (!down && !atTop))) return;
+    if (Math.abs(e.deltaY) < 4 || wheelLock.current) return;
     wheelLock.current = true;
-    window.setTimeout(() => { wheelLock.current = false; }, 750);
+    window.setTimeout(() => { wheelLock.current = false; }, 650);
     if (down) next(); else prev();
   }, [next, prev]);
 
@@ -92,9 +94,12 @@ export default function KeynoteDeck() {
       {/* top bar */}
       <header className="shrink-0 h-14 px-4 sm:px-8 flex items-center justify-between gap-3 border-b rule-soft">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="font-display text-[14px] tracking-[-0.02em] truncate" style={{ color: "hsl(var(--ink))" }}>
+          <button type="button" onClick={() => go(0, -1)}
+                  className="font-display text-[14px] tracking-[-0.02em] truncate transition-colors hover:text-[hsl(var(--accent))]"
+                  style={{ color: "hsl(var(--ink))" }}
+                  title="Back to the first slide">
             {profile.name}
-          </span>
+          </button>
         </div>
         <div className="flex items-center gap-4">
           <span className="hidden sm:inline font-mono text-[11px] tracking-[0.14em]" style={{ color: "hsl(var(--whisper))" }}>
