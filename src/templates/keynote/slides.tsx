@@ -299,6 +299,7 @@ function Block({ label, text }: { label: string; text?: string }) {
 function PaperDossier({ p, i, total }: { p: Publication; i: number; total: number }) {
   const authors = formatAuthors(p.authors);
   const isFirst = p.authors[0] === "Rahman, Md. Mosfikur";
+  const [showPdf, setShowPdf] = useState(false);
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -376,30 +377,60 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
                 <FileText size={13} strokeWidth={2} /> Full paper
               </span>
               <div className="flex items-center gap-2">
+                {showPdf && (
+                  <button type="button" onClick={() => setShowPdf(false)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold"
+                          style={{ border: "1px solid hsl(var(--rule))", color: "hsl(var(--ink))" }}>
+                    Hide
+                  </button>
+                )}
                 <a href={p.pdf} target="_blank" rel="noreferrer"
-                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold transition-colors"
+                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold"
                    style={{ border: "1px solid hsl(var(--rule))", color: "hsl(var(--ink))" }}
                    title="Open full PDF in a new tab">
                   <Maximize2 size={12} strokeWidth={2.2} /> Open
                 </a>
                 <a href={p.pdf} download
-                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold transition-colors"
+                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold"
                    style={{ background: "hsl(var(--accent))", color: "hsl(var(--paper))" }}
                    title="Download PDF">
                   <Download size={12} strokeWidth={2.4} /> PDF
                 </a>
               </div>
             </div>
-            <object data={`${p.pdf}#view=FitH`} type="application/pdf"
-                    className="w-full h-[58vh] lg:h-[70vh]" aria-label={`${p.title} — full paper PDF`}>
-              <div className="p-6 text-center text-[13px]" style={{ color: "hsl(var(--ink-soft))" }}>
-                Inline preview isn&apos;t supported here.{" "}
-                <a href={p.pdf} target="_blank" rel="noreferrer"
-                   className="font-semibold" style={{ color: "hsl(var(--accent))" }}>
-                  Open the PDF →
-                </a>
+
+            {showPdf ? (
+              <object data={`${p.pdf}#view=FitH`} type="application/pdf"
+                      className="w-full h-[56vh] lg:h-[68vh]" aria-label={`${p.title} — full paper PDF`}>
+                <div className="p-6 text-center text-[13px]" style={{ color: "hsl(var(--ink-soft))" }}>
+                  Inline preview isn&apos;t supported here.{" "}
+                  <a href={p.pdf} target="_blank" rel="noreferrer"
+                     className="font-semibold" style={{ color: "hsl(var(--accent))" }}>
+                    Open the PDF →
+                  </a>
+                </div>
+              </object>
+            ) : (
+              <div className="flex-1 grid place-items-center text-center px-6 py-12">
+                <div>
+                  <div className="mx-auto w-12 h-12 grid place-items-center rounded-xl"
+                       style={{ background: "hsl(var(--accent-wash))", color: "hsl(var(--accent-deep))" }}>
+                    <FileText size={20} strokeWidth={1.8} />
+                  </div>
+                  <p className="mt-4 text-[14px] font-medium" style={{ color: "hsl(var(--ink))" }}>
+                    Full paper available
+                  </p>
+                  <p className="mt-1 text-[12.5px] max-w-[34ch] mx-auto" style={{ color: "hsl(var(--muted))" }}>
+                    The complete PDF can be opened here on request.
+                  </p>
+                  <button type="button" onClick={() => setShowPdf(true)}
+                          className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold transition-transform hover:-translate-y-0.5"
+                          style={{ background: "hsl(var(--accent))", color: "hsl(var(--paper))" }}>
+                    Preview paper
+                  </button>
+                </div>
               </div>
-            </object>
+            )}
           </aside>
         )}
       </div>
@@ -630,12 +661,13 @@ const orderedPubs = [...publications].sort((a, b) => {
 });
 const firstAuthorCount = publications.filter(isFirstAuthor).length;
 
+// Narrative arc: who I am → academic foundation → current role →
+// the research body (the core) → research credibility → engineering depth →
+// supporting technical breadth → verified credentials → service → contact.
 export const SLIDES: DeckSlide[] = [
   { label: "Title", render: () => <TitleSlide /> },
-  { label: "Now", render: () => <NowSlide /> },
-  { label: "Toolbox", render: () => <SkillsSlide /> },
   { label: "Education", render: () => <EducationSlide /> },
-  { label: "Certifications", render: () => <CertificationsSlide /> },
+  { label: "Now", render: () => <NowSlide /> },
   {
     label: "Research",
     render: () => <Divider kicker="Section" title="Research"
@@ -646,7 +678,14 @@ export const SLIDES: DeckSlide[] = [
     render: () => <PaperDossier p={p} i={i} total={orderedPubs.length} />,
   })),
   { label: "Peer review & recognition", render: () => <ReviewSlide /> },
+  {
+    label: "Engineering",
+    render: () => <Divider kicker="Section" title="Engineering"
+      sub={`${projects.length} systems shipped — national, global, and product scale.`} />,
+  },
   { label: "Selected work", render: () => <WorkSlide /> },
+  { label: "Toolbox", render: () => <SkillsSlide /> },
+  { label: "Certifications", render: () => <CertificationsSlide /> },
   { label: "Leadership & activities", render: () => <ActivitiesSlide /> },
   { label: "Contact", render: () => <ContactSlide /> },
 ];
