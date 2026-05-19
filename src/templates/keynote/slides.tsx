@@ -645,8 +645,8 @@ export const SLIDES: DeckSlide[] = [
     label: `Paper · ${p.year}`,
     render: () => <PaperDossier p={p} i={i} total={orderedPubs.length} />,
   })),
-  { label: "Selected work", render: () => <WorkSlide /> },
   { label: "Peer review & recognition", render: () => <ReviewSlide /> },
+  { label: "Selected work", render: () => <WorkSlide /> },
   { label: "Leadership & activities", render: () => <ActivitiesSlide /> },
   { label: "Contact", render: () => <ContactSlide /> },
 ];
