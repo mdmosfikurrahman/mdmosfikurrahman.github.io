@@ -925,7 +925,10 @@
   border-radius: 9999px;
   transform-origin: center;
   background: linear-gradient(90deg,
-    transparent, hsl(var(--accent)), hsl(var(--accent-deep)), transparent);
+    transparent 0%, hsl(var(--accent)) 25%, hsl(var(--accent-deep)) 50%,
+    hsl(var(--accent)) 75%, transparent 100%);
+  background-size: 250% 100%;
+  animation: kn-grad 4.5s ease-in-out infinite;
 }
 /* Rotating gradient ring around the portrait */
 .template-keynote .kn-ring {
@@ -960,6 +963,7 @@
 @media (prefers-reduced-motion: reduce) {
   .template-keynote .kn-mark-live { animation: none; }
   .template-keynote .kn-mark { animation: none; }
+  .template-keynote .kn-bar { animation: none; }
   .template-keynote .kn-orb { animation: none; }
   .template-keynote .kn-aura { animation: none; }
   .template-keynote .kn-ring::before { animation: none; }
