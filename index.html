@@ -49,7 +49,7 @@
         } catch (_) {}
         try {
           var tpl = localStorage.getItem('portfolio.template');
-          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet'];
+          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet','keynote'];
           if (ALLOWED.indexOf(tpl) === -1) tpl = 'folio';
           document.documentElement.classList.add('template-' + tpl);
         } catch (_) {
@@ -67,6 +67,18 @@
           window.__entryClicked = true;
           document.documentElement.classList.add('skip-entry');
         }
+      })();
+    </script>
+    <!-- Keynote is a self-contained presentation deck → skip the
+         entry/welcome gate and mount the deck directly. -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('portfolio.template') === 'keynote') {
+            window.__entryClicked = true;
+            document.documentElement.classList.add('skip-entry');
+          }
+        } catch (_) {}
       })();
     </script>
     <style>
@@ -125,7 +137,7 @@
         detectDevtools();
       })();
     </script>
-  <script type="module" crossorigin src="/assets/index-DD2s_lvM.js"></script>
+  <script type="module" crossorigin src="/assets/index-CN4TEr7h.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-QWCipBUF.css">
 </head>
 
