@@ -8,6 +8,7 @@ import HeroInception from "@/templates/inception/Hero";
 import HeroHeist from "@/templates/heist/Hero";
 import HeroChess from "@/templates/chess/Hero";
 import HeroTenet from "@/templates/tenet/Hero";
+import HeroKeynote from "@/templates/keynote/Hero";
 
 export default function Hero() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function Hero() {
     case "heist":        return <HeroHeist />;
     case "chess":        return <HeroChess />;
     case "tenet":        return <HeroTenet />;
+    case "keynote":      return <HeroKeynote />;
     case "folio":
     default:             return <HeroFolio />;
   }

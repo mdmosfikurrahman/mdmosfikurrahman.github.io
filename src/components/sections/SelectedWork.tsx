@@ -8,6 +8,7 @@ import SelectedWorkInception from "@/templates/inception/SelectedWork";
 import SelectedWorkHeist from "@/templates/heist/SelectedWork";
 import SelectedWorkChess from "@/templates/chess/SelectedWork";
 import SelectedWorkTenet from "@/templates/tenet/SelectedWork";
+import SelectedWorkKeynote from "@/templates/keynote/SelectedWork";
 
 export default function SelectedWork() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function SelectedWork() {
     case "heist":        return <SelectedWorkHeist />;
     case "chess":        return <SelectedWorkChess />;
     case "tenet":        return <SelectedWorkTenet />;
+    case "keynote":      return <SelectedWorkKeynote />;
     case "folio":
     default:             return <SelectedWorkFolio />;
   }

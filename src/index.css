@@ -637,6 +637,147 @@
 }
 
 /* =====================================================================
+   TEMPLATE: KEYNOTE  (presentation deck — interview-ready, full-bleed)
+   ===================================================================== */
+@layer base {
+  .template-keynote {
+    --paper:        0 0% 100%;
+    --paper-deep:   244 38% 97%;
+    --paper-glass:  0 0% 100%;
+    --ink:          230 47% 11%;
+    --ink-soft:     230 18% 30%;
+    --muted:        230 12% 46%;
+    --whisper:      230 10% 62%;
+    --rule:         230 16% 87%;
+    --rule-soft:    230 18% 93%;
+
+    --accent:       244 76% 58%;   /* projector-safe vivid indigo */
+    --accent-deep:  244 70% 46%;
+    --accent-wash:  244 82% 96%;
+
+    --signal-pos:   158 64% 38%;
+    --signal-warn:  32 88% 48%;
+    --signal-crit:  0 72% 52%;
+
+    --radius: 0.75rem;
+    --scan-opacity: 0;
+    --grid-opacity: 0;
+  }
+  .template-keynote.dark {
+    --paper:        230 36% 7%;
+    --paper-deep:   230 30% 11%;
+    --paper-glass:  230 36% 8%;
+    --ink:          220 22% 97%;
+    --ink-soft:     220 14% 80%;
+    --muted:        220 10% 60%;
+    --whisper:      220 8% 44%;
+    --rule:         230 18% 21%;
+    --rule-soft:    230 18% 15%;
+
+    --accent:       245 96% 74%;
+    --accent-deep:  245 90% 64%;
+    --accent-wash:  245 42% 18%;
+
+    --signal-pos:   158 66% 50%;
+    --signal-warn:  34 92% 58%;
+    --signal-crit:  0 78% 62%;
+  }
+}
+
+@layer base {
+  .template-keynote body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    letter-spacing: -0.011em;
+  }
+  .template-keynote .font-display {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+  .template-keynote .font-serif-body {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+  }
+}
+
+@layer components {
+  /* Keynote section kicker = slide number, mono, accent */
+  .template-keynote .sig {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .template-keynote .sig::before {
+    content: "";
+    display: inline-block;
+    width: 1.75rem;
+    height: 2px;
+    background: hsl(var(--accent));
+    flex-shrink: 0;
+  }
+
+  .template-keynote .mg-label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: hsl(var(--muted));
+  }
+
+  .template-keynote .a {
+    color: hsl(var(--ink));
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--rule));
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.28em;
+    transition: color .15s, text-decoration-color .15s;
+  }
+  .template-keynote .a:hover {
+    color: hsl(var(--accent));
+    text-decoration-color: hsl(var(--accent));
+  }
+
+  .template-keynote .a-arrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: hsl(var(--accent));
+  }
+  .template-keynote .a-arrow:hover { color: hsl(var(--accent-deep)); }
+
+  /* Slide scaffold */
+  .template-keynote .slide {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    scroll-margin-top: 4rem;
+  }
+  .template-keynote .slide-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(hsl(var(--rule-soft)) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--rule-soft)) 1px, transparent 1px);
+    background-size: 88px 88px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 78%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 78%);
+    opacity: 0.5;
+  }
+}
+
+/* =====================================================================
    TEMPLATE: FOLIO  (clean, professional default — no theatre)
    ===================================================================== */
 @layer base {

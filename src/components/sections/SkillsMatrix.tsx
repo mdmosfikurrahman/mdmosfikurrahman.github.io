@@ -8,6 +8,7 @@ import SkillsMatrixInception from "@/templates/inception/SkillsMatrix";
 import SkillsMatrixHeist from "@/templates/heist/SkillsMatrix";
 import SkillsMatrixChess from "@/templates/chess/SkillsMatrix";
 import SkillsMatrixTenet from "@/templates/tenet/SkillsMatrix";
+import SkillsMatrixKeynote from "@/templates/keynote/SkillsMatrix";
 
 export default function SkillsMatrix() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function SkillsMatrix() {
     case "heist":        return <SkillsMatrixHeist />;
     case "chess":        return <SkillsMatrixChess />;
     case "tenet":        return <SkillsMatrixTenet />;
+    case "keynote":      return <SkillsMatrixKeynote />;
     case "folio":
     default:             return <SkillsMatrixFolio />;
   }

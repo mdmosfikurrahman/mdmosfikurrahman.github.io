@@ -8,6 +8,7 @@ import NotFoundInception from "@/templates/inception/NotFound";
 import NotFoundHeist from "@/templates/heist/NotFound";
 import NotFoundChess from "@/templates/chess/NotFound";
 import NotFoundTenet from "@/templates/tenet/NotFound";
+import NotFoundKeynote from "@/templates/keynote/NotFound";
 
 export default function NotFound() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function NotFound() {
     case "heist":        return <NotFoundHeist />;
     case "chess":        return <NotFoundChess />;
     case "tenet":        return <NotFoundTenet />;
+    case "keynote":      return <NotFoundKeynote />;
     case "folio":
     default:             return <NotFoundFolio />;
   }

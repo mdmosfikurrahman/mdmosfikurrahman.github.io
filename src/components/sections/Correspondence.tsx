@@ -8,6 +8,7 @@ import CorrespondenceInception from "@/templates/inception/Correspondence";
 import CorrespondenceHeist from "@/templates/heist/Correspondence";
 import CorrespondenceChess from "@/templates/chess/Correspondence";
 import CorrespondenceTenet from "@/templates/tenet/Correspondence";
+import CorrespondenceKeynote from "@/templates/keynote/Correspondence";
 
 export default function Correspondence() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function Correspondence() {
     case "heist":        return <CorrespondenceHeist />;
     case "chess":        return <CorrespondenceChess />;
     case "tenet":        return <CorrespondenceTenet />;
+    case "keynote":      return <CorrespondenceKeynote />;
     case "folio":
     default:             return <CorrespondenceFolio />;
   }

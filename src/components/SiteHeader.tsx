@@ -8,6 +8,7 @@ import SiteHeaderInception from "@/templates/inception/SiteHeader";
 import SiteHeaderHeist from "@/templates/heist/SiteHeader";
 import SiteHeaderChess from "@/templates/chess/SiteHeader";
 import SiteHeaderTenet from "@/templates/tenet/SiteHeader";
+import SiteHeaderKeynote from "@/templates/keynote/SiteHeader";
 
 export default function SiteHeader() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function SiteHeader() {
     case "heist":        return <SiteHeaderHeist />;
     case "chess":        return <SiteHeaderChess />;
     case "tenet":        return <SiteHeaderTenet />;
+    case "keynote":      return <SiteHeaderKeynote />;
     case "folio":
     default:             return <SiteHeaderFolio />;
   }

@@ -8,6 +8,7 @@ import NowSectionInception from "@/templates/inception/NowSection";
 import NowSectionHeist from "@/templates/heist/NowSection";
 import NowSectionChess from "@/templates/chess/NowSection";
 import NowSectionTenet from "@/templates/tenet/NowSection";
+import NowSectionKeynote from "@/templates/keynote/NowSection";
 
 export default function NowSection() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function NowSection() {
     case "heist":        return <NowSectionHeist />;
     case "chess":        return <NowSectionChess />;
     case "tenet":        return <NowSectionTenet />;
+    case "keynote":      return <NowSectionKeynote />;
     case "folio":
     default:             return <NowSectionFolio />;
   }

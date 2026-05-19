@@ -8,6 +8,7 @@ import SiteFooterInception from "@/templates/inception/SiteFooter";
 import SiteFooterHeist from "@/templates/heist/SiteFooter";
 import SiteFooterChess from "@/templates/chess/SiteFooter";
 import SiteFooterTenet from "@/templates/tenet/SiteFooter";
+import SiteFooterKeynote from "@/templates/keynote/SiteFooter";
 
 export default function SiteFooter() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function SiteFooter() {
     case "heist":        return <SiteFooterHeist />;
     case "chess":        return <SiteFooterChess />;
     case "tenet":        return <SiteFooterTenet />;
+    case "keynote":      return <SiteFooterKeynote />;
     case "folio":
     default:             return <SiteFooterFolio />;
   }

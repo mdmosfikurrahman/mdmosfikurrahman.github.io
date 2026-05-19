@@ -775,6 +775,33 @@ const PreviewSurveillance = (
   </div>
 );
 
+const PreviewKeynote = (
+  <div className="mt-4 rounded-[10px] overflow-hidden relative"
+       style={{ height: 132, background: "#ffffff", border: "1px solid #d9dce6" }}>
+    <span className="absolute top-3 left-4 text-[9px] uppercase tracking-[0.2em] flex items-center gap-2"
+          style={{ color: "#4338ca", fontFamily: "JetBrains Mono, monospace" }}>
+      <span className="inline-block w-5 h-[2px]" style={{ background: "#4338ca" }} />
+      01 · Title
+    </span>
+    <span className="absolute top-3 right-4 text-[8px] uppercase tracking-[0.2em]"
+          style={{ color: "#9aa0b0", fontFamily: "JetBrains Mono, monospace" }}>
+      Interview Deck
+    </span>
+    <div className="absolute left-4 right-4 top-10"
+         style={{
+           fontFamily: "Inter, system-ui, sans-serif",
+           fontSize: 26, fontWeight: 700, lineHeight: 0.98,
+           color: "#0d1024", letterSpacing: "-0.04em",
+         }}>
+      Md. Mosfikur Rahman
+    </div>
+    <span className="absolute bottom-3 left-4 text-[10px]"
+          style={{ color: "#5b6070", fontFamily: "Inter, sans-serif" }}>
+      Backend architect · scroll = next slide
+    </span>
+  </div>
+);
+
 const PREVIEWS: Record<TemplateId, ReactNode> = {
   folio:        PreviewFolio,
   broadsheet:   PreviewBroadsheet,
@@ -785,6 +812,7 @@ const PREVIEWS: Record<TemplateId, ReactNode> = {
   heist:        PreviewHeist,
   chess:        PreviewChess,
   tenet:        PreviewTenet,
+  keynote:      PreviewKeynote,
 };
 
 function Preview({ id }: { id: TemplateId }) {

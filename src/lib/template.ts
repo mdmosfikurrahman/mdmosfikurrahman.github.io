@@ -18,7 +18,8 @@ export type TemplateId =
   | "inception"
   | "heist"
   | "chess"
-  | "tenet";
+  | "tenet"
+  | "keynote";
 
 export type TemplateMeta = {
   id: TemplateId;
@@ -111,6 +112,15 @@ export const TEMPLATES: TemplateMeta[] = [
       "Cool blue ↔ warm red palindrome palette. Time-stamps shown both forward and reversed, mirrored section labels, occasional inverted ornaments. Restrained — not a gimmick.",
     era: "MMXXVI / VIII",
     family: "inversion · time",
+  },
+  {
+    id: "keynote",
+    name: "Keynote",
+    tagline: "presentation deck · interview-ready · full-bleed slides",
+    description:
+      "The portfolio as a talk. Each section is a full-viewport slide — oversized Inter display type, a faint stage grid, mono slide numbers, and presenter chrome. Built to be screen-shared in an interview instead of a slide deck: scroll = next slide.",
+    era: "MMXXVI / IX",
+    family: "deck · presentation",
   },
 ];
 

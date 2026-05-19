@@ -8,6 +8,7 @@ import ResearchStripInception from "@/templates/inception/ResearchStrip";
 import ResearchStripHeist from "@/templates/heist/ResearchStrip";
 import ResearchStripChess from "@/templates/chess/ResearchStrip";
 import ResearchStripTenet from "@/templates/tenet/ResearchStrip";
+import ResearchStripKeynote from "@/templates/keynote/ResearchStrip";
 
 export default function ResearchStrip() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function ResearchStrip() {
     case "heist":        return <ResearchStripHeist />;
     case "chess":        return <ResearchStripChess />;
     case "tenet":        return <ResearchStripTenet />;
+    case "keynote":      return <ResearchStripKeynote />;
     case "folio":
     default:             return <ResearchStripFolio />;
   }

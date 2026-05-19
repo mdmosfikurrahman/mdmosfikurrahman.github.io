@@ -8,6 +8,7 @@ import SiteWatermarkInception from "@/templates/inception/SiteWatermark";
 import SiteWatermarkHeist from "@/templates/heist/SiteWatermark";
 import SiteWatermarkChess from "@/templates/chess/SiteWatermark";
 import SiteWatermarkTenet from "@/templates/tenet/SiteWatermark";
+import SiteWatermarkKeynote from "@/templates/keynote/SiteWatermark";
 
 export default function SiteWatermark() {
   const { template } = useTemplate();
@@ -20,6 +21,7 @@ export default function SiteWatermark() {
     case "heist":        return <SiteWatermarkHeist />;
     case "chess":        return <SiteWatermarkChess />;
     case "tenet":        return <SiteWatermarkTenet />;
+    case "keynote":      return <SiteWatermarkKeynote />;
     case "folio":
     default:             return <SiteWatermarkFolio />;
   }
