@@ -10,6 +10,7 @@ import {
 import {
   profile, figures, roles, projects,
   publications, doiUrl, formatAuthors, reviewerFor, skillGroups,
+  education, distinctions, talksAndService, certifications,
   type Publication,
 } from "@/lib/content";
 
@@ -416,19 +417,152 @@ function ContactSlide() {
         <p className="mt-5 text-[13.5px]" style={{ color: "hsl(var(--muted))" }}>
           {profile.location} · {profile.phone}
         </p>
-        <div className="mt-6 flex flex-wrap items-baseline gap-x-5 gap-y-1">
-          <p className="mg-label">Reviewer for</p>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-[12.5px]" style={{ color: "hsl(var(--ink-soft))" }}>
-            {reviewerFor.slice(0, 4).map((r) => (
-              <li key={r} className="before:content-['·'] before:mr-3 before:text-[hsl(var(--accent))] first:before:hidden">{r}</li>
-            ))}
-          </ul>
-        </div>
       </div>
       <div className="col-span-12 lg:col-span-5 min-w-0 kn-card p-6">
         <p className="mg-label mb-1">Channels</p>
         <ul>{contacts.map((c) => <ContactRow key={c.label} c={c} />)}</ul>
       </div>
+    </div>
+  );
+}
+
+/* ── Education ──────────────────────────────────────────────────────── */
+function EducationSlide() {
+  return (
+    <div>
+      <p className="sig">Education</p>
+      <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
+          style={{ color: "hsl(var(--ink))" }}>
+        Where I <span className="kn-mark">studied.</span>
+      </h2>
+      <ol className="mt-8 grid sm:grid-cols-2 gap-4">
+        {education.map((e) => (
+          <li key={e.school + e.degree} className="kn-card p-5">
+            <div className="flex items-center justify-between gap-3">
+              <span className="font-mono text-[11.5px] font-semibold tabular-nums" style={{ color: "hsl(var(--accent))" }}>
+                {e.from.slice(0, 4)} – {e.to.slice(0, 4)}
+              </span>
+              {e.note && <span className="kn-pill px-2.5 py-0.5 text-[11px]">{e.note}</span>}
+            </div>
+            <h3 className="mt-2 font-display text-[clamp(1.05rem,1.7vw,1.3rem)] tracking-[-0.02em]"
+                style={{ color: "hsl(var(--ink))" }}>
+              {e.degree}
+            </h3>
+            <p className="mt-1 text-[13px]" style={{ color: "hsl(var(--ink-soft))" }}>
+              {e.url ? (
+                <a className="a" href={e.url} target="_blank" rel="noreferrer">{e.school}</a>
+              ) : e.school}
+              {e.place ? ` · ${e.place}` : ""}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/* ── Certifications ─────────────────────────────────────────────────── */
+function CertificationsSlide() {
+  const totalCerts = certifications.reduce((n, g) => n + g.items.length, 0);
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="sig">Certifications</p>
+        <span className="kn-pill px-3 py-1 text-[12px] font-semibold">{totalCerts} completed</span>
+      </div>
+      <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
+          style={{ color: "hsl(var(--ink))" }}>
+        Continuous <span className="kn-mark">learning.</span>
+      </h2>
+      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {certifications.map((g, gi) => (
+          <div key={gi} className="kn-card p-5">
+            <p className="font-mono text-[12px] font-bold uppercase tracking-[0.14em]" style={{ color: "hsl(var(--accent))" }}>
+              {g.group}
+            </p>
+            <p className="mt-0.5 text-[12px]" style={{ color: "hsl(var(--muted))" }}>{g.issuer}</p>
+            <ul className="mt-3 space-y-1.5">
+              {g.items.map((it) => (
+                <li key={it} className="flex gap-2 text-[12.5px] leading-[1.4]" style={{ color: "hsl(var(--ink-soft))" }}>
+                  <span style={{ color: "hsl(var(--accent))" }}>·</span>{it}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Peer review & recognition ──────────────────────────────────────── */
+function ReviewSlide() {
+  return (
+    <div>
+      <p className="sig">Service &amp; recognition</p>
+      <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
+          style={{ color: "hsl(var(--ink))" }}>
+        Peer review &amp; <span className="kn-mark">recognition.</span>
+      </h2>
+      <div className="mt-8 grid lg:grid-cols-2 gap-5">
+        <div className="kn-card p-6">
+          <p className="mg-label" style={{ color: "hsl(var(--accent))" }}>Reviewer for</p>
+          <ul className="mt-3 space-y-2.5">
+            {reviewerFor.map((r) => (
+              <li key={r} className="flex gap-3 text-[14px] leading-[1.45]" style={{ color: "hsl(var(--ink-soft))" }}>
+                <span className="font-mono text-[12px] pt-[2px]" style={{ color: "hsl(var(--accent))" }}>▹</span>
+                {r}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="kn-card p-6">
+          <p className="mg-label" style={{ color: "hsl(var(--accent))" }}>Recognition</p>
+          <ul className="mt-3 space-y-4">
+            {distinctions.map((d) => (
+              <li key={d.headline}>
+                <div className="flex items-baseline gap-3">
+                  <span className="font-mono text-[12px] font-semibold tabular-nums" style={{ color: "hsl(var(--accent))" }}>
+                    {d.year}
+                  </span>
+                  <span className="font-display text-[15px] tracking-[-0.02em]" style={{ color: "hsl(var(--ink))" }}>
+                    {d.headline}
+                  </span>
+                </div>
+                <p className="mt-0.5 ml-[2.7rem] text-[12.5px]" style={{ color: "hsl(var(--muted))" }}>
+                  {d.issuer}{d.detail ? ` — ${d.detail}` : ""}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Leadership & activities ────────────────────────────────────────── */
+function ActivitiesSlide() {
+  return (
+    <div>
+      <p className="sig">Beyond the work</p>
+      <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
+          style={{ color: "hsl(var(--ink))" }}>
+        Leadership &amp; <span className="kn-mark">activities.</span>
+      </h2>
+      <ol className="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-3">
+        {talksAndService.map((t, i) => (
+          <li key={i} className="flex gap-4 py-2.5 border-b rule-soft">
+            <span className="font-mono text-[12px] font-semibold tabular-nums pt-0.5 shrink-0" style={{ color: "hsl(var(--accent))" }}>
+              {t.year}
+            </span>
+            <div className="min-w-0">
+              <span className="kn-pill px-2.5 py-0.5 text-[11px] font-semibold">{t.kind}</span>
+              <p className="mt-1.5 text-[13.5px] leading-[1.45]" style={{ color: "hsl(var(--ink-soft))" }}>{t.title}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
@@ -451,6 +585,8 @@ export const SLIDES: DeckSlide[] = [
   { label: "Title", render: () => <TitleSlide /> },
   { label: "Now", render: () => <NowSlide /> },
   { label: "Toolbox", render: () => <SkillsSlide /> },
+  { label: "Education", render: () => <EducationSlide /> },
+  { label: "Certifications", render: () => <CertificationsSlide /> },
   {
     label: "Research",
     render: () => <Divider kicker="Section" title="Research"
@@ -461,5 +597,7 @@ export const SLIDES: DeckSlide[] = [
     render: () => <PaperDossier p={p} i={i} total={orderedPubs.length} />,
   })),
   { label: "Selected work", render: () => <WorkSlide /> },
+  { label: "Peer review & recognition", render: () => <ReviewSlide /> },
+  { label: "Leadership & activities", render: () => <ActivitiesSlide /> },
   { label: "Contact", render: () => <ContactSlide /> },
 ];
