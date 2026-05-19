@@ -173,14 +173,32 @@ export default function KeynoteDeck() {
           <ChevronLeft size={16} strokeWidth={2.2} /> <span className="hidden sm:inline">Prev</span>
         </button>
 
-        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-[46vw] px-2">
+        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-[46vw] px-2 py-1">
           {SLIDES.map((s, i) => (
-            <button key={i} onClick={() => go(i, i > index ? 1 : -1)} aria-label={`Go to ${s.label}`} title={s.label}
-                    className="shrink-0 rounded-full transition-all"
+            <span key={i} className="relative shrink-0 group grid place-items-center h-4">
+              <span aria-hidden
+                    className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2
+                               whitespace-nowrap rounded-md px-2 py-1 text-[10.5px] font-medium
+                               opacity-0 translate-y-1 transition-all duration-150
+                               group-hover:opacity-100 group-hover:translate-y-0"
                     style={{
-                      width: i === index ? 22 : 7, height: 7,
-                      background: i === index ? "hsl(var(--accent))" : "hsl(var(--rule))",
-                    }} />
+                      background: "hsl(var(--paper-glass))",
+                      border: "1px solid hsl(var(--rule))",
+                      color: "hsl(var(--ink))",
+                      boxShadow: "0 8px 24px -12px hsl(var(--ink) / 0.4)",
+                    }}>
+                <b className="font-mono mr-1.5" style={{ color: "hsl(var(--accent))" }}>
+                  {String(i + 1).padStart(2, "0")}
+                </b>
+                {s.label}
+              </span>
+              <button onClick={() => go(i, i > index ? 1 : -1)} aria-label={`Go to ${s.label}`} title={s.label}
+                      className="rounded-full transition-all"
+                      style={{
+                        width: i === index ? 22 : 7, height: 7,
+                        background: i === index ? "hsl(var(--accent))" : "hsl(var(--rule))",
+                      }} />
+            </span>
           ))}
         </div>
 

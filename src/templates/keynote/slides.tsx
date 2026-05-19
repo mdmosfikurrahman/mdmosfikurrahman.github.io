@@ -60,7 +60,7 @@ function TitleSlide() {
       <span className="kn-orb" aria-hidden
             style={{ width: 280, height: 280, bottom: "-14%", right: "4%", animationDelay: "-5s" }} />
 
-      <div className="relative z-10 grid grid-cols-12 gap-x-12 gap-y-6 items-center">
+      <div className="relative z-10 grid grid-cols-12 gap-x-14 gap-y-9 items-center">
         <div className="col-span-12 lg:col-span-7">
           <motion.p custom={0} variants={rise} initial="hidden" animate="show"
              className="flex flex-wrap items-center gap-2.5 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em]"
@@ -74,25 +74,25 @@ function TitleSlide() {
           </motion.p>
 
           <motion.h1 custom={1} variants={rise} initial="hidden" animate="show"
-              className="mt-3 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
-                         text-[clamp(1.4rem,4.4vw,3rem)]"
+              className="mt-5 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
+                         text-[clamp(1.9rem,5.4vw,4rem)]"
               style={{ color: "hsl(var(--ink))" }}>
             Md. <span className="kn-mark-live">Mosfik</span>ur Rahman
           </motion.h1>
 
-          <motion.div className="kn-bar mt-3 w-24"
+          <motion.div className="kn-bar mt-4 w-28"
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }} />
 
           <motion.p custom={2} variants={rise} initial="hidden" animate="show"
-             className="mt-3.5 max-w-[48ch] text-[clamp(0.95rem,1.2vw,1.15rem)] leading-[1.45]"
+             className="mt-5 max-w-[50ch] text-[clamp(1.05rem,1.45vw,1.35rem)] leading-[1.5]"
              style={{ color: "hsl(var(--ink-soft))" }}>
             {profile.tagline}
           </motion.p>
 
           <motion.ul custom={3} variants={rise} initial="hidden" animate="show"
-              className="mt-5 flex items-center gap-2 flex-wrap">
+              className="mt-7 flex items-center gap-2 flex-wrap">
             {channels.map(({ Icon, href, label, ext }) => (
               <li key={label}>
                 <a href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
@@ -106,7 +106,7 @@ function TitleSlide() {
 
         <motion.aside custom={2} variants={rise} initial="hidden" animate="show"
             className="col-span-12 lg:col-span-5">
-          <figure className="relative mx-auto lg:ml-auto w-[150px] sm:w-[190px]">
+          <figure className="relative mx-auto lg:ml-auto w-[190px] sm:w-[240px]">
             <motion.div className="absolute -inset-4 rounded-[2rem] blur-2xl"
                  style={{ background: "radial-gradient(closest-side, hsl(var(--accent) / 0.32), transparent)" }}
                  animate={{ scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }}
@@ -124,20 +124,69 @@ function TitleSlide() {
         </motion.aside>
       </div>
 
-      <div className="relative z-10 mt-6 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
+      <div className="relative z-10 mt-8 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
            style={{ border: "1px solid hsl(var(--rule))" }}>
         {figures.map((f, i) => (
           <motion.div key={f.k} custom={i} variants={pop} initial="hidden" animate="show"
-               className="flex-1 min-w-[130px] px-5 py-3"
+               className="flex-1 min-w-[140px] px-6 py-4"
                style={{ borderLeft: i === 0 ? "none" : "1px solid hsl(var(--rule))" }}>
-            <div className="font-display text-[clamp(1.35rem,2.2vw,1.85rem)] tracking-[-0.04em] tabular-nums"
+            <div className="font-display text-[clamp(1.5rem,2.6vw,2.2rem)] tracking-[-0.04em] tabular-nums"
                  style={{ color: "hsl(var(--ink))" }}>{f.v}</div>
-            <div className="mt-0.5 text-[11.5px] font-semibold" style={{ color: "hsl(var(--accent))" }}>{f.k}</div>
-            <p className="text-[11px]" style={{ color: "hsl(var(--muted))" }}>{f.note}</p>
+            <div className="mt-0.5 text-[12px] font-semibold" style={{ color: "hsl(var(--accent))" }}>{f.k}</div>
+            <p className="text-[11.5px]" style={{ color: "hsl(var(--muted))" }}>{f.note}</p>
           </motion.div>
         ))}
       </div>
 
+    </div>
+  );
+}
+
+/* ── Earlier experience ─────────────────────────────────────────────── */
+function ExperienceSlide() {
+  const earlier = roles.slice(1); // previous roles (current is the "Now" slide)
+  return (
+    <div>
+      <p className="sig">Earlier experience</p>
+      <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
+          style={{ color: "hsl(var(--ink))" }}>
+        Where I <span className="kn-mark">shipped before.</span>
+      </h2>
+      <div className="mt-7 grid lg:grid-cols-2 gap-5">
+        {earlier.map((r) => (
+          <div key={r.company} className="kn-card p-6">
+            <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+              <div>
+                <h3 className="font-display text-[clamp(1.25rem,2.2vw,1.7rem)] tracking-[-0.03em]"
+                    style={{ color: "hsl(var(--ink))" }}>
+                  <a className="a" href={r.companyUrl} target="_blank" rel="noreferrer">{r.company}</a>
+                </h3>
+                <p className="mt-1 text-[13px]" style={{ color: "hsl(var(--muted))" }}>{r.title} · {r.place}</p>
+              </div>
+              <span className="kn-pill px-3 py-1 text-[12px] font-medium tabular-nums shrink-0">
+                {fmt(r.from)} – {fmt(r.to)}
+              </span>
+            </div>
+            <p className="mt-4 text-[13.5px] leading-[1.55]" style={{ color: "hsl(var(--ink-soft))" }}>
+              {r.summary}
+            </p>
+            <ul className="mt-4 space-y-2">
+              {r.bullets.slice(0, 3).map((b, i) => (
+                <li key={i} className="flex gap-3 text-[13px] leading-[1.45]">
+                  <span className="font-mono text-[11px] pt-[2px] shrink-0 font-semibold tabular-nums"
+                        style={{ color: "hsl(var(--accent))" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span style={{ color: "hsl(var(--ink-soft))" }}>{b}</span>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-4 pt-3.5 flex flex-wrap gap-2 border-t rule-soft">
+              {r.stack.map((s) => <li key={s} className="kn-pill px-2.5 py-1 text-[11.5px]">{s}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -723,6 +772,7 @@ export const SLIDES: DeckSlide[] = [
   { label: "Title", render: () => <TitleSlide /> },
   { label: "Education", render: () => <EducationSlide /> },
   { label: "Now", render: () => <NowSlide /> },
+  { label: "Earlier experience", render: () => <ExperienceSlide /> },
   {
     label: "Research",
     render: () => <Divider kicker="Section" title="Research"
