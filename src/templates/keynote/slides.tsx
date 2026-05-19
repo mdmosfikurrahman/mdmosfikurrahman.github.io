@@ -11,7 +11,7 @@ import {
 import {
   profile, figures, roles, projects,
   publications, doiUrl, formatAuthors, reviewerFor, skillGroups,
-  education, distinctions, talksAndService, certifications,
+  education, distinctions, talksAndService, verifiedBadges,
   type Publication,
 } from "@/lib/content";
 
@@ -502,32 +502,42 @@ function EducationSlide() {
 
 /* ── Certifications ─────────────────────────────────────────────────── */
 function CertificationsSlide() {
-  const totalCerts = certifications.reduce((n, g) => n + g.items.length, 0);
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="sig">Certifications</p>
-        <span className="kn-pill px-3 py-1 text-[12px] font-semibold">{totalCerts} completed</span>
+        <span className="kn-pill px-3 py-1 text-[12px] font-semibold">Credly · verifiable</span>
       </div>
       <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
           style={{ color: "hsl(var(--ink))" }}>
-        Continuous <span className="kn-mark">learning.</span>
+        Verified <span className="kn-mark">credentials.</span>
       </h2>
-      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {certifications.map((g, gi) => (
-          <div key={gi} className="kn-card p-6 flex items-center justify-between gap-4">
-            <div>
-              <p className="font-display text-[clamp(1.1rem,1.8vw,1.4rem)] tracking-[-0.02em]"
-                 style={{ color: "hsl(var(--ink))" }}>
-                {g.group}
-              </p>
-              <p className="mt-1 text-[12.5px]" style={{ color: "hsl(var(--muted))" }}>{g.issuer}</p>
+      <div className="mt-8 grid sm:grid-cols-2 gap-5">
+        {verifiedBadges.map((b) => (
+          <a key={b.title} href={b.url} target="_blank" rel="noreferrer"
+             className="kn-card group p-6 flex flex-col">
+            <div className="flex items-center justify-between gap-3">
+              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em]"
+                    style={{ color: "hsl(var(--accent))" }}>
+                {b.authorizedBy} · {b.issuer}
+              </span>
+              <span className="kn-pill px-2.5 py-0.5 text-[10.5px] font-semibold">{b.level}</span>
             </div>
-            <span className="font-display text-[clamp(1.5rem,3vw,2.25rem)] tabular-nums shrink-0"
+            <h3 className="mt-3 font-display text-[clamp(1.15rem,2vw,1.55rem)] tracking-[-0.02em] flex items-start gap-2"
+                style={{ color: "hsl(var(--ink))" }}>
+              {b.title}
+              <ArrowUpRight size={17} strokeWidth={2}
+                            className="mt-1 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity"
+                            style={{ color: "hsl(var(--accent))" }} />
+            </h3>
+            <p className="mt-2.5 text-[13px] leading-[1.55] flex-1" style={{ color: "hsl(var(--ink-soft))" }}>
+              {b.blurb}
+            </p>
+            <span className="mt-4 inline-flex items-center gap-1.5 text-[12px] font-semibold"
                   style={{ color: "hsl(var(--accent))" }}>
-              {g.items.length}
+              Verify on Credly <ArrowUpRight size={13} strokeWidth={2.2} />
             </span>
-          </div>
+          </a>
         ))}
       </div>
     </div>

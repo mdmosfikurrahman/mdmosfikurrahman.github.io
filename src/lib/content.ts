@@ -717,6 +717,46 @@ export const certifications = [
   },
 ];
 
+// Verifiable, credential-backed badges (Credly). Curated headline set.
+export const verifiedBadges = [
+  {
+    title: "Data Science Professional Certificate",
+    issuer: "Coursera",
+    authorizedBy: "IBM",
+    level: "Professional",
+    blurb:
+      "End-to-end data science: the DS methodology, Jupyter, Python apps, SQL, Pandas, visualisation, and building/evaluating ML models with scikit-learn & SciPy.",
+    url: "https://www.credly.com/badges/daf46bed-e3e1-42d6-9fb4-8d0ab2fd825b/public_url",
+  },
+  {
+    title: "Applied Data Science Specialization",
+    issuer: "Coursera",
+    authorizedBy: "IBM",
+    level: "Intermediate",
+    blurb:
+      "Practical skills for real-world data science: Python for DS apps, plus data visualisation with Matplotlib and Seaborn.",
+    url: "https://www.credly.com/badges/7c97e2b4-b2ec-4413-a39d-31a0f2d3a869/public_url",
+  },
+  {
+    title: "Applied Data Science Capstone",
+    issuer: "Coursera",
+    authorizedBy: "IBM",
+    level: "Intermediate",
+    blurb:
+      "Defining a location-data problem, calling APIs, solving it with ML, and delivering a full formal data-science project report.",
+    url: "https://www.credly.com/badges/68834eaf-abfd-416b-b53d-a21c42385cc3/public_url",
+  },
+  {
+    title: "Data Science Foundations",
+    issuer: "Coursera",
+    authorizedBy: "IBM",
+    level: "Foundational",
+    blurb:
+      "Foundations of data science: the role and tasks, Jupyter tooling, the DS problem-solving methodology, and SQL on relational databases.",
+    url: "https://www.credly.com/badges/b8f09d7b-27db-4f31-b738-b27b84a7ebf3/public_url",
+  },
+];
+
 // Top-line recognitions used on /about. Curated, not exhaustive.
 export type Distinction = {
   year: number;
