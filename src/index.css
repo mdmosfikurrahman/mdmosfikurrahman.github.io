@@ -651,9 +651,9 @@
     --rule:         240 13% 89%;
     --rule-soft:    240 16% 94%;
 
-    --accent:       222 83% 53%;   /* light mode = clear blue */
-    --accent-deep:  222 80% 43%;
-    --accent-wash:  222 90% 96%;
+    --accent:       252 72% 56%;   /* refined indigo-violet */
+    --accent-deep:  252 68% 46%;
+    --accent-wash:  250 86% 97%;
 
     --signal-pos:   158 62% 38%;
     --signal-warn:  32 86% 48%;
@@ -674,9 +674,9 @@
     --rule:         240 14% 18%;
     --rule-soft:    240 16% 13%;
 
-    --accent:       4 86% 64%;     /* dark mode = reddish on black */
-    --accent-deep:  4 80% 56%;
-    --accent-wash:  6 55% 18%;
+    --accent:       252 96% 78%;
+    --accent-deep:  252 90% 70%;
+    --accent-wash:  250 44% 16%;
 
     --signal-pos:   158 64% 52%;
     --signal-warn:  34 92% 60%;
@@ -770,9 +770,9 @@
   /* Headline accent — the one word that carries the slide */
   .template-keynote .kn-mark {
     background: linear-gradient(100deg,
-      hsl(var(--accent)) 0%, hsl(var(--accent-deep)) 50%,
-      hsl(var(--accent)) 100%);
-    background-size: 220% 100%;
+      hsl(var(--accent)) 0%, hsl(var(--accent-deep)) 35%,
+      hsl(var(--ink)) 55%, hsl(var(--accent)) 80%, hsl(var(--accent-deep)) 100%);
+    background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -886,9 +886,9 @@
 }
 .template-keynote .kn-mark-live {
   background: linear-gradient(100deg,
-    hsl(var(--accent)) 0%, hsl(var(--accent-deep)) 50%,
-    hsl(var(--accent)) 100%);
-  background-size: 220% 100%;
+    hsl(var(--accent)) 0%, hsl(var(--accent-deep)) 35%,
+    hsl(var(--ink)) 55%, hsl(var(--accent)) 80%, hsl(var(--accent-deep)) 100%);
+  background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
