@@ -92,7 +92,7 @@ export default function About() {
                 <p className="mt-3 font-serif-body text-[1.125rem] leading-[1.6] text-ink-soft max-w-prose">
                   Dhaka-based backend architect. Ten peer-reviewed papers and an IEEE Best
                   Paper Award along the way, with current work on a configurable OTA
-                  platform at Akij iBOS.
+                  platform at iBOS.
                 </p>
 
                 <dl className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 max-w-xl">
@@ -175,7 +175,7 @@ export default function About() {
             At REVE Systems (2023–24), I shipped production modules on the national NBR
             Customs Bond Management System: a full-stack engagement across Spring Boot,
             React, and Oracle, with a ~25% throughput lift earned through query tuning and
-            OAuth2 hardening. Since November 2024 at Akij iBOS, the work has been backend
+            OAuth2 hardening. Since November 2024 at iBOS, the work has been backend
             architecture and system design for an OTA platform: scalable, configurable,
             rule-driven services across Java, .NET, and Node. Service-boundary-first work.
             Details under wraps until launch.

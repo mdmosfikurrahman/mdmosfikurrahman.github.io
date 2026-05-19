@@ -5,12 +5,12 @@
 import { useState } from "react";
 import {
   Github, Linkedin, Mail, GraduationCap, FileText, Award,
-  Copy, Check, ArrowUpRight, type LucideIcon,
+  Copy, Check, ArrowUpRight, ChevronDown, type LucideIcon,
 } from "lucide-react";
 import {
   profile, preamble, figures, roles, projects,
   publications, doiUrl, formatAuthors, reviewerFor, skillGroups,
-  type Project, type Publication,
+  type Publication,
 } from "@/lib/content";
 
 const avatar = "/profile-avatar.png";
@@ -171,39 +171,77 @@ function Divider({ kicker, title, sub }: { kicker: string; title: string; sub: s
 }
 
 /* ── Project dossier ────────────────────────────────────────────────── */
-function ProjectDossier({ p, i, total }: { p: Project; i: number; total: number }) {
+function WorkSlide() {
+  const [open, setOpen] = useState(projects.findIndex((p) => p.flagship) >= 0
+    ? projects.findIndex((p) => p.flagship) : 0);
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <p className="sig">Project · {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
-        <div className="flex items-center gap-2">
-          {p.flagship && (
-            <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full"
-                  style={{ background: "hsl(var(--accent-wash))", color: "hsl(var(--accent-deep))" }}>Flagship</span>
-          )}
-          <span className="kn-pill px-3 py-1 text-[12px] tabular-nums">{p.year}</span>
-        </div>
-      </div>
-      <h2 className="mt-6 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.9rem,4.4vw,3.5rem)] flex items-start gap-3"
+      <p className="sig">Selected work</p>
+      <h2 className="mt-5 font-display leading-[1.0] tracking-[-0.04em] text-[clamp(1.8rem,4vw,3.25rem)]"
           style={{ color: "hsl(var(--ink))" }}>
-        <span className="kn-mark">{p.name}</span>
-        {p.href && (
-          <a href={p.href} target="_blank" rel="noreferrer" aria-label="Open project">
-            <ArrowUpRight size={26} strokeWidth={2.2} className="mt-1.5 opacity-50 hover:opacity-100 transition-opacity"
-                          style={{ color: "hsl(var(--accent))" }} />
-          </a>
-        )}
+        Systems I&apos;d put <span className="kn-mark">on the cover.</span>
       </h2>
-      <p className="mt-3 text-[14.5px]" style={{ color: "hsl(var(--muted))" }}>{p.at} · {p.role}</p>
-      <div className="mt-7 kn-card p-7 md:p-9">
-        <p className="text-[clamp(1.05rem,1.5vw,1.35rem)] leading-[1.65] text-pretty"
-           style={{ color: "hsl(var(--ink-soft))" }}>
-          {p.blurb}
-        </p>
-        <ul className="mt-7 pt-6 flex flex-wrap gap-2 border-t rule-soft">
-          {p.tags.map((t) => <li key={t} className="kn-pill px-3 py-1 text-[12.5px]">{t}</li>)}
-        </ul>
-      </div>
+
+      <ul className="mt-7 flex flex-col gap-3">
+        {projects.map((p, i) => {
+          const isOpen = open === i;
+          return (
+            <li key={p.name} className="kn-card overflow-hidden">
+              <button type="button" onClick={() => setOpen(isOpen ? -1 : i)}
+                      className="w-full flex items-center gap-4 px-5 py-4 text-left"
+                      aria-expanded={isOpen}>
+                <span className="font-mono text-[13px] font-bold tabular-nums shrink-0"
+                      style={{ color: "hsl(var(--accent))" }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="font-display text-[clamp(1.1rem,2vw,1.5rem)] tracking-[-0.03em]"
+                        style={{ color: "hsl(var(--ink))" }}>
+                    {p.name}
+                  </span>
+                  <span className="block text-[12.5px] mt-0.5 truncate" style={{ color: "hsl(var(--muted))" }}>
+                    {p.at} · {p.role}
+                  </span>
+                </span>
+                {p.flagship && (
+                  <span className="hidden sm:inline px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full shrink-0"
+                        style={{ background: "hsl(var(--accent-wash))", color: "hsl(var(--accent-deep))" }}>
+                    Flagship
+                  </span>
+                )}
+                <span className="text-[12.5px] tabular-nums shrink-0" style={{ color: "hsl(var(--muted))" }}>
+                  {p.year}
+                </span>
+                <ChevronDown size={18} strokeWidth={2}
+                             className="shrink-0 transition-transform duration-300"
+                             style={{ color: "hsl(var(--accent))", transform: isOpen ? "rotate(180deg)" : "none" }} />
+              </button>
+
+              <div className="grid transition-[grid-template-rows] duration-300 ease-out"
+                   style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
+                <div className="overflow-hidden">
+                  <div className="px-5 pb-5 pt-1 border-t rule-soft">
+                    <p className="mt-3 text-[clamp(0.97rem,1.3vw,1.15rem)] leading-[1.6] text-pretty"
+                       style={{ color: "hsl(var(--ink-soft))" }}>
+                      {p.blurb}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      {p.tags.map((t) => <span key={t} className="kn-pill px-3 py-1 text-[12px]">{t}</span>)}
+                      {p.href && (
+                        <a href={p.href} target="_blank" rel="noreferrer"
+                           className="ml-auto inline-flex items-center gap-1 text-[12.5px] font-semibold"
+                           style={{ color: "hsl(var(--accent))" }}>
+                          Visit <ArrowUpRight size={13} strokeWidth={2.2} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
@@ -382,14 +420,6 @@ export const SLIDES: DeckSlide[] = [
     label: `Paper · ${p.year}`,
     render: () => <PaperDossier p={p} i={i} total={orderedPubs.length} />,
   })),
-  {
-    label: "Selected work",
-    render: () => <Divider kicker="Section" title="Selected work"
-      sub={`${projects.length} systems shipped — national, global, product.`} />,
-  },
-  ...projects.map((p, i): DeckSlide => ({
-    label: `Work · ${p.name}`,
-    render: () => <ProjectDossier p={p} i={i} total={projects.length} />,
-  })),
+  { label: "Selected work", render: () => <WorkSlide /> },
   { label: "Contact", render: () => <ContactSlide /> },
 ];

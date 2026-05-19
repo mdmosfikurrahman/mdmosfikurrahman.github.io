@@ -17,7 +17,7 @@ export const profile = {
   name: "Md. Mosfikur Rahman",
   shortName: "Mosfikur",
   role: "Backend architect · Dhaka",
-  roleLong: "Engineer II, Akij iBOS Ltd.",
+  roleLong: "Engineer II, iBOS Ltd.",
   tagline:
     "Designing the quiet half of software: services, schemas, and workflows, based in Dhaka.",
   location: "Dhaka, Bangladesh",
@@ -46,19 +46,19 @@ export type Role = {
 
 export const roles: Role[] = [
   {
-    company: "Akij iBOS Ltd.",
+    company: "iBOS Ltd.",
     companyUrl: "https://ibos.io/",
     title: "Engineer II · Backend architecture",
     from: "2024-11",
     to: "present",
     place: "Dhaka, BD",
     summary:
-      "Working on backend architecture and system design for an OTA platform: scalable, configurable, rule-driven systems, with hands-on work across Java, .NET, and Node, Docker, and deployment.",
+      "Backend architect for an OTA platform at iBOS Ltd. — a sister concern of Akij Resource Ltd. — that I designed and built, now serving 10k+ daily users. Scalable, configurable, rule-driven systems across Java, .NET, and Node, with hands-on Docker and deployment.",
     bullets: [
-      "Backend architecture and system design for an OTA platform, focused on scalable and configurable services.",
-      "Designing rule-driven logic, supplier integration flows, and microservice-based workflows.",
+      "Designed and built the backend architecture for a production OTA platform serving 10k+ daily users.",
+      "Owned system design: rule-driven logic, supplier-integration flows, and microservice-based workflows.",
       "Working across multiple stacks (.NET and Java), with hands-on Docker and deployment experience.",
-      "Shaping service boundaries and domain models to keep the estate maintainable as it grows.",
+      "Shaping service boundaries and domain models to keep the estate maintainable as it scales.",
     ],
     stack: ["Java", "Spring Boot", ".NET", "Node.js", "Drools", "gRPC", "Docker", "Kubernetes"],
   },
@@ -113,11 +113,11 @@ export type Project = {
 export const projects: Project[] = [
   {
     name: "OTA Platform · Backend",
-    at: "Akij iBOS Ltd. · unreleased",
+    at: "iBOS Ltd. (Akij Resource sister concern)",
     year: "2024–",
     role: "Backend architecture & system design",
     blurb:
-      "An online travel platform under active development. Backend architecture built around supplier integration, rule-driven pricing logic, and configurable microservice workflows. The system is designed configuration-first, so product changes rarely mean code changes. Details under wraps until launch.",
+      "A production online-travel platform I designed and built, now serving 10k+ daily users. Backend architecture around supplier integration, rule-driven pricing logic, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes.",
     tags: ["architecture", "microservices", "rule engine", "OTA"],
     flagship: true,
   },
@@ -741,7 +741,7 @@ export const stats = {
 export const preamble: string[] = [
   "I design the quiet half of software: the services, schemas, and workflows that hold a product together once traffic shows up. Paid work on backends in Java and .NET, published work in applied ML and systems.",
   `${capitalize(word(stats.years))} years shipping production systems across ${word(stats.companies)} companies, and ${word(stats.publications)} peer-reviewed papers along the way, ${word(stats.firstAuthor)} as first author.`,
-  "Currently shaping backend architecture at Akij iBOS: configurable systems, rule-driven logic, and microservice workflows across Java, .NET, and Node. Earlier, national-scale compliance software for the NBR, and backend services for Rakuten in Japan.",
+  "Currently shaping backend architecture at iBOS: configurable systems, rule-driven logic, and microservice workflows across Java, .NET, and Node. Earlier, national-scale compliance software for the NBR, and backend services for Rakuten in Japan.",
 ];
 
 export const figures = [

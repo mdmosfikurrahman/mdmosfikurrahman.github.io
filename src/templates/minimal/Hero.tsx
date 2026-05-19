@@ -83,7 +83,7 @@ export default function Hero() {
               <figcaption className="mt-3 text-[13px]"
                           style={{ color: "hsl(var(--muted))" }}>
                 Md. Mosfikur Rahman <br />
-                Engineer II · Akij iBOS
+                Engineer II · iBOS
               </figcaption>
             </figure>
 
