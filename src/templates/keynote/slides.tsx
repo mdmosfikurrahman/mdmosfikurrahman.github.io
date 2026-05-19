@@ -3,6 +3,7 @@
 // publications are the focus: every project and every paper is its own
 // dossier slide. Single data source stays @/lib/content.
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Github, Linkedin, Mail, GraduationCap, FileText, Award,
   Copy, Check, ArrowUpRight, ChevronDown, Download, Maximize2,
@@ -33,12 +34,27 @@ const channels: { Icon: LucideIcon; href: string; label: string; ext?: boolean }
   { Icon: FileText, href: profile.cvUrl, label: "CV", ext: true },
 ];
 
+const rise = {
+  hidden: { opacity: 0, y: 22 },
+  show: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const, delay: 0.08 + i * 0.09 },
+  }),
+};
+
 function TitleSlide() {
   return (
-    <div>
-      <div className="grid grid-cols-12 gap-x-16 gap-y-12 items-center">
+    <div className="relative">
+      {/* drifting accent orbs — motion behind the cover */}
+      <span className="kn-orb" aria-hidden
+            style={{ width: 340, height: 340, top: "-12%", left: "-8%" }} />
+      <span className="kn-orb" aria-hidden
+            style={{ width: 280, height: 280, bottom: "-14%", right: "4%", animationDelay: "-5s" }} />
+
+      <div className="relative grid grid-cols-12 gap-x-16 gap-y-12 items-center">
         <div className="col-span-12 lg:col-span-7">
-          <p className="flex flex-wrap items-center gap-2.5 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em]"
+          <motion.p custom={0} variants={rise} initial="hidden" animate="show"
+             className="flex flex-wrap items-center gap-2.5 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em]"
              style={{ color: "hsl(var(--muted))" }}>
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
@@ -46,20 +62,23 @@ function TitleSlide() {
               <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "hsl(var(--accent))" }} />
             </span>
             {profile.role}
-          </p>
+          </motion.p>
 
-          <h1 className="mt-7 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
+          <motion.h1 custom={1} variants={rise} initial="hidden" animate="show"
+              className="mt-7 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
                          text-[clamp(1.6rem,5.6vw,4.25rem)]"
               style={{ color: "hsl(var(--ink))" }}>
-            Md. <span className="kn-mark">Mosfikur Rahman</span>
-          </h1>
+            Md. <span className="kn-mark-live">Mosfikur Rahman</span>
+          </motion.h1>
 
-          <p className="mt-7 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
+          <motion.p custom={2} variants={rise} initial="hidden" animate="show"
+             className="mt-7 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
              style={{ color: "hsl(var(--ink-soft))" }}>
             {profile.tagline}
-          </p>
+          </motion.p>
 
-          <ul className="mt-9 flex items-center gap-2 flex-wrap">
+          <motion.ul custom={3} variants={rise} initial="hidden" animate="show"
+              className="mt-9 flex items-center gap-2 flex-wrap">
             {channels.map(({ Icon, href, label, ext }) => (
               <li key={label}>
                 <a href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
@@ -68,13 +87,16 @@ function TitleSlide() {
                 </a>
               </li>
             ))}
-          </ul>
+          </motion.ul>
         </div>
 
-        <aside className="col-span-12 lg:col-span-5">
+        <motion.aside custom={2} variants={rise} initial="hidden" animate="show"
+            className="col-span-12 lg:col-span-5">
           <figure className="relative mx-auto lg:ml-auto w-[210px] sm:w-[260px]">
-            <div className="absolute -inset-5 rounded-[2rem] blur-2xl"
-                 style={{ background: "radial-gradient(closest-side, hsl(var(--accent) / 0.28), transparent)" }} />
+            <motion.div className="absolute -inset-5 rounded-[2rem] blur-2xl"
+                 style={{ background: "radial-gradient(closest-side, hsl(var(--accent) / 0.32), transparent)" }}
+                 animate={{ scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }}
+                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
             <div className="absolute -inset-2 rounded-[1.9rem] rotate-3"
                  style={{ border: "1px solid hsl(var(--accent) / 0.35)" }} />
             <div className="relative overflow-hidden"
@@ -85,10 +107,11 @@ function TitleSlide() {
               {profile.roleLong}
             </figcaption>
           </figure>
-        </aside>
+        </motion.aside>
       </div>
 
-      <div className="mt-12 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
+      <motion.div custom={4} variants={rise} initial="hidden" animate="show"
+           className="relative mt-12 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
            style={{ border: "1px solid hsl(var(--rule))" }}>
         {figures.map((f, i) => (
           <div key={f.k} className="flex-1 min-w-[140px] px-6 py-5"
@@ -99,13 +122,14 @@ function TitleSlide() {
             <p className="text-[11.5px]" style={{ color: "hsl(var(--muted))" }}>{f.note}</p>
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      <p className="mt-9 inline-flex items-center gap-2.5 font-mono text-[12px] tracking-[0.16em] uppercase"
+      <motion.p custom={5} variants={rise} initial="hidden" animate="show"
+         className="relative mt-9 inline-flex items-center gap-2.5 font-mono text-[12px] tracking-[0.16em] uppercase"
          style={{ color: "hsl(var(--whisper))" }}>
         <span className="kn-key">←</span><span className="kn-key">→</span>
         <span>or the arrows below to walk through — papers first, then work</span>
-      </p>
+      </motion.p>
     </div>
   );
 }
@@ -297,9 +321,9 @@ function WorkSlide() {
 function Block({ label, text }: { label: string; text?: string }) {
   if (!text) return null;
   return (
-    <div className="kn-card p-5">
+    <div className="kn-card p-4">
       <p className="mg-label" style={{ color: "hsl(var(--accent))" }}>{label}</p>
-      <p className="mt-2 text-[13px] leading-[1.55]" style={{ color: "hsl(var(--ink-soft))" }}>{text}</p>
+      <p className="mt-1.5 text-[12.5px] leading-[1.5]" style={{ color: "hsl(var(--ink-soft))" }}>{text}</p>
     </div>
   );
 }
@@ -369,9 +393,9 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
         )}
       </div>
 
-      <div className={p.pdf ? "mt-6 grid lg:grid-cols-[1.05fr,0.95fr] gap-6" : "mt-6"}>
+      <div className={p.pdf ? "mt-5 grid lg:grid-cols-[1.15fr,0.85fr] gap-6" : "mt-5"}>
         <div>
-          <div className={p.pdf ? "grid sm:grid-cols-2 gap-4" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-4"}>
+          <div className={p.pdf ? "grid sm:grid-cols-2 xl:grid-cols-3 gap-3" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-3"}>
             <Block label="Problem" text={p.problem} />
             <Block label="Solution" text={p.solution} />
             <Block label="Methodology" text={p.methodology} />

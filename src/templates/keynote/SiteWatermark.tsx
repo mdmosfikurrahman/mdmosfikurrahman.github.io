@@ -143,8 +143,8 @@ export default function KeynoteDeck() {
             onWheel={onWheel}
             className="absolute inset-0 overflow-y-auto overflow-x-hidden"
           >
-            <div className="min-h-full flex items-center justify-center px-4 sm:px-10 py-6 sm:py-10">
-              <div className="w-full max-w-[1120px] mx-auto">
+            <div className="min-h-full flex items-center justify-center px-4 sm:px-8 lg:px-12 py-6 sm:py-9">
+              <div className="w-full max-w-[1400px] mx-auto">
                 {slide.render()}
               </div>
             </div>

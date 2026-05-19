@@ -869,6 +869,39 @@
   }
 }
 
+/* Keynote — cover-slide motion (kept subtle, projector-safe) */
+@keyframes kn-grad {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes kn-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(0, -22px, 0) scale(1.06); }
+}
+.template-keynote .kn-mark-live {
+  background: linear-gradient(100deg,
+    hsl(var(--accent)) 0%, hsl(var(--accent-deep)) 35%,
+    hsl(var(--ink)) 55%, hsl(var(--accent)) 80%, hsl(var(--accent-deep)) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: kn-grad 7s ease-in-out infinite;
+}
+.template-keynote .kn-orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(36px);
+  opacity: 0.5;
+  background: radial-gradient(closest-side, hsl(var(--accent) / 0.55), transparent);
+  animation: kn-float 11s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .template-keynote .kn-mark-live { animation: none; }
+  .template-keynote .kn-orb { animation: none; }
+}
+
 /* =====================================================================
    TEMPLATE: FOLIO  (clean, professional default — no theatre)
    ===================================================================== */
