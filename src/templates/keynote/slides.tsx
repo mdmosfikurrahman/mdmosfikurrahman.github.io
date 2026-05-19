@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import {
-  profile, figures, roles, projects,
+  profile, preamble, figures, roles, projects,
   publications, doiUrl, formatAuthors, reviewerFor, skillGroups,
   education, distinctions, talksAndService, verifiedBadges,
   type Publication,
@@ -75,32 +75,41 @@ function TitleSlide() {
         </motion.p>
 
         <motion.div custom={1} variants={pop} initial="hidden" animate="show"
-            className="mt-7 kn-ring w-[116px] h-[116px] sm:w-[132px] sm:h-[132px]">
+            className="mt-5 kn-ring w-[104px] h-[104px] sm:w-[120px] sm:h-[120px]">
           <img src={avatar} alt="Portrait of Md. Mosfikur Rahman"
                className="w-full h-full object-cover rounded-full block"
                style={{ border: "2px solid hsl(var(--paper))" }} loading="eager" />
         </motion.div>
 
         <motion.h1 custom={2} variants={rise} initial="hidden" animate="show"
-            className="mt-7 font-display leading-[0.98] tracking-[-0.05em] whitespace-nowrap
-                       text-[clamp(2rem,6.4vw,4.75rem)]"
+            className="mt-5 font-display leading-[0.98] tracking-[-0.05em] whitespace-nowrap
+                       text-[clamp(1.9rem,5.6vw,4.25rem)]"
             style={{ color: "hsl(var(--ink))" }}>
           Md. <span className="kn-mark-live">Mosfik</span>ur Rahman
         </motion.h1>
 
-        <motion.div className="kn-bar mt-5 w-24"
+        <motion.div className="kn-bar mt-4 w-24"
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }} />
 
         <motion.p custom={3} variants={rise} initial="hidden" animate="show"
-           className="mt-6 max-w-[58ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
+           className="mt-5 max-w-[64ch] text-[clamp(0.98rem,1.3vw,1.2rem)] leading-[1.55]"
            style={{ color: "hsl(var(--ink-soft))" }}>
-          {profile.tagline}
+          {preamble[0]}
         </motion.p>
 
-        <motion.div custom={4} variants={rise} initial="hidden" animate="show"
-            className="mt-7 flex items-center justify-center gap-x-5 gap-y-2 flex-wrap">
+        <motion.p custom={4} variants={rise} initial="hidden" animate="show"
+           className="mt-3 max-w-[64ch] text-[clamp(0.92rem,1.15vw,1.05rem)] leading-[1.55]"
+           style={{ color: "hsl(var(--muted))" }}>
+          Backend architect at <strong style={{ color: "hsl(var(--ink-soft))" }}>iBOS Ltd.</strong>
+          {" "}— I designed and built an OTA platform now serving 10k+ daily users —
+          alongside ten peer-reviewed papers, an IEEE Best Paper, and journal
+          peer-review service.
+        </motion.p>
+
+        <motion.div custom={5} variants={rise} initial="hidden" animate="show"
+            className="mt-6 flex items-center justify-center gap-x-5 gap-y-2 flex-wrap">
           {channels.map(({ Icon, href, label, ext }) => (
             <a key={label} href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
                className="group inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors"
@@ -112,7 +121,7 @@ function TitleSlide() {
           ))}
         </motion.div>
 
-        <div className="mt-9 w-full flex flex-wrap items-stretch rounded-2xl overflow-hidden"
+        <div className="mt-7 w-full flex flex-wrap items-stretch rounded-2xl overflow-hidden"
              style={{ border: "1px solid hsl(var(--rule))" }}>
           {figures.map((f, i) => (
             <motion.div key={f.k} custom={i} variants={pop} initial="hidden" animate="show"
