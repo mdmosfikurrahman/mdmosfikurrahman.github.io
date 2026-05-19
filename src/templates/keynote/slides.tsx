@@ -60,7 +60,7 @@ function TitleSlide() {
       <span className="kn-orb" aria-hidden
             style={{ width: 280, height: 280, bottom: "-14%", right: "4%", animationDelay: "-5s" }} />
 
-      <div className="relative z-10 grid grid-cols-12 gap-x-16 gap-y-12 items-center">
+      <div className="relative z-10 grid grid-cols-12 gap-x-12 gap-y-8 items-center">
         <div className="col-span-12 lg:col-span-7">
           <motion.p custom={0} variants={rise} initial="hidden" animate="show"
              className="flex flex-wrap items-center gap-2.5 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em]"
@@ -74,29 +74,29 @@ function TitleSlide() {
           </motion.p>
 
           <motion.h1 custom={1} variants={rise} initial="hidden" animate="show"
-              className="mt-7 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
-                         text-[clamp(1.6rem,5.6vw,4.25rem)]"
+              className="mt-4 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
+                         text-[clamp(1.5rem,5vw,3.5rem)]"
               style={{ color: "hsl(var(--ink))" }}>
             Md. <span className="kn-mark-live">Mosfik</span>ur Rahman
           </motion.h1>
 
-          <motion.div className="kn-bar mt-5 w-32"
+          <motion.div className="kn-bar mt-3.5 w-28"
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }} />
 
           <motion.p custom={2} variants={rise} initial="hidden" animate="show"
-             className="mt-6 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
+             className="mt-4 max-w-[50ch] text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.45]"
              style={{ color: "hsl(var(--ink-soft))" }}>
             {profile.tagline}
           </motion.p>
 
           <motion.ul custom={3} variants={rise} initial="hidden" animate="show"
-              className="mt-9 flex items-center gap-2 flex-wrap">
+              className="mt-6 flex items-center gap-2 flex-wrap">
             {channels.map(({ Icon, href, label, ext }) => (
               <li key={label}>
                 <a href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
-                   className="kn-pill inline-flex items-center gap-2 px-3.5 py-2 text-[13px] font-medium transition-colors hover:!border-[hsl(var(--accent))] hover:!text-[hsl(var(--accent))]">
+                   className="kn-pill inline-flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium transition-colors hover:!border-[hsl(var(--accent))] hover:!text-[hsl(var(--accent))]">
                   <Icon size={14} strokeWidth={1.8} /> {label}
                 </a>
               </li>
@@ -106,31 +106,31 @@ function TitleSlide() {
 
         <motion.aside custom={2} variants={rise} initial="hidden" animate="show"
             className="col-span-12 lg:col-span-5">
-          <figure className="relative mx-auto lg:ml-auto w-[210px] sm:w-[260px]">
-            <motion.div className="absolute -inset-5 rounded-[2rem] blur-2xl"
+          <figure className="relative mx-auto lg:ml-auto w-[150px] sm:w-[190px]">
+            <motion.div className="absolute -inset-4 rounded-[2rem] blur-2xl"
                  style={{ background: "radial-gradient(closest-side, hsl(var(--accent) / 0.32), transparent)" }}
                  animate={{ scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }}
                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
-            <div className="absolute -inset-2 rounded-[1.9rem] rotate-3"
+            <div className="absolute -inset-2 rounded-[1.6rem] rotate-3"
                  style={{ border: "1px solid hsl(var(--accent) / 0.35)" }} />
             <div className="relative overflow-hidden"
-                 style={{ border: "1px solid hsl(var(--rule))", borderRadius: "1.6rem" }}>
+                 style={{ border: "1px solid hsl(var(--rule))", borderRadius: "1.4rem" }}>
               <img src={avatar} alt="Portrait of Md. Mosfikur Rahman" className="w-full h-auto block" loading="eager" />
             </div>
-            <figcaption className="mt-4 text-center text-[13px]" style={{ color: "hsl(var(--muted))" }}>
+            <figcaption className="mt-3 text-center text-[12.5px]" style={{ color: "hsl(var(--muted))" }}>
               {profile.roleLong}
             </figcaption>
           </figure>
         </motion.aside>
       </div>
 
-      <div className="relative z-10 mt-12 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
+      <div className="relative z-10 mt-8 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
            style={{ border: "1px solid hsl(var(--rule))" }}>
         {figures.map((f, i) => (
           <motion.div key={f.k} custom={i} variants={pop} initial="hidden" animate="show"
-               className="flex-1 min-w-[140px] px-6 py-5"
+               className="flex-1 min-w-[140px] px-5 py-4"
                style={{ borderLeft: i === 0 ? "none" : "1px solid hsl(var(--rule))" }}>
-            <div className="font-display text-[clamp(1.6rem,3vw,2.4rem)] tracking-[-0.04em] tabular-nums"
+            <div className="font-display text-[clamp(1.5rem,2.6vw,2.1rem)] tracking-[-0.04em] tabular-nums"
                  style={{ color: "hsl(var(--ink))" }}>{f.v}</div>
             <div className="mt-0.5 text-[12px] font-semibold" style={{ color: "hsl(var(--accent))" }}>{f.k}</div>
             <p className="text-[11.5px]" style={{ color: "hsl(var(--muted))" }}>{f.note}</p>
