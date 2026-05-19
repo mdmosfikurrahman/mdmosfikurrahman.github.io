@@ -221,11 +221,18 @@ function Block({ label, text }: { label: string; text?: string }) {
 
 function PaperDossier({ p, i, total }: { p: Publication; i: number; total: number }) {
   const authors = formatAuthors(p.authors);
+  const isFirst = p.authors[0] === "Rahman, Md. Mosfikur";
   return (
     <div>
       <div className="flex items-center justify-between gap-4">
         <p className="sig">Paper · {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
         <div className="flex items-center gap-2 text-[12px]" style={{ color: "hsl(var(--muted))" }}>
+          {isFirst && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 font-semibold rounded-full"
+                  style={{ background: "hsl(var(--accent))", color: "hsl(var(--paper))" }} title="First author">
+              ★ First author
+            </span>
+          )}
           <span className="kn-pill px-3 py-1 tabular-nums">{p.year}</span>
           <span className="kn-pill px-3 py-1 uppercase tracking-[0.12em]">{p.type}</span>
           {p.award && (
@@ -247,9 +254,26 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
             <span style={{ color: a.bold ? "hsl(var(--accent))" : undefined, fontWeight: a.bold ? 600 : 400 }}>{a.name}</span>
             {idx < authors.length - 1 ? ", " : "."}
           </span>
-        ))}{" "}
-        <span style={{ color: "hsl(var(--muted))" }}>{p.venue}{p.pages ? `, pp. ${p.pages}` : ""}.</span>
+        ))}
       </p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl px-4 py-2.5"
+           style={{ background: "hsl(var(--accent-wash))" }}>
+        <span className="mg-label" style={{ color: "hsl(var(--accent-deep))" }}>Published in</span>
+        <span className="text-[13.5px] font-medium" style={{ color: "hsl(var(--ink))" }}>
+          {p.venue}
+        </span>
+        <span className="text-[12.5px]" style={{ color: "hsl(var(--muted))" }}>
+          · {p.year}{p.volume ? ` · vol. ${p.volume}` : ""}{p.pages ? ` · pp. ${p.pages}` : ""}
+        </span>
+        {p.doi && (
+          <a href={doiUrl(p.doi)} target="_blank" rel="noreferrer"
+             className="inline-flex items-center gap-1 text-[12px] font-semibold ml-auto"
+             style={{ color: "hsl(var(--accent-deep))" }}>
+            DOI <ArrowUpRight size={12} strokeWidth={2.2} />
+          </a>
+        )}
+      </div>
 
       <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Block label="Problem" text={p.problem} />
@@ -336,12 +360,28 @@ function ContactSlide() {
 /* ── Deck order — projects + publications are the spine ─────────────── */
 export type DeckSlide = { label: string; render: () => JSX.Element };
 
-const pubsByYear = [...publications].sort((a, b) => b.year - a.year);
+// First-author papers lead, then the rest; newest first within each group.
+const isFirstAuthor = (p: Publication) => p.authors[0] === "Rahman, Md. Mosfikur";
+const orderedPubs = [...publications].sort((a, b) => {
+  const fa = isFirstAuthor(a), fb = isFirstAuthor(b);
+  if (fa !== fb) return fa ? -1 : 1;
+  return b.year - a.year;
+});
+const firstAuthorCount = publications.filter(isFirstAuthor).length;
 
 export const SLIDES: DeckSlide[] = [
   { label: "Title", render: () => <TitleSlide /> },
   { label: "Now", render: () => <NowSlide /> },
   { label: "Toolbox", render: () => <SkillsSlide /> },
+  {
+    label: "Research",
+    render: () => <Divider kicker="Section" title="Research"
+      sub={`${publications.length} peer-reviewed papers · ${firstAuthorCount} as first author · 1 IEEE best paper.`} />,
+  },
+  ...orderedPubs.map((p, i): DeckSlide => ({
+    label: `Paper · ${p.year}`,
+    render: () => <PaperDossier p={p} i={i} total={orderedPubs.length} />,
+  })),
   {
     label: "Selected work",
     render: () => <Divider kicker="Section" title="Selected work"
@@ -350,15 +390,6 @@ export const SLIDES: DeckSlide[] = [
   ...projects.map((p, i): DeckSlide => ({
     label: `Work · ${p.name}`,
     render: () => <ProjectDossier p={p} i={i} total={projects.length} />,
-  })),
-  {
-    label: "Research",
-    render: () => <Divider kicker="Section" title="Research"
-      sub={`${publications.length} peer-reviewed papers · ${publications.filter((p) => (p.tags || []).includes("first-author")).length} as first author · 1 IEEE best paper.`} />,
-  },
-  ...pubsByYear.map((p, i): DeckSlide => ({
-    label: `Paper · ${p.year}`,
-    render: () => <PaperDossier p={p} i={i} total={pubsByYear.length} />,
   })),
   { label: "Contact", render: () => <ContactSlide /> },
 ];
