@@ -208,7 +208,8 @@ export default function KeynoteDeck() {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[12px] tabular-nums tracking-[0.1em]" style={{ color: "hsl(var(--whisper))" }}>
+          <span className="font-mono text-[12px] tabular-nums tracking-[0.1em] text-right tnum"
+                style={{ color: "hsl(var(--whisper))", minWidth: "5.5ch", fontFeatureSettings: '"tnum" 1' }}>
             <b style={{ color: "hsl(var(--ink))" }}>{String(index + 1).padStart(2, "0")}</b> / {String(total).padStart(2, "0")}
           </span>
           <button onClick={next} disabled={index === total - 1}

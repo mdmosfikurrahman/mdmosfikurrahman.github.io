@@ -710,6 +710,8 @@
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: hsl(var(--accent));
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     display: inline-flex;
     align-items: center;
     gap: 0.7rem;
@@ -739,6 +741,8 @@
     font-weight: 600;
     letter-spacing: 0.16em;
     color: hsl(var(--whisper));
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
   .template-keynote .kn-step b {
     color: hsl(var(--ink));
@@ -799,11 +803,15 @@
     position: absolute;
     right: clamp(-1rem, -1vw, 1rem);
     bottom: -0.22em;
+    width: 2ch;
+    text-align: right;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 800;
     font-size: clamp(13rem, 32vw, 30rem);
     line-height: 1;
     letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     color: hsl(var(--ink));
     opacity: 0.035;
     pointer-events: none;
