@@ -142,7 +142,7 @@ export default function KeynoteDeck() {
             exit="exit"
             transition={{ duration: 0.42, ease: EASE }}
             onWheel={onWheel}
-            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
+            className={`absolute inset-0 ${index === 0 ? "overflow-hidden" : "overflow-y-auto overflow-x-hidden"}`}
           >
             <div className="min-h-full flex items-center justify-center px-4 sm:px-8 lg:px-12 py-5 sm:py-7">
               <div className="w-full max-w-[1400px] mx-auto">
