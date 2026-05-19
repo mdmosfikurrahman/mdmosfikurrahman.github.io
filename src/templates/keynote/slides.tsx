@@ -42,16 +42,25 @@ const rise = {
   }),
 };
 
+const pop = {
+  hidden: { opacity: 0, y: 14, scale: 0.96 },
+  show: (i: number) => ({
+    opacity: 1, y: 0, scale: 1,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const, delay: 0.55 + i * 0.1 },
+  }),
+};
+
 function TitleSlide() {
   return (
     <div className="relative">
-      {/* drifting accent orbs — motion behind the cover */}
+      {/* motion behind the cover: rotating aura + drifting orbs */}
+      <div className="kn-aura" aria-hidden />
       <span className="kn-orb" aria-hidden
             style={{ width: 340, height: 340, top: "-12%", left: "-8%" }} />
       <span className="kn-orb" aria-hidden
             style={{ width: 280, height: 280, bottom: "-14%", right: "4%", animationDelay: "-5s" }} />
 
-      <div className="relative grid grid-cols-12 gap-x-16 gap-y-12 items-center">
+      <div className="relative z-10 grid grid-cols-12 gap-x-16 gap-y-12 items-center">
         <div className="col-span-12 lg:col-span-7">
           <motion.p custom={0} variants={rise} initial="hidden" animate="show"
              className="flex flex-wrap items-center gap-2.5 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em]"
@@ -71,8 +80,13 @@ function TitleSlide() {
             Md. <span className="kn-mark-live">Mosfik</span>ur Rahman
           </motion.h1>
 
+          <motion.div className="kn-bar mt-5 w-32"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }} />
+
           <motion.p custom={2} variants={rise} initial="hidden" animate="show"
-             className="mt-7 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
+             className="mt-6 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
              style={{ color: "hsl(var(--ink-soft))" }}>
             {profile.tagline}
           </motion.p>
@@ -110,19 +124,19 @@ function TitleSlide() {
         </motion.aside>
       </div>
 
-      <motion.div custom={4} variants={rise} initial="hidden" animate="show"
-           className="relative mt-12 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
+      <div className="relative z-10 mt-12 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
            style={{ border: "1px solid hsl(var(--rule))" }}>
         {figures.map((f, i) => (
-          <div key={f.k} className="flex-1 min-w-[140px] px-6 py-5"
+          <motion.div key={f.k} custom={i} variants={pop} initial="hidden" animate="show"
+               className="flex-1 min-w-[140px] px-6 py-5"
                style={{ borderLeft: i === 0 ? "none" : "1px solid hsl(var(--rule))" }}>
             <div className="font-display text-[clamp(1.6rem,3vw,2.4rem)] tracking-[-0.04em] tabular-nums"
                  style={{ color: "hsl(var(--ink))" }}>{f.v}</div>
             <div className="mt-0.5 text-[12px] font-semibold" style={{ color: "hsl(var(--accent))" }}>{f.k}</div>
             <p className="text-[11.5px]" style={{ color: "hsl(var(--muted))" }}>{f.note}</p>
-          </div>
+          </motion.div>
         ))}
-      </motion.div>
+      </div>
 
     </div>
   );
@@ -358,7 +372,13 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
 
       <h2 className="mt-5 font-display leading-[1.12] tracking-[-0.03em] text-[clamp(1.35rem,2.7vw,2.35rem)] text-pretty"
           style={{ color: "hsl(var(--ink))" }}>
-        {p.doi ? <a className="a" href={doiUrl(p.doi)} target="_blank" rel="noreferrer">{p.title}</a> : p.title}
+        {p.doi ? (
+          <a href={doiUrl(p.doi)} target="_blank" rel="noreferrer"
+             className="no-underline transition-colors hover:text-[hsl(var(--accent))]"
+             style={{ color: "inherit", textDecoration: "none" }}>
+            {p.title}
+          </a>
+        ) : p.title}
       </h2>
       <p className="mt-3 text-[13px] leading-[1.5]" style={{ color: "hsl(var(--ink-soft))" }}>
         {authors.map((a, idx) => (

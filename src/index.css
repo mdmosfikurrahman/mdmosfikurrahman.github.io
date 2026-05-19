@@ -903,9 +903,32 @@
   background: radial-gradient(closest-side, hsl(var(--accent) / 0.55), transparent);
   animation: kn-float 11s ease-in-out infinite;
 }
+@keyframes kn-spin { to { transform: rotate(360deg); } }
+.template-keynote .kn-aura {
+  position: absolute;
+  inset: -40% -10%;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.45;
+  background: conic-gradient(from 0deg,
+    hsl(var(--accent) / 0.30), transparent 30%,
+    hsl(var(--accent-deep) / 0.28) 55%, transparent 78%,
+    hsl(var(--accent) / 0.30));
+  animation: kn-spin 26s linear infinite;
+}
+.template-keynote .kn-bar {
+  height: 3px;
+  border-radius: 9999px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, hsl(var(--accent)), hsl(var(--accent-deep)));
+}
 @media (prefers-reduced-motion: reduce) {
   .template-keynote .kn-mark-live { animation: none; }
+  .template-keynote .kn-mark { animation: none; }
   .template-keynote .kn-orb { animation: none; }
+  .template-keynote .kn-aura { animation: none; }
 }
 
 /* =====================================================================
