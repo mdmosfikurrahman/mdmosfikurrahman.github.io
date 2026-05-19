@@ -754,14 +754,15 @@ const orderedPubs = [...publications].sort((a, b) => {
 const firstAuthorCount = publications.filter(isFirstAuthor).length;
 const totalCitations = publications.reduce((n, p) => n + (p.citations ?? 0), 0);
 
-// Narrative arc: who I am → academic foundation → current role →
-// the research body (the core) → research credibility → engineering depth →
-// supporting technical breadth → verified credentials → service → contact.
+// Professional self-presentation arc (interview / seminar):
+//   identity → current impact → trajectory → academic foundation →
+//   research body + credibility → engineering depth + tooling →
+//   credentials → service → close.
 export const SLIDES: DeckSlide[] = [
   { label: "Title", render: () => <TitleSlide /> },
-  { label: "Education", render: () => <EducationSlide /> },
   { label: "Now", render: () => <NowSlide /> },
   { label: "Earlier experience", render: () => <ExperienceSlide /> },
+  { label: "Education", render: () => <EducationSlide /> },
   {
     label: "Research",
     render: () => <Divider kicker="Section" title="Research"
