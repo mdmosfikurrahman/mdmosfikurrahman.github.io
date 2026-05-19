@@ -47,11 +47,10 @@ function TitleSlide() {
             {profile.role}
           </p>
 
-          <h1 className="mt-7 font-display leading-[0.92] tracking-[-0.05em]
-                         text-[clamp(2.6rem,6.4vw,5rem)]"
+          <h1 className="mt-7 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
+                         text-[clamp(1.6rem,5.6vw,4.25rem)]"
               style={{ color: "hsl(var(--ink))" }}>
-            <span className="block">Md.</span>
-            <span className="block kn-mark">Mosfikur Rahman</span>
+            Md. <span className="kn-mark">Mosfikur Rahman</span>
           </h1>
 
           <p className="mt-7 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
