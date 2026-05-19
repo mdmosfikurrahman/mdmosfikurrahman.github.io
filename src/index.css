@@ -641,46 +641,46 @@
    ===================================================================== */
 @layer base {
   .template-keynote {
-    --paper:        0 0% 100%;
-    --paper-deep:   244 38% 97%;
+    --paper:        240 24% 99%;
+    --paper-deep:   246 30% 97%;
     --paper-glass:  0 0% 100%;
-    --ink:          230 47% 11%;
-    --ink-soft:     230 18% 30%;
-    --muted:        230 12% 46%;
-    --whisper:      230 10% 62%;
-    --rule:         230 16% 87%;
-    --rule-soft:    230 18% 93%;
+    --ink:          240 28% 9%;
+    --ink-soft:     240 10% 34%;
+    --muted:        240 7% 50%;
+    --whisper:      240 8% 64%;
+    --rule:         240 13% 89%;
+    --rule-soft:    240 16% 94%;
 
-    --accent:       244 76% 58%;   /* projector-safe vivid indigo */
-    --accent-deep:  244 70% 46%;
-    --accent-wash:  244 82% 96%;
+    --accent:       252 72% 56%;   /* refined indigo-violet */
+    --accent-deep:  252 68% 46%;
+    --accent-wash:  250 86% 97%;
 
-    --signal-pos:   158 64% 38%;
-    --signal-warn:  32 88% 48%;
-    --signal-crit:  0 72% 52%;
+    --signal-pos:   158 62% 38%;
+    --signal-warn:  32 86% 48%;
+    --signal-crit:  0 70% 52%;
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
     --scan-opacity: 0;
     --grid-opacity: 0;
   }
   .template-keynote.dark {
-    --paper:        230 36% 7%;
-    --paper-deep:   230 30% 11%;
-    --paper-glass:  230 36% 8%;
-    --ink:          220 22% 97%;
-    --ink-soft:     220 14% 80%;
-    --muted:        220 10% 60%;
-    --whisper:      220 8% 44%;
-    --rule:         230 18% 21%;
-    --rule-soft:    230 18% 15%;
+    --paper:        240 28% 6%;
+    --paper-deep:   240 24% 9%;
+    --paper-glass:  240 28% 7%;
+    --ink:          240 20% 98%;
+    --ink-soft:     240 12% 78%;
+    --muted:        240 8% 58%;
+    --whisper:      240 8% 42%;
+    --rule:         240 14% 18%;
+    --rule-soft:    240 16% 13%;
 
-    --accent:       245 96% 74%;
-    --accent-deep:  245 90% 64%;
-    --accent-wash:  245 42% 18%;
+    --accent:       252 96% 78%;
+    --accent-deep:  252 90% 70%;
+    --accent-wash:  250 44% 16%;
 
-    --signal-pos:   158 66% 50%;
-    --signal-warn:  34 92% 58%;
-    --signal-crit:  0 78% 62%;
+    --signal-pos:   158 64% 52%;
+    --signal-warn:  34 92% 60%;
+    --signal-crit:  0 78% 64%;
   }
 }
 
@@ -688,12 +688,12 @@
   .template-keynote body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: "cv11", "ss01";
-    letter-spacing: -0.011em;
+    letter-spacing: -0.012em;
   }
   .template-keynote .font-display {
     font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.035em;
+    font-weight: 750;
+    letter-spacing: -0.04em;
   }
   .template-keynote .font-serif-body {
     font-family: 'Inter', system-ui, sans-serif;
@@ -702,34 +702,47 @@
 }
 
 @layer components {
-  /* Keynote section kicker = slide number, mono, accent */
+  /* Eyebrow — slide label, mono, accent, with a short tick */
   .template-keynote .sig {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: hsl(var(--accent));
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.7rem;
   }
   .template-keynote .sig::before {
     content: "";
     display: inline-block;
-    width: 1.75rem;
-    height: 2px;
+    width: 2rem;
+    height: 1.5px;
     background: hsl(var(--accent));
     flex-shrink: 0;
   }
 
   .template-keynote .mg-label {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted));
+  }
+
+  /* Slide step counter — top-right of every slide */
+  .template-keynote .kn-step {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: hsl(var(--muted));
+    color: hsl(var(--whisper));
+  }
+  .template-keynote .kn-step b {
+    color: hsl(var(--ink));
+    font-weight: 700;
   }
 
   .template-keynote .a {
@@ -748,12 +761,22 @@
   .template-keynote .a-arrow {
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     color: hsl(var(--accent));
+    transition: gap .15s, color .15s;
   }
   .template-keynote .a-arrow:hover { color: hsl(var(--accent-deep)); }
 
-  /* Slide scaffold */
+  /* Headline accent — the one word that carries the slide */
+  .template-keynote .kn-mark {
+    background: linear-gradient(100deg,
+      hsl(var(--accent)) 0%, hsl(var(--accent-deep)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Slide scaffold — full viewport, content centred */
   .template-keynote .slide {
     min-height: 100vh;
     min-height: 100svh;
@@ -761,19 +784,72 @@
     flex-direction: column;
     justify-content: center;
     position: relative;
-    scroll-margin-top: 4rem;
+    overflow: hidden;
+    scroll-margin-top: 3.5rem;
   }
-  .template-keynote .slide-grid {
+
+  /* Faint oversized slide numeral, bottom-right */
+  .template-keynote .kn-ghost {
+    position: absolute;
+    right: clamp(-1rem, -1vw, 1rem);
+    bottom: -0.22em;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(13rem, 32vw, 30rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: hsl(var(--ink));
+    opacity: 0.035;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Soft accent halo at the top of each slide */
+  .template-keynote .kn-glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background-image:
-      linear-gradient(hsl(var(--rule-soft)) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--rule-soft)) 1px, transparent 1px);
-    background-size: 88px 88px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 78%);
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 78%);
-    opacity: 0.5;
+    background: radial-gradient(56% 44% at 50% -4%,
+      hsl(var(--accent) / 0.12), transparent 70%);
+  }
+
+  /* Refined surface card */
+  .template-keynote .kn-card {
+    border: 1px solid hsl(var(--rule));
+    border-radius: 1rem;
+    background: hsl(var(--paper-glass) / 0.6);
+    backdrop-filter: blur(2px);
+    transition: border-color .2s ease, transform .2s ease, box-shadow .25s ease;
+  }
+  .template-keynote .kn-card:hover {
+    border-color: hsl(var(--accent) / 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 18px 50px -22px hsl(var(--accent) / 0.35);
+  }
+
+  /* Bordered chip */
+  .template-keynote .kn-pill {
+    border: 1px solid hsl(var(--rule));
+    border-radius: 999px;
+    color: hsl(var(--ink-soft));
+    background: hsl(var(--paper-deep) / 0.5);
+  }
+
+  /* Scroll-progress rail (in the header) */
+  .template-keynote .kn-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: transparent;
+  }
+  .template-keynote .kn-progress > i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg,
+      hsl(var(--accent)), hsl(var(--accent-deep)));
+    transition: width .12s linear;
   }
 }
 

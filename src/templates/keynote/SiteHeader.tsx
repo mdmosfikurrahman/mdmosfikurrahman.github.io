@@ -8,39 +8,46 @@ const nav = [
   { to: "/experience", label: "Work" },
   { to: "/publications", label: "Writing" },
   { to: "/about", label: "About" },
-  { to: "/play", label: "Play" },
 ];
 
 export default function SiteHeader() {
   const { theme, toggle } = useTheme();
   const loc = useLocation();
   const [open, setOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => { setOpen(false); }, [loc.pathname]);
 
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      setProgress(max > 0 ? (h.scrollTop / max) * 100 : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-paper/80 border-b rule-soft">
-      <div className="mx-auto w-full max-w-[1080px] px-6 sm:px-8 md:px-10 flex items-center justify-between h-14">
+    <header className="sticky top-0 z-40 backdrop-blur-xl bg-paper/75 border-b rule-soft">
+      <div className="mx-auto w-full max-w-[1120px] px-6 sm:px-10 flex items-center justify-between h-14">
         <Link
           to="/"
           onClick={() => { if (loc.pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" }); }}
           className="flex items-center gap-3 group"
           aria-label="Md. Mosfikur Rahman, home"
         >
-          <span className="font-display text-[15px] tracking-tight group-hover:text-accent transition-colors">
+          <span className="font-display text-[15px] tracking-[-0.02em] group-hover:text-accent transition-colors">
             {profile.name}
           </span>
-          <span className="hidden sm:inline font-mono text-[10px] px-1.5 py-0.5 uppercase tracking-[0.14em]"
-                style={{
-                  border: "1px solid hsl(var(--rule))",
-                  borderRadius: "999px",
-                  color: "hsl(var(--muted))",
-                }}>
-            Interview Deck
+          <span className="hidden sm:inline font-mono text-[9.5px] px-2 py-0.5 uppercase tracking-[0.18em] rounded-full"
+                style={{ border: "1px solid hsl(var(--rule))", color: "hsl(var(--muted))" }}>
+            Deck
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7 text-[13.5px]">
+        <nav className="hidden md:flex items-center gap-8 text-[13.5px]">
           {nav.map((n) => (
             <NavLink
               key={n.to}
@@ -54,7 +61,7 @@ export default function SiteHeader() {
                 <span className="relative">
                   {n.label}
                   {isActive && (
-                    <span aria-hidden className="absolute -bottom-[5px] left-0 right-0 h-[2px]"
+                    <span aria-hidden className="absolute -bottom-[6px] left-0 right-0 h-[2px] rounded-full"
                           style={{ background: "hsl(var(--accent))" }} />
                   )}
                 </span>
@@ -88,7 +95,7 @@ export default function SiteHeader() {
 
       {open && (
         <div className="md:hidden border-t rule-soft bg-paper">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-4 flex flex-col gap-3">
+          <div className="mx-auto w-full max-w-[1120px] px-6 py-4 flex flex-col gap-3">
             {nav.map((n) => (
               <NavLink key={n.to} to={n.to} end={n.to === "/"}
                        className={({ isActive }) =>
@@ -102,6 +109,10 @@ export default function SiteHeader() {
           </div>
         </div>
       )}
+
+      <div className="kn-progress" aria-hidden>
+        <i style={{ width: `${progress}%` }} />
+      </div>
     </header>
   );
 }

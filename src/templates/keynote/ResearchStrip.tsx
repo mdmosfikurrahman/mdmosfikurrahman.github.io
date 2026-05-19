@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Award } from "lucide-react";
+import { Award, ArrowRight } from "lucide-react";
 import { publications, doiUrl, formatAuthors, reviewerFor } from "@/lib/content";
 
 export default function ResearchStrip() {
@@ -9,62 +9,53 @@ export default function ResearchStrip() {
 
   return (
     <section id="research" className="slide border-t rule-soft">
-      <div className="slide-grid" aria-hidden />
-      <div className="relative mx-auto w-full max-w-[1080px] px-6 sm:px-8 md:px-10 py-24 md:py-28">
-        <div className="flex items-baseline justify-between gap-6 flex-wrap">
-          <p className="sig">04 · Research</p>
-          <Link to="/publications" className="a-arrow inline-flex items-center gap-1.5">
-            Full bibliography <span aria-hidden>→</span>
-          </Link>
+      <div className="kn-glow" aria-hidden />
+      <span className="kn-ghost" aria-hidden>04</span>
+
+      <div className="relative mx-auto w-full max-w-[1120px] px-6 sm:px-10 py-28">
+        <div className="flex items-center justify-between">
+          <p className="sig">Research</p>
+          <span className="kn-step"><b>04</b> / 06</span>
         </div>
 
-        <h2 className="mt-7 font-display leading-[1.02] tracking-[-0.035em]
-                       text-[clamp(2rem,5.5vw,3.75rem)]"
+        <h2 className="mt-9 font-display leading-[1.0] tracking-[-0.04em]
+                       text-[clamp(2.25rem,6vw,4.25rem)] max-w-[20ch]"
             style={{ color: "hsl(var(--ink))" }}>
-          Ten papers, one IEEE best paper.
+          Ten papers, one <span className="kn-mark">IEEE best paper.</span>
         </h2>
 
-        <ol className="mt-12 grid md:grid-cols-2 gap-x-12 gap-y-9">
+        <ol className="mt-14 grid md:grid-cols-2 gap-6">
           {highlights.map((p) => {
             const authors = formatAuthors(p.authors);
             return (
-              <li key={p.key}>
-                <div className="flex items-baseline gap-3 text-[12.5px]"
+              <li key={p.key} className="kn-card p-7">
+                <div className="flex items-center gap-3 text-[12px]"
                      style={{ color: "hsl(var(--muted))" }}>
-                  <span className="tabular-nums font-mono">{p.year}</span>
-                  <span>·</span>
-                  <span className="uppercase tracking-wide">{p.type}</span>
+                  <span className="tabular-nums font-mono font-semibold">{p.year}</span>
+                  <span className="opacity-50">·</span>
+                  <span className="uppercase tracking-[0.14em]">{p.type}</span>
                   {p.award && (
-                    <span className="ml-auto inline-flex items-center gap-1 px-2 py-0.5 text-[11px]"
-                          style={{
-                            background: "hsl(var(--accent-wash))",
-                            color: "hsl(var(--accent-deep))",
-                            borderRadius: "999px",
-                          }}
+                    <span className="ml-auto inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-semibold rounded-full"
+                          style={{ background: "hsl(var(--accent-wash))", color: "hsl(var(--accent-deep))" }}
                           title={p.award}>
-                      <Award className="w-3 h-3" aria-hidden />
-                      Best paper
+                      <Award className="w-3 h-3" aria-hidden /> Best paper
                     </span>
                   )}
                 </div>
-                <h3 className="mt-2 font-display text-[clamp(1.05rem,1.7vw,1.3rem)] leading-[1.3] tracking-tight text-pretty"
+                <h3 className="mt-3 font-display text-[clamp(1.05rem,1.7vw,1.35rem)] leading-[1.3] tracking-[-0.02em] text-pretty"
                     style={{ color: "hsl(var(--ink))" }}>
                   {p.doi ? (
-                    <a className="a" href={doiUrl(p.doi)} target="_blank" rel="noreferrer">
-                      {p.title}
-                    </a>
+                    <a className="a" href={doiUrl(p.doi)} target="_blank" rel="noreferrer">{p.title}</a>
                   ) : p.title}
                 </h3>
-                <p className="mt-2 text-[13.5px] leading-[1.55]"
+                <p className="mt-3 text-[13px] leading-[1.55]"
                    style={{ color: "hsl(var(--ink-soft))" }}>
                   {authors.map((a, i) => (
                     <span key={i}>
                       <span style={{
                         color: a.bold ? "hsl(var(--accent))" : undefined,
                         fontWeight: a.bold ? 600 : 400,
-                      }}>
-                        {a.name}
-                      </span>
+                      }}>{a.name}</span>
                       {i < authors.length - 1 ? ", " : "."}
                     </span>
                   ))}{" "}
@@ -75,9 +66,9 @@ export default function ResearchStrip() {
           })}
         </ol>
 
-        <div className="mt-12 pt-7 border-t rule-soft">
-          <p className="mg-label mb-3">Reviewer for</p>
-          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[14.5px]"
+        <div className="mt-10 pt-7 border-t rule-soft flex flex-wrap items-baseline gap-x-6 gap-y-3">
+          <p className="mg-label">Reviewer for</p>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-[14px]"
               style={{ color: "hsl(var(--ink-soft))" }}>
             {reviewerFor.map((r) => (
               <li key={r} className="before:content-['·'] before:mr-4 before:text-[hsl(var(--accent))] first:before:hidden">
@@ -86,6 +77,10 @@ export default function ResearchStrip() {
             ))}
           </ul>
         </div>
+
+        <Link to="/publications" className="a-arrow mt-8 inline-flex items-center gap-1.5">
+          Full bibliography <ArrowRight size={15} strokeWidth={2.2} />
+        </Link>
       </div>
     </section>
   );

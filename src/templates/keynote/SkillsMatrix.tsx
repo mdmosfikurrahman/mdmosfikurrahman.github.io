@@ -3,31 +3,33 @@ import { skillGroups } from "@/lib/content";
 export default function SkillsMatrix() {
   return (
     <section id="skills" className="slide border-t rule-soft">
-      <div className="slide-grid" aria-hidden />
-      <div className="relative mx-auto w-full max-w-[1080px] px-6 sm:px-8 md:px-10 py-24 md:py-28">
-        <p className="sig">05 · Toolbox</p>
+      <div className="kn-glow" aria-hidden />
+      <span className="kn-ghost" aria-hidden>05</span>
 
-        <h2 className="mt-7 font-display leading-[1.02] tracking-[-0.035em]
-                       text-[clamp(2rem,5.5vw,3.75rem)]"
+      <div className="relative mx-auto w-full max-w-[1120px] px-6 sm:px-10 py-28">
+        <div className="flex items-center justify-between">
+          <p className="sig">Toolbox</p>
+          <span className="kn-step"><b>05</b> / 06</span>
+        </div>
+
+        <h2 className="mt-9 font-display leading-[1.0] tracking-[-0.04em]
+                       text-[clamp(2.25rem,6vw,4.25rem)] max-w-[16ch]"
             style={{ color: "hsl(var(--ink))" }}>
-          What I reach for.
+          What I <span className="kn-mark">reach for.</span>
         </h2>
 
-        <dl className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-9">
+        <dl className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {skillGroups.map((g) => (
-            <div key={g.label} className="border-t-2 pt-4"
-                 style={{ borderColor: "hsl(var(--accent))" }}>
-              <dt className="font-mono text-[12px] font-semibold uppercase tracking-[0.14em]"
+            <div key={g.label} className="kn-card p-7">
+              <dt className="flex items-center gap-2.5 font-mono text-[12px] font-bold uppercase tracking-[0.16em]"
                   style={{ color: "hsl(var(--accent))" }}>
+                <span className="inline-block w-2 h-2 rounded-full"
+                      style={{ background: "hsl(var(--accent))" }} />
                 {g.label}
               </dt>
-              <dd className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-[15.5px] leading-[1.5]"
-                  style={{ color: "hsl(var(--ink-soft))" }}>
+              <dd className="mt-4 flex flex-wrap gap-2">
                 {g.items.map((it) => (
-                  <span key={it}
-                        className="before:content-['/'] before:mr-3 before:opacity-40 first:before:hidden">
-                    {it}
-                  </span>
+                  <span key={it} className="kn-pill px-2.5 py-1 text-[13px]">{it}</span>
                 ))}
               </dd>
             </div>
