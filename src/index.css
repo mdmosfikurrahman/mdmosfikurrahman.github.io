@@ -651,9 +651,9 @@
     --rule:         240 13% 89%;
     --rule-soft:    240 16% 94%;
 
-    --accent:       214 90% 48%;   /* light mode = bluish on white */
-    --accent-deep:  214 88% 38%;
-    --accent-wash:  214 92% 96%;
+    --accent:       252 80% 60%;   /* light mode = the old bluish indigo-violet */
+    --accent-deep:  252 72% 48%;
+    --accent-wash:  250 86% 97%;
 
     --signal-pos:   158 62% 38%;
     --signal-warn:  32 86% 48%;
