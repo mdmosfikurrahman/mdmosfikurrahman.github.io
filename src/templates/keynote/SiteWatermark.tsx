@@ -43,12 +43,15 @@ export default function KeynoteDeck() {
   const onWheel = useCallback((e: WheelEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     const down = e.deltaY > 0;
-    // Only defer to internal scrolling for slides that meaningfully overflow
-    // (a long dossier). Minor overflow shouldn't trap the wheel on the cover.
-    const overflowing = el.scrollHeight - el.clientHeight > 120;
+    // Defer to internal scrolling ONLY when the slide is actually scrollable
+    // (overflow-y auto/scroll) AND meaningfully overflows. The cover is
+    // overflow-hidden, so the wheel always advances there.
+    const oy = getComputedStyle(el).overflowY;
+    const scrollable = (oy === "auto" || oy === "scroll")
+      && el.scrollHeight - el.clientHeight > 120;
     const atTop = el.scrollTop <= 4;
     const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
-    if (overflowing && ((down && !atBottom) || (!down && !atTop))) return;
+    if (scrollable && ((down && !atBottom) || (!down && !atTop))) return;
     if (Math.abs(e.deltaY) < 4 || wheelLock.current) return;
     wheelLock.current = true;
     window.setTimeout(() => { wheelLock.current = false; }, 650);
