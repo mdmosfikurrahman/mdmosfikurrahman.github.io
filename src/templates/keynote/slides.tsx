@@ -52,8 +52,10 @@ const pop = {
 
 function TitleSlide() {
   return (
-    <div className="relative">
-      {/* motion behind the cover: rotating aura + drifting orbs */}
+    <div className="relative w-full overflow-hidden">
+      {/* motion behind the cover: rotating aura + drifting orbs.
+          Root clips them so their spinning bounding box can't toggle a
+          scrollbar / cause layout jitter. */}
       <div className="kn-aura" aria-hidden />
       <span className="kn-orb" aria-hidden
             style={{ width: 340, height: 340, top: "-12%", left: "-8%" }} />
