@@ -3,7 +3,7 @@
 // one-slide-at-a-time deck: animated transitions, arrow-key + on-screen
 // button + swipe navigation, dots and a slide counter. On every other route
 // it renders nothing, so sub-pages behave normally.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type WheelEvent } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sun, Moon, ExternalLink } from "lucide-react";
@@ -35,6 +35,22 @@ export default function KeynoteDeck() {
 
   const next = useCallback(() => setState(([c]) => [Math.min(total - 1, c + 1), 1]), [total]);
   const prev = useCallback(() => setState(([c]) => [Math.max(0, c - 1), -1]), []);
+
+  // Wheel / trackpad: advance only when the slide is scrolled to its edge,
+  // so tall dossier slides still scroll internally first. One gesture = one
+  // slide (cooldown lock prevents skipping several at once).
+  const wheelLock = useRef(false);
+  const onWheel = useCallback((e: WheelEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const down = e.deltaY > 0;
+    const atTop = el.scrollTop <= 0;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+    if ((down && !atBottom) || (!down && !atTop)) return; // let it scroll
+    if (Math.abs(e.deltaY) < 6 || wheelLock.current) return;
+    wheelLock.current = true;
+    window.setTimeout(() => { wheelLock.current = false; }, 750);
+    if (down) next(); else prev();
+  }, [next, prev]);
 
   const onHome = loc.pathname === "/";
 
@@ -119,6 +135,7 @@ export default function KeynoteDeck() {
             animate="center"
             exit="exit"
             transition={{ duration: 0.42, ease: EASE }}
+            onWheel={onWheel}
             className="absolute inset-0 overflow-y-auto overflow-x-hidden"
           >
             <div className="min-h-full flex items-center justify-center px-4 sm:px-10 py-6 sm:py-10">

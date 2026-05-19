@@ -440,8 +440,10 @@ export type DeckSlide = { label: string; render: () => JSX.Element };
 const isFirstAuthor = (p: Publication) => p.authors[0] === "Rahman, Md. Mosfikur";
 const orderedPubs = [...publications].sort((a, b) => {
   const fa = isFirstAuthor(a), fb = isFirstAuthor(b);
-  if (fa !== fb) return fa ? -1 : 1;
-  return b.year - a.year;
+  if (fa !== fb) return fa ? -1 : 1;          // first-author papers lead
+  const ra = a.impactRank ?? 99, rb = b.impactRank ?? 99;
+  if (ra !== rb) return ra - rb;              // then strongest by impact
+  return b.year - a.year;                     // tie-break: newest first
 });
 const firstAuthorCount = publications.filter(isFirstAuthor).length;
 
