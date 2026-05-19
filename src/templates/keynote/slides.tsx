@@ -8,7 +8,7 @@ import {
   Copy, Check, ArrowUpRight, ChevronDown, type LucideIcon,
 } from "lucide-react";
 import {
-  profile, preamble, figures, roles, projects,
+  profile, figures, roles, projects,
   publications, doiUrl, formatAuthors, reviewerFor, skillGroups,
   type Publication,
 } from "@/lib/content";
@@ -33,57 +33,78 @@ const channels: { Icon: LucideIcon; href: string; label: string; ext?: boolean }
 
 function TitleSlide() {
   return (
-    <div className="grid grid-cols-12 gap-x-14 gap-y-10 items-center">
-      <div className="col-span-12 lg:col-span-8">
-        <p className="sig">Interview deck</p>
-        <p className="mt-6 text-[14px] font-semibold" style={{ color: "hsl(var(--accent))" }}>
-          {profile.role}
-        </p>
-        <h1 className="mt-3 font-display leading-[0.98] tracking-[-0.04em]
-                       text-[clamp(2.1rem,4.6vw,3.75rem)] whitespace-nowrap"
-            style={{ color: "hsl(var(--ink))" }}>
-          Md. <span className="kn-mark">Mosfikur Rahman</span>
-        </h1>
-        <p className="mt-6 max-w-[54ch] text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.55]"
-           style={{ color: "hsl(var(--ink-soft))" }}>
-          {preamble[0]}
-        </p>
-        <ul className="mt-8 flex items-center gap-2 flex-wrap">
-          {channels.map(({ Icon, href, label, ext }) => (
-            <li key={label}>
-              <a href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
-                 className="kn-pill inline-flex items-center gap-2 px-3.5 py-2 text-[13px] font-medium transition-colors hover:!border-[hsl(var(--accent))] hover:!text-[hsl(var(--accent))]">
-                <Icon size={14} strokeWidth={1.8} /> {label}
-              </a>
-            </li>
-          ))}
-        </ul>
+    <div>
+      <div className="grid grid-cols-12 gap-x-16 gap-y-12 items-center">
+        <div className="col-span-12 lg:col-span-7">
+          <p className="flex flex-wrap items-center gap-2.5 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.22em]"
+             style={{ color: "hsl(var(--muted))" }}>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
+                    style={{ background: "hsl(var(--accent))" }} />
+              <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "hsl(var(--accent))" }} />
+            </span>
+            {profile.role}
+          </p>
+
+          <h1 className="mt-7 font-display leading-[0.92] tracking-[-0.05em]
+                         text-[clamp(2.6rem,6.4vw,5rem)]"
+              style={{ color: "hsl(var(--ink))" }}>
+            <span className="block">Md.</span>
+            <span className="block kn-mark">Mosfikur Rahman</span>
+          </h1>
+
+          <p className="mt-7 max-w-[50ch] text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.5]"
+             style={{ color: "hsl(var(--ink-soft))" }}>
+            {profile.tagline}
+          </p>
+
+          <ul className="mt-9 flex items-center gap-2 flex-wrap">
+            {channels.map(({ Icon, href, label, ext }) => (
+              <li key={label}>
+                <a href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
+                   className="kn-pill inline-flex items-center gap-2 px-3.5 py-2 text-[13px] font-medium transition-colors hover:!border-[hsl(var(--accent))] hover:!text-[hsl(var(--accent))]">
+                  <Icon size={14} strokeWidth={1.8} /> {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <aside className="col-span-12 lg:col-span-5">
+          <figure className="relative mx-auto lg:ml-auto w-[210px] sm:w-[260px]">
+            <div className="absolute -inset-5 rounded-[2rem] blur-2xl"
+                 style={{ background: "radial-gradient(closest-side, hsl(var(--accent) / 0.28), transparent)" }} />
+            <div className="absolute -inset-2 rounded-[1.9rem] rotate-3"
+                 style={{ border: "1px solid hsl(var(--accent) / 0.35)" }} />
+            <div className="relative overflow-hidden"
+                 style={{ border: "1px solid hsl(var(--rule))", borderRadius: "1.6rem" }}>
+              <img src={avatar} alt="Portrait of Md. Mosfikur Rahman" className="w-full h-auto block" loading="eager" />
+            </div>
+            <figcaption className="mt-4 text-center text-[13px]" style={{ color: "hsl(var(--muted))" }}>
+              {profile.roleLong}
+            </figcaption>
+          </figure>
+        </aside>
       </div>
-      <aside className="col-span-12 lg:col-span-4">
-        <figure className="relative mx-auto lg:mx-0 w-[190px] lg:w-full max-w-[250px]">
-          <div className="absolute -inset-3 rounded-[1.75rem]"
-               style={{ background: "radial-gradient(closest-side, hsl(var(--accent) / 0.18), transparent)" }} />
-          <div className="relative overflow-hidden"
-               style={{ border: "1px solid hsl(var(--rule))", borderRadius: "1.5rem" }}>
-            <img src={avatar} alt="Portrait of Md. Mosfikur Rahman" className="w-full h-auto block" loading="eager" />
-          </div>
-          <figcaption className="mt-4 text-[13px] text-center lg:text-left" style={{ color: "hsl(var(--muted))" }}>
-            {profile.roleLong}
-          </figcaption>
-        </figure>
-      </aside>
-      <dl className="col-span-12 grid grid-cols-2 md:grid-cols-4 rounded-2xl overflow-hidden"
-          style={{ border: "1px solid hsl(var(--rule))" }}>
+
+      <div className="mt-12 flex flex-wrap items-stretch rounded-2xl overflow-hidden"
+           style={{ border: "1px solid hsl(var(--rule))" }}>
         {figures.map((f, i) => (
-          <div key={f.k} className="px-6 py-5"
-               style={{ borderColor: "hsl(var(--rule))", borderLeftWidth: i % 4 === 0 ? 0 : 1, borderTopWidth: i >= 2 ? 1 : 0 }}>
-            <dd className="font-display text-[clamp(1.5rem,2.8vw,2.25rem)] tracking-[-0.04em] tabular-nums"
-                style={{ color: "hsl(var(--ink))" }}>{f.v}</dd>
-            <dt className="mt-0.5 text-[12px] font-semibold" style={{ color: "hsl(var(--accent))" }}>{f.k}</dt>
+          <div key={f.k} className="flex-1 min-w-[140px] px-6 py-5"
+               style={{ borderLeft: i === 0 ? "none" : "1px solid hsl(var(--rule))" }}>
+            <div className="font-display text-[clamp(1.6rem,3vw,2.4rem)] tracking-[-0.04em] tabular-nums"
+                 style={{ color: "hsl(var(--ink))" }}>{f.v}</div>
+            <div className="mt-0.5 text-[12px] font-semibold" style={{ color: "hsl(var(--accent))" }}>{f.k}</div>
             <p className="text-[11.5px]" style={{ color: "hsl(var(--muted))" }}>{f.note}</p>
           </div>
         ))}
-      </dl>
+      </div>
+
+      <p className="mt-9 inline-flex items-center gap-2.5 font-mono text-[12px] tracking-[0.16em] uppercase"
+         style={{ color: "hsl(var(--whisper))" }}>
+        <span className="kn-key">←</span><span className="kn-key">→</span>
+        <span>or the arrows below to walk through — papers first, then work</span>
+      </p>
     </div>
   );
 }
@@ -220,13 +241,30 @@ function WorkSlide() {
               <div className="grid transition-[grid-template-rows] duration-300 ease-out"
                    style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
                 <div className="overflow-hidden">
-                  <div className="px-5 pb-5 pt-1 border-t rule-soft">
-                    <p className="mt-3 text-[clamp(0.97rem,1.3vw,1.15rem)] leading-[1.6] text-pretty"
+                  <div className="px-5 pb-6 pt-1 border-t rule-soft">
+                    <p className="mt-3 text-[14.5px] leading-[1.6] text-pretty"
                        style={{ color: "hsl(var(--ink-soft))" }}>
                       {p.blurb}
                     </p>
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                      {p.tags.map((t) => <span key={t} className="kn-pill px-3 py-1 text-[12px]">{t}</span>)}
+
+                    <p className="mg-label mt-5" style={{ color: "hsl(var(--accent))" }}>
+                      Key contributions
+                    </p>
+                    <ul className="mt-3 grid sm:grid-cols-2 gap-x-8 gap-y-2.5">
+                      {p.highlights.map((h, hi) => (
+                        <li key={hi} className="flex gap-3 text-[13.5px] leading-[1.5]">
+                          <span className="font-mono text-[11px] pt-[3px] shrink-0 font-semibold tabular-nums"
+                                style={{ color: "hsl(var(--accent))" }}>
+                            {String(hi + 1).padStart(2, "0")}
+                          </span>
+                          <span style={{ color: "hsl(var(--ink-soft))" }}>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-5 pt-4 border-t rule-soft flex flex-wrap items-center gap-2">
+                      <span className="mg-label mr-1" style={{ color: "hsl(var(--muted))" }}>Stack</span>
+                      {p.stack.map((t) => <span key={t} className="kn-pill px-3 py-1 text-[12px]">{t}</span>)}
                       {p.href && (
                         <a href={p.href} target="_blank" rel="noreferrer"
                            className="ml-auto inline-flex items-center gap-1 text-[12.5px] font-semibold"
@@ -262,9 +300,9 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
   const isFirst = p.authors[0] === "Rahman, Md. Mosfikur";
   return (
     <div>
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="sig">Paper · {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
-        <div className="flex items-center gap-2 text-[12px]" style={{ color: "hsl(var(--muted))" }}>
+        <div className="flex flex-wrap items-center gap-2 text-[12px]" style={{ color: "hsl(var(--muted))" }}>
           {isFirst && (
             <span className="inline-flex items-center gap-1 px-3 py-1 font-semibold rounded-full"
                   style={{ background: "hsl(var(--accent))", color: "hsl(var(--paper))" }} title="First author">

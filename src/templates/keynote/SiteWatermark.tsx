@@ -65,7 +65,7 @@ export default function KeynoteDeck() {
   const slide = SLIDES[index];
 
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col"
+    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden"
          style={{ background: "hsl(var(--paper))", color: "hsl(var(--ink))" }}>
       {/* progress rail */}
       <div className="absolute top-0 left-0 right-0 h-[3px] z-20" style={{ background: "hsl(var(--rule-soft))" }}>
@@ -74,14 +74,10 @@ export default function KeynoteDeck() {
       </div>
 
       {/* top bar */}
-      <header className="shrink-0 h-14 px-5 sm:px-8 flex items-center justify-between border-b rule-soft">
+      <header className="shrink-0 h-14 px-4 sm:px-8 flex items-center justify-between gap-3 border-b rule-soft">
         <div className="flex items-center gap-3 min-w-0">
           <span className="font-display text-[14px] tracking-[-0.02em] truncate" style={{ color: "hsl(var(--ink))" }}>
             {profile.name}
-          </span>
-          <span className="hidden sm:inline font-mono text-[9px] px-2 py-0.5 uppercase tracking-[0.18em] rounded-full shrink-0"
-                style={{ border: "1px solid hsl(var(--rule))", color: "hsl(var(--muted))" }}>
-            Interview Deck
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -123,10 +119,12 @@ export default function KeynoteDeck() {
             animate="center"
             exit="exit"
             transition={{ duration: 0.42, ease: EASE }}
-            className="absolute inset-0 flex items-center justify-center px-5 sm:px-10 py-8 overflow-y-auto"
+            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
           >
-            <div className="w-full max-w-[1120px] mx-auto">
-              {slide.render()}
+            <div className="min-h-full flex items-center justify-center px-4 sm:px-10 py-6 sm:py-10">
+              <div className="w-full max-w-[1120px] mx-auto">
+                {slide.render()}
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -145,14 +143,14 @@ export default function KeynoteDeck() {
       </main>
 
       {/* control bar */}
-      <footer className="shrink-0 h-16 px-5 sm:px-8 flex items-center justify-between gap-4 border-t rule-soft">
+      <footer className="shrink-0 h-14 sm:h-16 px-4 sm:px-8 flex items-center justify-between gap-3 border-t rule-soft">
         <button onClick={prev} disabled={index === 0}
-                className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-colors disabled:opacity-30 disabled:pointer-events-none"
-                style={{ color: "hsl(var(--ink))" }}>
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-semibold transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                style={{ color: "hsl(var(--ink))", border: "1px solid hsl(var(--rule))" }}>
           <ChevronLeft size={16} strokeWidth={2.2} /> <span className="hidden sm:inline">Prev</span>
         </button>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-[55vw] px-2">
+        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-[46vw] px-2">
           {SLIDES.map((s, i) => (
             <button key={i} onClick={() => go(i, i > index ? 1 : -1)} aria-label={`Go to ${s.label}`} title={s.label}
                     className="shrink-0 rounded-full transition-all"
@@ -163,7 +161,7 @@ export default function KeynoteDeck() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <span className="font-mono text-[12px] tabular-nums tracking-[0.1em]" style={{ color: "hsl(var(--whisper))" }}>
             <b style={{ color: "hsl(var(--ink))" }}>{String(index + 1).padStart(2, "0")}</b> / {String(total).padStart(2, "0")}
           </span>

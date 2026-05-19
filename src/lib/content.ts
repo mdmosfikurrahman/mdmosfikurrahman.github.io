@@ -106,6 +106,8 @@ export type Project = {
   year: string;
   role: string;
   blurb: string;
+  highlights: string[];
+  stack: string[];
   tags: string[];
   flagship?: boolean;
 };
@@ -118,6 +120,13 @@ export const projects: Project[] = [
     role: "Backend architecture & system design",
     blurb:
       "A production online-travel platform I designed and built, now serving 10k+ daily users. Backend architecture around supplier integration, rule-driven pricing logic, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes.",
+    highlights: [
+      "Designed and built the end-to-end backend architecture for a production OTA platform now serving 10k+ daily users.",
+      "Modelled supplier-integration flows and a rule-driven pricing engine so business changes are configuration, not code.",
+      "Decomposed the estate into microservice workflows with clear service boundaries to keep it maintainable as it scales.",
+      "Delivered across Java, .NET, and Node with hands-on Docker packaging and deployment.",
+    ],
+    stack: ["Java", "Spring Boot", ".NET", "Node.js", "Drools", "gRPC", "Docker", "Kubernetes"],
     tags: ["architecture", "microservices", "rule engine", "OTA"],
     flagship: true,
   },
@@ -128,7 +137,14 @@ export const projects: Project[] = [
     year: "2023–24",
     role: "Full-stack Engineer",
     blurb:
-      "National-scale bond system for the NBR. Owned the Legal Case and Utilization Declaration modules, BGMEA/BKMEA sync for garment-export compliance, audit trail, and role-based access control.",
+      "National-scale customs-bond system for Bangladesh's National Board of Revenue, used for garment-export compliance.",
+    highlights: [
+      "Shipped production modules on a live national compliance system (NBR Customs Bond).",
+      "Owned the Legal Case and Utilization Declaration modules end to end — React front, Spring Boot back, Oracle data layer.",
+      "Automated BGMEA / BKMEA synchronisation for garment-export declaration processing.",
+      "Improved system throughput ~25% via query tuning and access-path refactoring; hardened auth with OAuth2 and Spring Security.",
+    ],
+    stack: ["Java", "Spring Boot", "React", "Oracle", "OAuth2"],
     tags: ["Spring Boot", "React", "Oracle", "compliance"],
   },
   {
@@ -138,7 +154,14 @@ export const projects: Project[] = [
     year: "2022–23",
     role: "Backend Engineer",
     blurb:
-      "GraphQL BFF for Rakuten Echiba e-commerce. Resolver batching, schema stitching, and query-path optimisation. Internal tooling for consistent schema generation across teams.",
+      "GraphQL Backend-for-Frontend for Rakuten Echiba e-commerce, delivered to Japanese stakeholders.",
+    highlights: [
+      "Built GraphQL BFF services handling complex nested data with resolver batching.",
+      "Reduced query latency through schema stitching and join-path optimisation.",
+      "Contributed reusable service patterns to internal GraphQL schema tooling used across teams.",
+      "Delivered to Japanese enterprise review standards — correctness and operational calmness.",
+    ],
+    stack: ["Java", "Spring Boot", "GraphQL", "Oracle"],
     tags: ["GraphQL", "Java", "Spring Boot"],
   },
   {
@@ -147,7 +170,14 @@ export const projects: Project[] = [
     year: "2022–23",
     role: "Full-stack Engineer",
     blurb:
-      "Corporate CMS for Denka Japan. Dynamic Marquee components, content scheduling, multilingual support, SEO and analytics integration across a Thymeleaf-driven stack.",
+      "Corporate CMS for Denka Japan across a Thymeleaf-driven stack.",
+    highlights: [
+      "Delivered CMS and multilingual content logic for the Denka corporate site.",
+      "Built dynamic Marquee components and content-scheduling workflows.",
+      "Integrated SEO and analytics across the Thymeleaf-driven stack.",
+      "Coordinated delivery with Japanese stakeholders end to end.",
+    ],
+    stack: ["Java", "Thymeleaf", "Spring Boot"],
     tags: ["Java", "Thymeleaf", "CMS"],
   },
 ];

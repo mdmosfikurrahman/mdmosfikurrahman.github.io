@@ -851,6 +851,22 @@
       hsl(var(--accent)), hsl(var(--accent-deep)));
     transition: width .12s linear;
   }
+
+  /* Keycap hint on the cover slide */
+  .template-keynote .kn-key {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    border: 1px solid hsl(var(--rule));
+    border-bottom-width: 2px;
+    border-radius: 0.4rem;
+    background: hsl(var(--paper-deep));
+    color: hsl(var(--ink));
+    font-size: 12px;
+    line-height: 1;
+  }
 }
 
 /* =====================================================================
