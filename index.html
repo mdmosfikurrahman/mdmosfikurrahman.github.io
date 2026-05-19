@@ -288,6 +288,39 @@
         html.template-keynote .se-corner,
         html.template-keynote .sew { display: none; }
 
+        /* Keynote tagline: professional copy (default hidden for keynote). */
+        .se-tag-keynote { display: none; }
+        html.template-keynote .se-tag-default { display: none; }
+        html.template-keynote .se-tag-keynote { display: inline; }
+
+        /* Keynote name: animated bleeding gradient (matches the deck cover). */
+        @keyframes se-bleed {
+            0%, 100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+        html.template-keynote .site-entry__name {
+            font-weight: 800;
+            background: linear-gradient(100deg, #6b4ce0 0%, #4733b8 50%, #6b4ce0 100%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: se-name 1100ms cubic-bezier(.2,.7,.2,1) 320ms forwards,
+                       se-bleed 6s ease-in-out 1500ms infinite;
+        }
+        html.template-keynote.dark .site-entry__name {
+            background: linear-gradient(100deg, #b6a4ff 0%, #9c82ff 50%, #b6a4ff 100%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html.template-keynote .site-entry__name {
+                animation: se-name 1100ms cubic-bezier(.2,.7,.2,1) 320ms forwards;
+            }
+        }
+
         /* Watermark layer — shared shell, template-specific backdrop. */
         .site-entry__watermark {
             position: absolute;
@@ -1086,7 +1119,8 @@
             <h1 class="site-entry__name">Md. Mosfikur Rahman</h1>
             <div class="site-entry__rule" aria-hidden="true"></div>
             <p class="site-entry__tagline">
-                Engineer by craft, researcher by rigor, architect by design.
+                <span class="se-tag-default">Engineer by craft, researcher by rigor, architect by design.</span>
+                <span class="se-tag-keynote">Backend architect &amp; applied-ML researcher — production systems at real scale, backed by peer-reviewed research.</span>
             </p>
             <div class="site-entry__dots" aria-hidden="true">
                 <span class="site-entry__dot"></span>
