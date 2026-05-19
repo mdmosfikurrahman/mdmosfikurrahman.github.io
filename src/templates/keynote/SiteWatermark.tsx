@@ -173,7 +173,7 @@ export default function KeynoteDeck() {
           <ChevronLeft size={16} strokeWidth={2.2} /> <span className="hidden sm:inline">Prev</span>
         </button>
 
-        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-[46vw] px-2 py-1">
+        <div className="kn-dots hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-[46vw] px-2 py-1">
           {SLIDES.map((s, i) => (
             <span key={i} className="relative shrink-0 group grid place-items-center h-4">
               <span aria-hidden

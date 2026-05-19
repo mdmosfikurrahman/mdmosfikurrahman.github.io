@@ -918,6 +918,8 @@
     hsl(var(--accent) / 0.30));
   animation: kn-spin 26s linear infinite;
 }
+.template-keynote .kn-dots { scrollbar-width: none; -ms-overflow-style: none; }
+.template-keynote .kn-dots::-webkit-scrollbar { display: none; }
 .template-keynote .kn-bar {
   height: 3px;
   border-radius: 9999px;
