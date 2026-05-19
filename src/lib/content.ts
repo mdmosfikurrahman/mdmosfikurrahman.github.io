@@ -195,6 +195,7 @@ export type Publication = {
   tags?: string[];
   award?: string;
   impactRank?: number; // 1 = strongest; drives deck ordering within author group
+  pdf?: string;        // served from /public/papers/<key>.pdf when available
   abstract?: string;
   problem?: string;
   solution?: string;
@@ -209,6 +210,7 @@ export const publications: Publication[] = [
   {
     key: "Johora2024CovidPrediction",
     impactRank: 5,
+    pdf: "/papers/Johora2024CovidPrediction.pdf",
     type: "conference",
     title:
       "Machine Learning-Based Prediction of COVID-19: A Robust Approach for Early Diagnosis and Treatment",
@@ -276,6 +278,7 @@ export const publications: Publication[] = [
   {
     key: "Islam2023CyberSecurity",
     impactRank: 4,
+    pdf: "/papers/Islam2023CyberSecurity.pdf",
     type: "conference",
     title: "Cyber Security Intruder Detection Using Deep Learning Approach",
     authors: [
@@ -308,6 +311,7 @@ export const publications: Publication[] = [
   {
     key: "Yesmin2022Education",
     impactRank: 10,
+    pdf: "/papers/Yesmin2022Education.pdf",
     type: "chapter",
     title: "Pandemic Effect on Education System Among University Students",
     authors: [
@@ -341,6 +345,7 @@ export const publications: Publication[] = [
   {
     key: "Moon2021PlantDisease",
     impactRank: 7,
+    pdf: "/papers/Moon2021PlantDisease.pdf",
     type: "conference",
     title: "Deep Learning Model for Detecting and Diagnosing Plant Disease",
     authors: [
@@ -376,6 +381,7 @@ export const publications: Publication[] = [
   {
     key: "Rahman2021TraFoo",
     impactRank: 3,
+    pdf: "/papers/Rahman2021TraFoo.pdf",
     type: "conference",
     title: "TraFoo: An Android Application for Food Delivery in Train",
     authors: [
@@ -409,6 +415,7 @@ export const publications: Publication[] = [
   {
     key: "SHETU2021100038",
     impactRank: 8,
+    pdf: "/papers/SHETU2021100038.pdf",
     type: "journal",
     title: "Impactful e-learning framework: A new hybrid form of education",
     authors: [
@@ -444,6 +451,7 @@ export const publications: Publication[] = [
   {
     key: "RAHMAN2021100037",
     impactRank: 2,
+    pdf: "/papers/RAHMAN2021100037.pdf",
     type: "journal",
     title:
       "Impact of COVID-19 on mental health: A quantitative analysis of anxiety and depression based on regular life and internet use",
@@ -479,6 +487,7 @@ export const publications: Publication[] = [
   {
     key: "SAIFUZZAMAN2021100034",
     impactRank: 9,
+    pdf: "/papers/SAIFUZZAMAN2021100034.pdf",
     type: "journal",
     title:
       "COVID-19 and Bangladesh: Situation report, comparative analysis, and case study",
@@ -513,6 +522,7 @@ export const publications: Publication[] = [
   {
     key: "Rahman2020SmartSewer",
     impactRank: 1,
+    pdf: "/papers/Rahman2020SmartSewer.pdf",
     type: "conference",
     title:
       "Future City of Bangladesh: IoT Based Autonomous Smart Sewerage and Hazard Condition Sharing System",

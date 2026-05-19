@@ -5,7 +5,8 @@
 import { useState } from "react";
 import {
   Github, Linkedin, Mail, GraduationCap, FileText, Award,
-  Copy, Check, ArrowUpRight, ChevronDown, type LucideIcon,
+  Copy, Check, ArrowUpRight, ChevronDown, Download, Maximize2,
+  type LucideIcon,
 } from "lucide-react";
 import {
   profile, figures, roles, projects,
@@ -351,20 +352,57 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
         )}
       </div>
 
-      <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Block label="Problem" text={p.problem} />
-        <Block label="Solution" text={p.solution} />
-        <Block label="Methodology" text={p.methodology} />
-        <Block label="Key findings" text={p.keyFindings} />
-        <Block label="Impact" text={p.impact} />
-        <Block label="Challenges" text={p.challenges} />
-      </div>
+      <div className={p.pdf ? "mt-6 grid lg:grid-cols-[1.05fr,0.95fr] gap-6" : "mt-6"}>
+        <div>
+          <div className={p.pdf ? "grid sm:grid-cols-2 gap-4" : "grid sm:grid-cols-2 lg:grid-cols-3 gap-4"}>
+            <Block label="Problem" text={p.problem} />
+            <Block label="Solution" text={p.solution} />
+            <Block label="Methodology" text={p.methodology} />
+            <Block label="Key findings" text={p.keyFindings} />
+            <Block label="Impact" text={p.impact} />
+            <Block label="Challenges" text={p.challenges} />
+          </div>
+          {p.keywords && p.keywords.length > 0 && (
+            <ul className="mt-5 flex flex-wrap gap-2">
+              {p.keywords.map((k) => <li key={k} className="kn-pill px-2.5 py-1 text-[12px]">{k}</li>)}
+            </ul>
+          )}
+        </div>
 
-      {p.keywords && p.keywords.length > 0 && (
-        <ul className="mt-5 flex flex-wrap gap-2">
-          {p.keywords.map((k) => <li key={k} className="kn-pill px-2.5 py-1 text-[12px]">{k}</li>)}
-        </ul>
-      )}
+        {p.pdf && (
+          <aside className="kn-card overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b rule-soft">
+              <span className="inline-flex items-center gap-2 mg-label" style={{ color: "hsl(var(--accent))" }}>
+                <FileText size={13} strokeWidth={2} /> Full paper
+              </span>
+              <div className="flex items-center gap-2">
+                <a href={p.pdf} target="_blank" rel="noreferrer"
+                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold transition-colors"
+                   style={{ border: "1px solid hsl(var(--rule))", color: "hsl(var(--ink))" }}
+                   title="Open full PDF in a new tab">
+                  <Maximize2 size={12} strokeWidth={2.2} /> Open
+                </a>
+                <a href={p.pdf} download
+                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-semibold transition-colors"
+                   style={{ background: "hsl(var(--accent))", color: "hsl(var(--paper))" }}
+                   title="Download PDF">
+                  <Download size={12} strokeWidth={2.4} /> PDF
+                </a>
+              </div>
+            </div>
+            <object data={`${p.pdf}#view=FitH`} type="application/pdf"
+                    className="w-full h-[58vh] lg:h-[70vh]" aria-label={`${p.title} — full paper PDF`}>
+              <div className="p-6 text-center text-[13px]" style={{ color: "hsl(var(--ink-soft))" }}>
+                Inline preview isn&apos;t supported here.{" "}
+                <a href={p.pdf} target="_blank" rel="noreferrer"
+                   className="font-semibold" style={{ color: "hsl(var(--accent))" }}>
+                  Open the PDF →
+                </a>
+              </div>
+            </object>
+          </aside>
+        )}
+      </div>
     </div>
   );
 }
@@ -435,8 +473,10 @@ function EducationSlide() {
         Where I <span className="kn-mark">studied.</span>
       </h2>
       <ol className="mt-8 grid sm:grid-cols-2 gap-4">
-        {education.map((e) => (
-          <li key={e.school + e.degree} className="kn-card p-5">
+        {education
+          .filter((e) => /B\.Sc\.|Erasmus/.test(e.degree))
+          .map((e) => (
+          <li key={e.school + e.degree} className="kn-card p-6">
             <div className="flex items-center justify-between gap-3">
               <span className="font-mono text-[11.5px] font-semibold tabular-nums" style={{ color: "hsl(var(--accent))" }}>
                 {e.from.slice(0, 4)} – {e.to.slice(0, 4)}
@@ -475,18 +515,18 @@ function CertificationsSlide() {
       </h2>
       <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {certifications.map((g, gi) => (
-          <div key={gi} className="kn-card p-5">
-            <p className="font-mono text-[12px] font-bold uppercase tracking-[0.14em]" style={{ color: "hsl(var(--accent))" }}>
-              {g.group}
-            </p>
-            <p className="mt-0.5 text-[12px]" style={{ color: "hsl(var(--muted))" }}>{g.issuer}</p>
-            <ul className="mt-3 space-y-1.5">
-              {g.items.map((it) => (
-                <li key={it} className="flex gap-2 text-[12.5px] leading-[1.4]" style={{ color: "hsl(var(--ink-soft))" }}>
-                  <span style={{ color: "hsl(var(--accent))" }}>·</span>{it}
-                </li>
-              ))}
-            </ul>
+          <div key={gi} className="kn-card p-6 flex items-center justify-between gap-4">
+            <div>
+              <p className="font-display text-[clamp(1.1rem,1.8vw,1.4rem)] tracking-[-0.02em]"
+                 style={{ color: "hsl(var(--ink))" }}>
+                {g.group}
+              </p>
+              <p className="mt-1 text-[12.5px]" style={{ color: "hsl(var(--muted))" }}>{g.issuer}</p>
+            </div>
+            <span className="font-display text-[clamp(1.5rem,3vw,2.25rem)] tabular-nums shrink-0"
+                  style={{ color: "hsl(var(--accent))" }}>
+              {g.items.length}
+            </span>
           </div>
         ))}
       </div>
