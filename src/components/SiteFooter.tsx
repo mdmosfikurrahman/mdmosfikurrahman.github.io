@@ -21,7 +21,9 @@ export default function SiteFooter() {
     case "heist":        return <SiteFooterHeist />;
     case "chess":        return <SiteFooterChess />;
     case "tenet":        return <SiteFooterTenet />;
-    case "keynote":      return <SiteFooterKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <SiteFooterKeynote />;
     case "folio":
     default:             return <SiteFooterFolio />;
   }

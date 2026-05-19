@@ -21,7 +21,9 @@ export default function SkillsMatrix() {
     case "heist":        return <SkillsMatrixHeist />;
     case "chess":        return <SkillsMatrixChess />;
     case "tenet":        return <SkillsMatrixTenet />;
-    case "keynote":      return <SkillsMatrixKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <SkillsMatrixKeynote />;
     case "folio":
     default:             return <SkillsMatrixFolio />;
   }

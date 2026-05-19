@@ -21,7 +21,9 @@ export default function ResearchStrip() {
     case "heist":        return <ResearchStripHeist />;
     case "chess":        return <ResearchStripChess />;
     case "tenet":        return <ResearchStripTenet />;
-    case "keynote":      return <ResearchStripKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <ResearchStripKeynote />;
     case "folio":
     default:             return <ResearchStripFolio />;
   }

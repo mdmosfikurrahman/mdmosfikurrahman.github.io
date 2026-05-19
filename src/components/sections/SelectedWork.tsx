@@ -21,7 +21,9 @@ export default function SelectedWork() {
     case "heist":        return <SelectedWorkHeist />;
     case "chess":        return <SelectedWorkChess />;
     case "tenet":        return <SelectedWorkTenet />;
-    case "keynote":      return <SelectedWorkKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <SelectedWorkKeynote />;
     case "folio":
     default:             return <SelectedWorkFolio />;
   }

@@ -19,7 +19,9 @@ export type TemplateId =
   | "heist"
   | "chess"
   | "tenet"
-  | "keynote";
+  | "keynote"
+  | "keynote-tech"
+  | "keynote-talk";
 
 export type TemplateMeta = {
   id: TemplateId;
@@ -115,12 +117,30 @@ export const TEMPLATES: TemplateMeta[] = [
   },
   {
     id: "keynote",
-    name: "Keynote",
-    tagline: "presentation deck · interview-ready · full-bleed slides",
+    name: "Keynote — Research",
+    tagline: "deck · PhD / research interview · papers in depth",
     description:
-      "The portfolio as a talk. Each section is a full-viewport slide — oversized Inter display type, a faint stage grid, mono slide numbers, and presenter chrome. Built to be screen-shared in an interview instead of a slide deck: scroll = next slide.",
+      "Presentation deck tuned for a PhD or research interview. Research is the spine: every peer-reviewed paper gets its own dossier, ordered first-author-then-impact, with peer-review and recognition. Engineering and credentials follow.",
     era: "MMXXVI / IX",
-    family: "deck · presentation",
+    family: "deck · research",
+  },
+  {
+    id: "keynote-tech",
+    name: "Keynote — Engineering",
+    tagline: "deck · technical interview · systems first",
+    description:
+      "Presentation deck tuned for a technical interview. Engineering leads: current architecture, selected systems, and tooling up front; research is kept to the two strongest papers. Tight and outcome-driven.",
+    era: "MMXXVI / X",
+    family: "deck · engineering",
+  },
+  {
+    id: "keynote-talk",
+    name: "Keynote — Seminar",
+    tagline: "deck · self-presentation / seminar · balanced",
+    description:
+      "Presentation deck tuned for a seminar or self-introduction. A balanced, concise arc — current impact, trajectory, a focused set of papers, engineering, and well-roundedness — built to introduce yourself end to end in minutes.",
+    era: "MMXXVI / XI",
+    family: "deck · seminar",
   },
 ];
 
@@ -143,7 +163,14 @@ export function writeTemplate(t: TemplateId) {
 export function applyTemplateClass(t: TemplateId) {
   const root = document.documentElement;
   TEMPLATES.forEach((tpl) => root.classList.remove(`template-${tpl.id}`));
+  // The keynote-* variants share one visual system — keep the base
+  // `template-keynote` class on so all keynote CSS applies; the specific
+  // `template-<id>` only drives which deck order is shown (in JS).
+  root.classList.remove("template-keynote");
   root.classList.add(`template-${t}`);
+  if (t === "keynote-tech" || t === "keynote-talk") {
+    root.classList.add("template-keynote");
+  }
 }
 
 // Module-level "remote fetched" guard so we only hit the network once per

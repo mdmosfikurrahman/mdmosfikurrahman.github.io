@@ -813,6 +813,8 @@ const PREVIEWS: Record<TemplateId, ReactNode> = {
   chess:        PreviewChess,
   tenet:        PreviewTenet,
   keynote:      PreviewKeynote,
+  "keynote-tech": PreviewKeynote,
+  "keynote-talk": PreviewKeynote,
 };
 
 function Preview({ id }: { id: TemplateId }) {

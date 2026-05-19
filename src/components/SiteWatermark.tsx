@@ -21,7 +21,9 @@ export default function SiteWatermark() {
     case "heist":        return <SiteWatermarkHeist />;
     case "chess":        return <SiteWatermarkChess />;
     case "tenet":        return <SiteWatermarkTenet />;
-    case "keynote":      return <SiteWatermarkKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <SiteWatermarkKeynote />;
     case "folio":
     default:             return <SiteWatermarkFolio />;
   }

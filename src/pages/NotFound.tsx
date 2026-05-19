@@ -21,7 +21,9 @@ export default function NotFound() {
     case "heist":        return <NotFoundHeist />;
     case "chess":        return <NotFoundChess />;
     case "tenet":        return <NotFoundTenet />;
-    case "keynote":      return <NotFoundKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <NotFoundKeynote />;
     case "folio":
     default:             return <NotFoundFolio />;
   }

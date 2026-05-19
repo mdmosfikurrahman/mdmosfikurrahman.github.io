@@ -21,7 +21,9 @@ export default function Hero() {
     case "heist":        return <HeroHeist />;
     case "chess":        return <HeroChess />;
     case "tenet":        return <HeroTenet />;
-    case "keynote":      return <HeroKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <HeroKeynote />;
     case "folio":
     default:             return <HeroFolio />;
   }

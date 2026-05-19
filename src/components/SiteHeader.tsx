@@ -21,7 +21,9 @@ export default function SiteHeader() {
     case "heist":        return <SiteHeaderHeist />;
     case "chess":        return <SiteHeaderChess />;
     case "tenet":        return <SiteHeaderTenet />;
-    case "keynote":      return <SiteHeaderKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <SiteHeaderKeynote />;
     case "folio":
     default:             return <SiteHeaderFolio />;
   }

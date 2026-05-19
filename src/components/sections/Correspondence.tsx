@@ -21,7 +21,9 @@ export default function Correspondence() {
     case "heist":        return <CorrespondenceHeist />;
     case "chess":        return <CorrespondenceChess />;
     case "tenet":        return <CorrespondenceTenet />;
-    case "keynote":      return <CorrespondenceKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <CorrespondenceKeynote />;
     case "folio":
     default:             return <CorrespondenceFolio />;
   }

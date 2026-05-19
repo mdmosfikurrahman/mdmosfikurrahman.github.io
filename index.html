@@ -49,9 +49,13 @@
         } catch (_) {}
         try {
           var tpl = localStorage.getItem('portfolio.template');
-          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet','keynote'];
+          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet','keynote','keynote-tech','keynote-talk'];
           if (ALLOWED.indexOf(tpl) === -1) tpl = 'folio';
           document.documentElement.classList.add('template-' + tpl);
+          // keynote-* share one visual system — keep the base class on too.
+          if (tpl === 'keynote-tech' || tpl === 'keynote-talk') {
+            document.documentElement.classList.add('template-keynote');
+          }
         } catch (_) {
           document.documentElement.classList.add('template-folio');
         }

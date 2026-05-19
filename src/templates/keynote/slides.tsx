@@ -390,7 +390,7 @@ function PaperDossier({ p, i, total }: { p: Publication; i: number; total: numbe
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="sig">Paper · {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
+        <p className="sig">Paper {String(i + 1).padStart(2, "0")}</p>
         <div className="flex flex-wrap items-center gap-2 text-[12px]" style={{ color: "hsl(var(--muted))" }}>
           {isFirst && (
             <span className="inline-flex items-center gap-1 px-3 py-1 font-semibold rounded-full"
@@ -763,34 +763,70 @@ const orderedPubs = [...publications].sort((a, b) => {
 const firstAuthorCount = publications.filter(isFirstAuthor).length;
 const totalCitations = publications.reduce((n, p) => n + (p.citations ?? 0), 0);
 
-// Professional self-presentation arc (interview / seminar):
-//   identity → current impact → trajectory → academic foundation →
-//   research body + credibility → engineering depth + tooling →
-//   credentials → service → close.
-export const SLIDES: DeckSlide[] = [
-  { label: "Title", render: () => <TitleSlide /> },
-  { label: "Now", render: () => <NowSlide /> },
-  { label: "Earlier experience", render: () => <ExperienceSlide /> },
-  { label: "Education", render: () => <EducationSlide /> },
-  {
-    label: "Research",
-    render: () => <Divider kicker="Section" title="Research"
-      sub={`${publications.length} peer-reviewed papers · ${firstAuthorCount} as first author · ${totalCitations} citations · 1 IEEE best paper.`}
-      verifyHref={profile.links.scholar} />,
-  },
-  ...orderedPubs.map((p, i): DeckSlide => ({
+// ── Reusable slide units ───────────────────────────────────────────────
+const S = {
+  title:      { label: "Title", render: () => <TitleSlide /> } as DeckSlide,
+  now:        { label: "Now", render: () => <NowSlide /> } as DeckSlide,
+  earlier:    { label: "Earlier experience", render: () => <ExperienceSlide /> } as DeckSlide,
+  education:  { label: "Education", render: () => <EducationSlide /> } as DeckSlide,
+  peerReview: { label: "Peer review & recognition", render: () => <ReviewSlide /> } as DeckSlide,
+  work:       { label: "Selected work", render: () => <WorkSlide /> } as DeckSlide,
+  toolbox:    { label: "Toolbox", render: () => <SkillsSlide /> } as DeckSlide,
+  certs:      { label: "Certifications", render: () => <CertificationsSlide /> } as DeckSlide,
+  leadership: { label: "Leadership & activities", render: () => <ActivitiesSlide /> } as DeckSlide,
+  contact:    { label: "Contact", render: () => <ContactSlide /> } as DeckSlide,
+};
+
+const researchDivider: DeckSlide = {
+  label: "Research",
+  render: () => <Divider kicker="Section" title="Research"
+    sub={`${publications.length} peer-reviewed papers · ${firstAuthorCount} as first author · ${totalCitations} citations · 1 IEEE best paper.`}
+    verifyHref={profile.links.scholar} />,
+};
+const engineeringDivider: DeckSlide = {
+  label: "Engineering",
+  render: () => <Divider kicker="Section" title="Engineering"
+    sub={`${projects.length} systems shipped — national, global, and product scale.`} />,
+};
+const papers = (n?: number): DeckSlide[] => {
+  const list = typeof n === "number" ? orderedPubs.slice(0, n) : orderedPubs;
+  return list.map((p, i) => ({
     label: `Paper · ${p.year}`,
-    render: () => <PaperDossier p={p} i={i} total={orderedPubs.length} />,
-  })),
-  { label: "Peer review & recognition", render: () => <ReviewSlide /> },
-  {
-    label: "Engineering",
-    render: () => <Divider kicker="Section" title="Engineering"
-      sub={`${projects.length} systems shipped — national, global, and product scale.`} />,
-  },
-  { label: "Selected work", render: () => <WorkSlide /> },
-  { label: "Toolbox", render: () => <SkillsSlide /> },
-  { label: "Certifications", render: () => <CertificationsSlide /> },
-  { label: "Leadership & activities", render: () => <ActivitiesSlide /> },
-  { label: "Contact", render: () => <ContactSlide /> },
+    render: () => <PaperDossier p={p} i={i} total={list.length} />,
+  }));
+};
+
+// ── Three professionally-ordered decks, one per presentation context ────
+// Research / PhD — research is the spine, every paper in depth.
+const DECK_RESEARCH: DeckSlide[] = [
+  S.title, S.now, S.earlier, S.education,
+  researchDivider, ...papers(), S.peerReview,
+  engineeringDivider, S.work, S.toolbox,
+  S.certs, S.leadership, S.contact,
 ];
+
+// Engineering / Technical interview — systems first, research kept brief.
+const DECK_TECH: DeckSlide[] = [
+  S.title, S.now,
+  engineeringDivider, S.work, S.toolbox,
+  S.earlier, S.education,
+  researchDivider, ...papers(2),
+  S.certs, S.contact,
+];
+
+// Seminar / Self-presentation — balanced, concise, well-rounded.
+const DECK_TALK: DeckSlide[] = [
+  S.title, S.now, S.earlier, S.education,
+  researchDivider, ...papers(3), S.peerReview,
+  engineeringDivider, S.work, S.toolbox,
+  S.certs, S.leadership, S.contact,
+];
+
+export function deckFor(template: string): DeckSlide[] {
+  if (template === "keynote-tech") return DECK_TECH;
+  if (template === "keynote-talk") return DECK_TALK;
+  return DECK_RESEARCH;
+}
+
+// Back-compat default (research deck).
+export const SLIDES: DeckSlide[] = DECK_RESEARCH;

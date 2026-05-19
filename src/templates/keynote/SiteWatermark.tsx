@@ -8,10 +8,9 @@ import { useLocation, Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sun, Moon, ExternalLink } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
+import { useTemplate } from "@/lib/template";
 import { profile } from "@/lib/content";
-import { SLIDES } from "./slides";
-
-const DECK = SLIDES;
+import { deckFor } from "./slides";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -24,9 +23,16 @@ const variants = {
 export default function KeynoteDeck() {
   const loc = useLocation();
   const { theme, toggle } = useTheme();
+  const { template } = useTemplate();
+  const DECK = deckFor(template);
   const [[index, dir], setState] = useState<[number, number]>([0, 0]);
   const touchX = useRef<number | null>(null);
   const total = DECK.length;
+
+  // Switching decks (e.g. remote sync) can leave the index out of range.
+  useEffect(() => {
+    setState(([cur]) => (cur >= total ? [0, -1] : [cur, 0]));
+  }, [total]);
 
   const go = useCallback((to: number, d: number) => {
     setState(([cur]) => {
@@ -137,6 +143,11 @@ export default function KeynoteDeck() {
         <div className="kn-glow" aria-hidden />
         <span className="kn-ghost" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
 
+        {/* Consistent in-slide page number — same place & format on every slide */}
+        <div className="absolute top-4 right-5 sm:right-8 z-20 kn-step pointer-events-none select-none">
+          <b>{String(index + 1).padStart(2, "0")}</b> / {String(total).padStart(2, "0")}
+        </div>
+
         <AnimatePresence custom={dir} mode="wait" initial={false}>
           <motion.div
             key={index}
@@ -179,7 +190,7 @@ export default function KeynoteDeck() {
         </button>
 
         <div className="kn-dots hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-[46vw] px-2 py-1">
-          {SLIDES.map((s, i) => (
+          {DECK.map((s, i) => (
             <span key={i} className="relative shrink-0 group grid place-items-center h-4">
               <span aria-hidden
                     className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2

@@ -21,7 +21,9 @@ export default function NowSection() {
     case "heist":        return <NowSectionHeist />;
     case "chess":        return <NowSectionChess />;
     case "tenet":        return <NowSectionTenet />;
-    case "keynote":      return <NowSectionKeynote />;
+    case "keynote":
+    case "keynote-tech":
+    case "keynote-talk":  return <NowSectionKeynote />;
     case "folio":
     default:             return <NowSectionFolio />;
   }
