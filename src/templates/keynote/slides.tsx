@@ -68,7 +68,7 @@ function TitleSlide() {
               className="mt-7 font-display leading-[1.0] tracking-[-0.045em] whitespace-nowrap
                          text-[clamp(1.6rem,5.6vw,4.25rem)]"
               style={{ color: "hsl(var(--ink))" }}>
-            Md. <span className="kn-mark-live">Mosfikur Rahman</span>
+            Md. <span className="kn-mark-live">Mosfik</span>ur Rahman
           </motion.h1>
 
           <motion.p custom={2} variants={rise} initial="hidden" animate="show"
@@ -124,12 +124,6 @@ function TitleSlide() {
         ))}
       </motion.div>
 
-      <motion.p custom={5} variants={rise} initial="hidden" animate="show"
-         className="relative mt-9 inline-flex items-center gap-2.5 font-mono text-[12px] tracking-[0.16em] uppercase"
-         style={{ color: "hsl(var(--whisper))" }}>
-        <span className="kn-key">←</span><span className="kn-key">→</span>
-        <span>or the arrows below to walk through — papers first, then work</span>
-      </motion.p>
     </div>
   );
 }
