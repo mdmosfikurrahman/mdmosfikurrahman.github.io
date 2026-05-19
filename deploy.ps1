@@ -65,6 +65,21 @@ Assert-LastExit "Failed to checkout $SourceBranch"
 git pull $Remote $SourceBranch
 Assert-LastExit "Failed to pull $SourceBranch"
 
+# .env holds the VITE_JSONBIN_* values that get inlined at build time. It is
+# gitignored and does not survive the branch-switch/clean cycle, so guarantee
+# it exists BEFORE the build — otherwise remote template sync ships dead.
+Write-Step "Ensuring .env exists for the build"
+if (-not (Test-Path -LiteralPath '.\.env')) {
+    if (Test-Path -LiteralPath '.\.env.example') {
+        Copy-Item -LiteralPath '.\.env.example' -Destination '.\.env' -Force
+        Write-Host "   .env was missing; restored from .env.example" -ForegroundColor DarkYellow
+    } else {
+        throw ".env and .env.example are both missing; cannot embed JSONBin config"
+    }
+} else {
+    Write-Host "   .env present." -ForegroundColor DarkGray
+}
+
 Write-Step "Installing dependencies"
 npm install
 Assert-LastExit "npm install failed"
