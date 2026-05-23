@@ -114,10 +114,15 @@
         });
 
         // DevTools size-delta detector — polls every 500ms, blurs body when open.
+        // Skipped on touch devices: mobile keyboards shrink innerHeight by ~300px,
+        // which would otherwise fire a false positive every time an input is focused.
+        // On desktop we only compare width — devtools docked side panels grow wDelta;
+        // height deltas alone fire false positives for browser chrome/zoom changes.
+        var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
         function detectDevtools() {
+          if (isTouch) return;
           var wDelta = Math.abs(window.outerWidth - window.innerWidth);
-          var hDelta = Math.abs(window.outerHeight - window.innerHeight);
-          var open = wDelta > 160 || hDelta > 160;
+          var open = wDelta > 160;
           if (open !== devtoolsOpen) {
             devtoolsOpen = open;
             if (document.body) {
@@ -125,12 +130,14 @@
             }
           }
         }
-        setInterval(detectDevtools, 500);
-        detectDevtools();
+        if (!isTouch) {
+          setInterval(detectDevtools, 500);
+          detectDevtools();
+        }
       })();
     </script>
-  <script type="module" crossorigin src="/assets/index-DMWFiZ4u.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-BugNinQd.css">
+  <script type="module" crossorigin src="/assets/index-CoPoMT8I.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BLgHFTHR.css">
 </head>
 
 <body>
