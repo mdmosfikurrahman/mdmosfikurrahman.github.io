@@ -52,6 +52,8 @@ export default function SiteFooter() {
             <li><Link className="a" to="/publications">Publications</Link></li>
             <li><Link className="a" to="/about">About</Link></li>
             <li><Link className="a" to="/play">Play</Link></li>
+            <li><Link className="a" to="/guestbook">Guestbook</Link></li>
+            <li><Link className="a" to="/ask">Ask</Link></li>
             <li>
               <a className="a inline-flex items-center gap-1" href={CV_URL} target="_blank" rel="noreferrer">
                 Curriculum Vitae <ArrowUpRight size={12} strokeWidth={1.6} />

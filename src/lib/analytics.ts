@@ -58,22 +58,102 @@ type GeoResponse = {
 
 type CachedGeo = { at: number; data: GeoResponse };
 
+// Provider fallback chain. Each adapter returns a normalised GeoResponse or
+// null when the provider failed (HTTP error, rate-limit body, missing fields,
+// or blocked by network). We accept a result as "good" only if it carries at
+// least country + ip — partial responses don't poison the cache.
+type GeoProvider = { name: string; load: () => Promise<GeoResponse | null> };
+
+function isGoodGeo(g: GeoResponse | null): g is GeoResponse {
+  return !!g && !!g.ip && !!g.country_name;
+}
+
+async function loadIpapiCo(): Promise<GeoResponse | null> {
+  try {
+    const res = await fetch("https://ipapi.co/json/", { cache: "no-store" });
+    if (!res.ok) return null;
+    const raw = (await res.json()) as Record<string, unknown>;
+    // ipapi.co returns 200 OK with { error: true, reason: "..." } on rate-limit.
+    if (raw.error) return null;
+    return {
+      ip: typeof raw.ip === "string" ? raw.ip : undefined,
+      city: typeof raw.city === "string" ? raw.city : undefined,
+      region: typeof raw.region === "string" ? raw.region : undefined,
+      country_name: typeof raw.country_name === "string" ? raw.country_name : undefined,
+      country_code: typeof raw.country_code === "string" ? raw.country_code : undefined,
+      org: typeof raw.org === "string" ? raw.org : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function loadIpwhoIs(): Promise<GeoResponse | null> {
+  try {
+    const res = await fetch("https://ipwho.is/", { cache: "no-store" });
+    if (!res.ok) return null;
+    const raw = (await res.json()) as Record<string, unknown>;
+    if (raw.success === false) return null;
+    const connection = (raw.connection as Record<string, unknown> | undefined) ?? {};
+    return {
+      ip: typeof raw.ip === "string" ? raw.ip : undefined,
+      city: typeof raw.city === "string" ? raw.city : undefined,
+      region: typeof raw.region === "string" ? raw.region : undefined,
+      country_name: typeof raw.country === "string" ? raw.country : undefined,
+      country_code: typeof raw.country_code === "string" ? raw.country_code : undefined,
+      org:
+        typeof connection.org === "string"
+          ? (connection.org as string)
+          : typeof connection.isp === "string"
+          ? (connection.isp as string)
+          : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function loadGeojsIo(): Promise<GeoResponse | null> {
+  try {
+    const res = await fetch("https://get.geojs.io/v1/ip/geo.json", { cache: "no-store" });
+    if (!res.ok) return null;
+    const raw = (await res.json()) as Record<string, unknown>;
+    return {
+      ip: typeof raw.ip === "string" ? raw.ip : undefined,
+      city: typeof raw.city === "string" ? raw.city : undefined,
+      region: typeof raw.region === "string" ? raw.region : undefined,
+      country_name: typeof raw.country === "string" ? raw.country : undefined,
+      country_code: typeof raw.country_code === "string" ? raw.country_code : undefined,
+      org: typeof raw.organization_name === "string" ? raw.organization_name : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+const GEO_PROVIDERS: GeoProvider[] = [
+  { name: "ipapi.co", load: loadIpapiCo },
+  { name: "ipwho.is", load: loadIpwhoIs },
+  { name: "geojs.io", load: loadGeojsIo },
+];
+
 async function fetchGeo(): Promise<GeoResponse | null> {
   if (typeof window !== "undefined") {
     try {
       const raw = window.localStorage.getItem(GEO_CACHE);
       if (raw) {
         const c = JSON.parse(raw) as CachedGeo;
-        if (Date.now() - c.at < GEO_CACHE_MAX_AGE_MS) return c.data;
+        if (Date.now() - c.at < GEO_CACHE_MAX_AGE_MS && isGoodGeo(c.data)) {
+          return c.data;
+        }
       }
     } catch {
       /* ignore */
     }
   }
-  try {
-    const res = await fetch("https://ipapi.co/json/", { cache: "no-store" });
-    if (!res.ok) return null;
-    const data = (await res.json()) as GeoResponse;
+  for (const p of GEO_PROVIDERS) {
+    const data = await p.load();
+    if (!isGoodGeo(data)) continue;
     if (typeof window !== "undefined") {
       try {
         window.localStorage.setItem(GEO_CACHE, JSON.stringify({ at: Date.now(), data }));
@@ -82,9 +162,8 @@ async function fetchGeo(): Promise<GeoResponse | null> {
       }
     }
     return data;
-  } catch {
-    return null;
   }
+  return null;
 }
 
 function isBot(ua: string): boolean {

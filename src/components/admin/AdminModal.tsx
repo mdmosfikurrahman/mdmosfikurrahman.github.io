@@ -5,22 +5,29 @@ import {
   LayoutDashboard,
   LayoutTemplate,
   LogOut,
+  MailOpen,
+  MessageSquare,
   Settings as SettingsIcon,
   Terminal as TerminalIcon,
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ensureAuth, isUnlocked, markLocked } from "@/lib/adminAuth";
+import { fetchBin } from "@/lib/binStore";
 import AdminGate from "./AdminGate";
 import Dashboard from "@/pages/admin/Dashboard";
 import AdminTemplates from "@/pages/AdminTemplates";
 import Settings from "@/pages/admin/Settings";
+import AdminGuestbook from "@/pages/admin/Guestbook";
+import AdminQandA from "@/pages/admin/QandA";
 
-export type AdminSection = "dashboard" | "templates" | "settings";
+export type AdminSection = "dashboard" | "templates" | "guestbook" | "qanda" | "settings";
 
 const TABS: { id: AdminSection; label: string; Icon: typeof LayoutDashboard }[] = [
   { id: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { id: "templates", label: "Templates", Icon: LayoutTemplate },
+  { id: "guestbook", label: "Guestbook", Icon: MailOpen },
+  { id: "qanda",     label: "Q&A",       Icon: MessageSquare },
   { id: "settings",  label: "Settings",  Icon: SettingsIcon },
 ];
 
@@ -37,6 +44,10 @@ export default function AdminModal({
   const [authed, setAuthed] = useState<boolean>(() => isUnlocked());
   const [username, setUsername] = useState<string>("admin");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingCounts, setPendingCounts] = useState<{ guestbook: number; qanda: number }>({
+    guestbook: 0,
+    qanda: 0,
+  });
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // Reset to requested section every time the modal opens
@@ -53,6 +64,17 @@ export default function AdminModal({
       if (a) setUsername(a.username);
     })();
   }, [open]);
+
+  // Pull pending counts for guestbook + Q&A tabs (badge dots).
+  useEffect(() => {
+    if (!open || !authed) return;
+    void (async () => {
+      const bin = await fetchBin();
+      const guestbook = (bin?.guestbook ?? []).filter((e) => e.status === "pending").length;
+      const qanda = (bin?.questions ?? []).filter((q) => q.status === "pending").length;
+      setPendingCounts({ guestbook, qanda });
+    })();
+  }, [open, authed, section]);
 
   // Lock body scroll while open
   useEffect(() => {
@@ -184,6 +206,12 @@ export default function AdminModal({
             >
               {TABS.map(({ id, label, Icon }) => {
                 const active = section === id;
+                const badge =
+                  id === "guestbook"
+                    ? pendingCounts.guestbook
+                    : id === "qanda"
+                      ? pendingCounts.qanda
+                      : 0;
                 return (
                   <button
                     key={id}
@@ -199,6 +227,18 @@ export default function AdminModal({
                   >
                     <Icon size={13} strokeWidth={1.9} aria-hidden />
                     {label}
+                    {badge > 0 && (
+                      <span
+                        className="text-[10px] tabular-nums leading-none px-1.5 py-0.5 rounded-full"
+                        style={{
+                          background: "hsl(var(--a-accent))",
+                          color: "white",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {badge}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -338,6 +378,12 @@ export default function AdminModal({
           >
             {TABS.map(({ id, label, Icon }) => {
               const active = section === id;
+              const badge =
+                id === "guestbook"
+                  ? pendingCounts.guestbook
+                  : id === "qanda"
+                    ? pendingCounts.qanda
+                    : 0;
               return (
                 <button
                   key={id}
@@ -352,6 +398,18 @@ export default function AdminModal({
                 >
                   <Icon size={13} strokeWidth={1.9} aria-hidden />
                   {label}
+                  {badge > 0 && (
+                    <span
+                      className="text-[10px] tabular-nums leading-none px-1.5 py-0.5 rounded-full"
+                      style={{
+                        background: "hsl(var(--a-accent))",
+                        color: "white",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -367,6 +425,10 @@ export default function AdminModal({
             <Dashboard />
           ) : section === "templates" ? (
             <AdminTemplates />
+          ) : section === "guestbook" ? (
+            <AdminGuestbook />
+          ) : section === "qanda" ? (
+            <AdminQandA />
           ) : (
             <Settings />
           )}

@@ -27,6 +27,8 @@ import Experience from "./pages/Experience";
 import Publications from "./pages/Publications";
 import About from "./pages/About";
 import Special from "./pages/Special";
+import Guestbook from "./pages/Guestbook";
+import QandA from "./pages/QandA";
 import NotFound from "./pages/NotFound";
 import { profile } from "@/lib/content";
 
@@ -94,7 +96,7 @@ function AppInner() {
     const deferred = sessionStorage.getItem("portfolio.admin.openOnLoad");
     if (deferred) {
       sessionStorage.removeItem("portfolio.admin.openOnLoad");
-      const valid: AdminSection[] = ["dashboard", "templates", "settings"];
+      const valid: AdminSection[] = ["dashboard", "templates", "guestbook", "qanda", "settings"];
       const s = (valid as string[]).includes(deferred) ? (deferred as AdminSection) : "dashboard";
       openAdmin(s);
     }
@@ -105,7 +107,7 @@ function AppInner() {
   useEffect(() => {
     if (!location.hash.startsWith("#admin")) return;
     const part = location.hash.slice(6).replace(/^\//, ""); // 'settings' / 'templates' / ''
-    const valid: AdminSection[] = ["dashboard", "templates", "settings"];
+    const valid: AdminSection[] = ["dashboard", "templates", "guestbook", "qanda", "settings"];
     const s = (valid as string[]).includes(part) ? (part as AdminSection) : "dashboard";
     openAdmin(s);
     navigate(location.pathname + location.search, { replace: true });
@@ -165,11 +167,15 @@ function AnimatedRoutes() {
         <Route path="/publications" element={<Publications />} />
         <Route path="/about" element={<About />} />
         <Route path="/play" element={<Special />} />
+        <Route path="/guestbook" element={<Guestbook />} />
+        <Route path="/ask" element={<QandA />} />
 
         {/* Admin deep-links now route through the modal. */}
         <Route path="/admin" element={<AdminRedirect section="dashboard" />} />
         <Route path="/admin/dashboard" element={<AdminRedirect section="dashboard" />} />
         <Route path="/admin/templates" element={<AdminRedirect section="templates" />} />
+        <Route path="/admin/guestbook" element={<AdminRedirect section="guestbook" />} />
+        <Route path="/admin/qanda" element={<AdminRedirect section="qanda" />} />
         <Route path="/admin/settings" element={<AdminRedirect section="settings" />} />
 
         <Route path="/cv" element={<ExternalRedirect to={profile.cvUrl} />} />

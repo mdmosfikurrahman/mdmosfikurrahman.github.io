@@ -331,8 +331,15 @@ function RecentVisits({ visits }: { visits: VisitEntry[] }) {
                 <span className="shrink-0 w-[5px] text-[14px] leading-none">
                   {countryFlag(v.countryCode) || "•"}
                 </span>
-                <span className="shrink-0 truncate min-w-0 max-w-[120px]" style={{ color: "hsl(var(--a-ink))" }}>
+                <span className="shrink-0 truncate min-w-0 max-w-[110px]" style={{ color: "hsl(var(--a-ink))" }}>
                   {v.city || v.country || "—"}
+                </span>
+                <span
+                  className="shrink-0 font-mono text-[10.5px] tabular-nums truncate max-w-[110px]"
+                  style={{ color: v.ip ? "hsl(var(--a-ink-soft))" : "hsl(var(--a-ink-faint))" }}
+                  title={v.ip || "no IP captured"}
+                >
+                  {v.ip || "—"}
                 </span>
                 <span className="shrink-0 text-[10.5px] px-1.5 py-0.5 rounded"
                       style={{ background: "hsl(var(--a-border) / 0.5)", color: "hsl(var(--a-ink-soft))" }}>

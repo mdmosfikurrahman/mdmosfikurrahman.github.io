@@ -27,11 +27,41 @@ export type AdminAuth = {
   updatedAt?: string;
 };
 
+// --- Guestbook -----------------------------------------------------------
+export type GuestbookStatus = "pending" | "approved" | "rejected";
+export type GuestbookEntry = {
+  id: string;                 // ULID-ish: ts-base36 + random suffix
+  name: string;
+  message: string;
+  ts: string;                 // ISO submission time
+  status: GuestbookStatus;
+  ipHash?: string;            // for moderation context
+  country?: string;
+  device?: string;
+  moderatedAt?: string;
+};
+
+// --- Q&A inbox -----------------------------------------------------------
+export type QuestionStatus = "pending" | "answered" | "published" | "rejected";
+export type QuestionEntry = {
+  id: string;
+  question: string;
+  askedAt: string;
+  status: QuestionStatus;
+  answer?: string;
+  answeredAt?: string;
+  ipHash?: string;
+  country?: string;
+  device?: string;
+};
+
 export type BinPayload = {
   template?: TemplateId;
   updatedAt?: string;
   auth?: AdminAuth;
   visits?: VisitEntry[];
+  guestbook?: GuestbookEntry[];
+  questions?: QuestionEntry[];
 };
 
 const BIN_ID = (import.meta.env.VITE_JSONBIN_ID as string | undefined) ?? "";
@@ -41,7 +71,9 @@ const MASTER_KEY_STORAGE = "portfolio.admin.jsonbin.masterKey";
 
 const API_BASE = "https://api.jsonbin.io/v3/b";
 
-export const VISITS_CAP = 500; // keep bin under JSONBin free-tier size
+export const VISITS_CAP = 500;          // keep bin under JSONBin free-tier size
+export const GUESTBOOK_CAP = 500;
+export const QUESTIONS_CAP = 700;
 
 export function isBinConfigured(): boolean {
   return BIN_ID.length > 0;

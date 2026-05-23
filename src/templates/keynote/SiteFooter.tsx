@@ -57,6 +57,8 @@ export default function SiteFooter() {
         <div className="flex items-center gap-6 text-[13px]">
           <Link className="a" to="/experience">Work</Link>
           <Link className="a" to="/publications">Writing</Link>
+          <Link className="a" to="/guestbook">Guestbook</Link>
+          <Link className="a" to="/ask">Ask</Link>
           <button onClick={toTop}
                   className="inline-flex items-center gap-2 px-3 py-2 text-[13px] transition-colors"
                   style={{

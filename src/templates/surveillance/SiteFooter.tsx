@@ -70,9 +70,11 @@ export default function SiteFooter() {
             <li><Link className="a" to="/publications">02 · Archive</Link></li>
             <li><Link className="a" to="/about">03 · Dossier</Link></li>
             <li><Link className="a" to="/play">04 · Sandbox</Link></li>
+            <li><Link className="a" to="/guestbook">05 · Guestbook</Link></li>
+            <li><Link className="a" to="/ask">06 · Inbox</Link></li>
             <li>
               <a className="a inline-flex items-center gap-1" href={CV_URL} target="_blank" rel="noreferrer">
-                05 · Curriculum Vitae <ArrowUpRight size={12} strokeWidth={1.6} />
+                07 · Curriculum Vitae <ArrowUpRight size={12} strokeWidth={1.6} />
               </a>
             </li>
           </ul>
