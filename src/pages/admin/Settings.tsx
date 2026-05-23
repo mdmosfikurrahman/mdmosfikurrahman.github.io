@@ -1,0 +1,514 @@
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import {
+  AlertTriangle,
+  Bot,
+  Check,
+  Database,
+  Eye,
+  EyeOff,
+  KeyRound,
+  ShieldCheck,
+} from "lucide-react";
+import { changePassword, ensureAuth } from "@/lib/adminAuth";
+import {
+  getBinId,
+  getStoredMasterKey,
+  hasEnvMasterKey,
+  isBinConfigured,
+  setStoredMasterKey,
+} from "@/lib/binStore";
+import { fetchRemoteTemplate, type RemoteState } from "@/lib/templateRemote";
+import {
+  getChatbotEnabled,
+  setChatbotEnabled,
+  subscribeSettings,
+} from "@/lib/settings";
+
+type SaveStatus =
+  | { kind: "idle" }
+  | { kind: "saving" }
+  | { kind: "ok"; at: number }
+  | { kind: "err"; reason: string };
+
+export default function Settings() {
+  // ---- Account ----
+  const [username, setUsername] = useState<string>("");
+  const [updatedAt, setUpdatedAt] = useState<string | undefined>(undefined);
+
+  // ---- Change password form ----
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [pwStatus, setPwStatus] = useState<SaveStatus>({ kind: "idle" });
+  const strength = useMemo(() => scoreStrength(next), [next]);
+  const confirmMismatch = confirm.length > 0 && confirm !== next;
+
+  // ---- Preferences ----
+  const [chatbot, setChatbot] = useState<boolean>(() => getChatbotEnabled());
+  useEffect(() => subscribeSettings((s) => setChatbot(s.chatbotEnabled)), []);
+
+  // ---- Remote storage ----
+  const [remote, setRemote] = useState<RemoteState | null>(null);
+  const [remoteLoading, setRemoteLoading] = useState(false);
+  const [masterKey, setMasterKey] = useState<string>(() => getStoredMasterKey());
+  const [showKey, setShowKey] = useState(false);
+
+  const refreshRemote = async () => {
+    if (!isBinConfigured()) return;
+    setRemoteLoading(true);
+    const r = await fetchRemoteTemplate();
+    setRemote(r);
+    setRemoteLoading(false);
+  };
+
+  useEffect(() => {
+    void (async () => {
+      const auth = await ensureAuth();
+      if (auth) {
+        setUsername(auth.username);
+        setUpdatedAt(auth.updatedAt);
+      }
+    })();
+    void refreshRemote();
+  }, []);
+
+  const submitPassword = async (e: FormEvent) => {
+    e.preventDefault();
+    if (pwStatus.kind === "saving") return;
+    if (next !== confirm) {
+      setPwStatus({ kind: "err", reason: "New passwords don't match." });
+      return;
+    }
+    if (next.length < 8) {
+      setPwStatus({ kind: "err", reason: "Must be at least 8 characters." });
+      return;
+    }
+    setPwStatus({ kind: "saving" });
+    const res = await changePassword(current, next);
+    if (res.kind === "ok") {
+      setPwStatus({ kind: "ok", at: Date.now() });
+      setCurrent("");
+      setNext("");
+      setConfirm("");
+      const auth = await ensureAuth();
+      if (auth) setUpdatedAt(auth.updatedAt);
+    } else {
+      setPwStatus({ kind: "err", reason: res.reason });
+    }
+  };
+
+  const saveMasterKey = (val: string) => {
+    setMasterKey(val);
+    setStoredMasterKey(val);
+  };
+
+  return (
+    <div className="h-full p-4 md:p-5 grid grid-cols-1 md:grid-cols-[1fr_1.05fr] gap-3 overflow-hidden">
+      {/* LEFT COLUMN */}
+      <div className="flex flex-col gap-3 min-h-0">
+        {/* Account card */}
+        <Card Icon={KeyRound} title="Admin account" hint="Single user">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[12.5px]">
+            <Row label="Username">
+              <span className="a-code">{username || "—"}</span>
+            </Row>
+            <Row label="Last changed">
+              <span className="tabular-nums" style={{ color: "hsl(var(--a-ink))" }}>
+                {fmtAbs(updatedAt)}
+              </span>
+            </Row>
+            <Row label="Hash">
+              <span style={{ color: "hsl(var(--a-ink))" }}>SHA-256 · username-salted</span>
+            </Row>
+          </dl>
+        </Card>
+
+        {/* Preferences */}
+        <Card Icon={Bot} title="Preferences" hint="Visitor-facing toggles">
+          <ToggleRow
+            label="Show chatbot"
+            description="The floating assistant on the public portfolio."
+            checked={chatbot}
+            onChange={(v) => setChatbotEnabled(v)}
+          />
+        </Card>
+
+        {/* Remote storage */}
+        <Card Icon={Database} title="Remote storage" hint="JSONBin" flex>
+          <div className="grid grid-cols-3 gap-2 text-[11.5px] mb-2">
+            <Stat label="Status">
+              {isBinConfigured() ? (
+                <span style={{ color: "hsl(var(--a-success))" }}>● connected</span>
+              ) : (
+                <span style={{ color: "hsl(var(--a-danger))" }}>○ disabled</span>
+              )}
+            </Stat>
+            <Stat label="Bin">
+              <span className="a-code truncate inline-block max-w-full">
+                {getBinId() ? `${getBinId().slice(0, 8)}…` : "—"}
+              </span>
+            </Stat>
+            <Stat label="Health">
+              <span className="tabular-nums" style={{ color: "hsl(var(--a-ink))" }}>
+                {remoteLoading ? "…" : remote?.updatedAt ? fmtRel(remote.updatedAt) : "—"}
+              </span>
+            </Stat>
+          </div>
+
+          <label className="a-label block mb-1.5 text-[10px]">
+            Master key{" "}
+            {hasEnvMasterKey() && (
+              <span className="ml-1.5 inline-flex items-center gap-1 normal-case tracking-normal text-[10.5px] font-medium"
+                    style={{ color: "hsl(var(--a-success))" }}>
+                <Check size={10} strokeWidth={2.5} aria-hidden /> from .env
+              </span>
+            )}
+          </label>
+          <div className="flex gap-1.5">
+            <div className="relative flex-1 min-w-0">
+              <input
+                type={showKey ? "text" : "password"}
+                value={masterKey}
+                onChange={(e) => saveMasterKey(e.target.value)}
+                placeholder={hasEnvMasterKey() ? "•••• (using .env)" : "$2a$10$…"}
+                className="a-input pr-9 text-[12px] py-1.5"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey((v) => !v)}
+                aria-label={showKey ? "Hide" : "Show"}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded"
+                style={{ color: "hsl(var(--a-ink-muted))" }}
+              >
+                {showKey ? <EyeOff size={13} strokeWidth={1.8} /> : <Eye size={13} strokeWidth={1.8} />}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => saveMasterKey("")}
+              className="a-btn a-btn-danger py-1.5 px-2 text-[11.5px] shrink-0"
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={() => void refreshRemote()}
+              className="a-btn a-btn-ghost py-1.5 px-2 text-[11.5px] shrink-0"
+            >
+              {remoteLoading ? "Sync…" : "Refresh"}
+            </button>
+          </div>
+        </Card>
+      </div>
+
+      {/* RIGHT COLUMN — Change password form */}
+      <Card Icon={ShieldCheck} title="Change password" hint="≥ 8 characters" flex>
+        <form onSubmit={submitPassword} className="space-y-3 flex-1 flex flex-col min-h-0">
+          <PasswordField
+            id="cur-pw"
+            label="Current password"
+            autoComplete="current-password"
+            value={current}
+            onChange={setCurrent}
+            placeholder="••••••••"
+          />
+          <div>
+            <PasswordField
+              id="new-pw"
+              label="New password"
+              autoComplete="new-password"
+              value={next}
+              onChange={setNext}
+              placeholder="at least 8 characters"
+            />
+            {next.length > 0 && <StrengthMeter score={strength.score} label={strength.label} />}
+          </div>
+          <PasswordField
+            id="conf-pw"
+            label="Confirm new password"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={setConfirm}
+            placeholder="re-type new password"
+            error={confirmMismatch ? "Doesn't match." : undefined}
+          />
+
+          <div
+            className="text-[11.5px] flex items-center gap-1.5 mt-auto min-h-[16px]"
+            style={{ color: "hsl(var(--a-ink-muted))" }}
+          >
+            {pwStatus.kind === "err" && (
+              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
+                <AlertTriangle size={12} strokeWidth={2.2} aria-hidden />
+                {pwStatus.reason}
+              </span>
+            )}
+            {pwStatus.kind === "ok" && (
+              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
+                <Check size={12} strokeWidth={2.4} aria-hidden /> Password updated.
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 pt-2 shrink-0"
+               style={{ borderTop: "1px solid hsl(var(--a-border))" }}>
+            <button
+              type="submit"
+              disabled={
+                pwStatus.kind === "saving" ||
+                !current ||
+                !next ||
+                !confirm ||
+                confirmMismatch ||
+                next.length < 8
+              }
+              className="a-btn a-btn-primary px-4 py-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {pwStatus.kind === "saving" ? "Saving…" : "Update password"}
+            </button>
+            <span
+              className="text-[11px] ml-auto inline-flex items-center gap-1"
+              style={{ color: "hsl(var(--a-ink-muted))" }}
+            >
+              <AlertTriangle size={11} strokeWidth={1.9} aria-hidden />
+              Soft auth — pick a long passphrase.
+            </span>
+          </div>
+        </form>
+      </Card>
+    </div>
+  );
+}
+
+// =============================================================================
+// pieces
+// =============================================================================
+
+function Card({
+  Icon,
+  title,
+  hint,
+  children,
+  flex,
+}: {
+  Icon: typeof KeyRound;
+  title: string;
+  hint?: string;
+  children: ReactNode;
+  flex?: boolean;
+}) {
+  return (
+    <section className={`a-card p-3.5 md:p-4 ${flex ? "flex flex-col min-h-0 flex-1" : ""}`}>
+      <header className="flex items-center gap-2 mb-3">
+        <span
+          className="w-6 h-6 rounded-md grid place-items-center shrink-0"
+          style={{ background: "hsl(var(--a-accent-wash))" }}
+        >
+          <Icon size={12} strokeWidth={1.8} style={{ color: "hsl(var(--a-accent-deep))" }} aria-hidden />
+        </span>
+        <span className="text-[13px] font-semibold tracking-tight"
+              style={{ color: "hsl(var(--a-ink))" }}>
+          {title}
+        </span>
+        {hint && (
+          <span className="ml-auto text-[10.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+            {hint}
+          </span>
+        )}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+function Row({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <>
+      <dt className="a-label text-[10px] mt-1" style={{ alignSelf: "start" }}>
+        {label}
+      </dt>
+      <dd className="min-w-0 truncate">{children}</dd>
+    </>
+  );
+}
+
+function Stat({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <div className="a-label text-[10px] mb-0.5">{label}</div>
+      <div className="truncate">{children}</div>
+    </div>
+  );
+}
+
+function ToggleRow({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center justify-between gap-3 cursor-pointer select-none">
+      <div className="min-w-0">
+        <div className="text-[13px] font-medium" style={{ color: "hsl(var(--a-ink))" }}>
+          {label}
+        </div>
+        <p className="mt-0.5 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+          {description}
+        </p>
+      </div>
+      <span
+        className="relative w-10 h-[22px] rounded-full transition-colors shrink-0"
+        style={{ background: checked ? "hsl(var(--a-accent))" : "hsl(var(--a-border))" }}
+      >
+        <span
+          className="absolute top-[2px] w-[18px] h-[18px] rounded-full transition-all"
+          style={{
+            background: "white",
+            left: checked ? "20px" : "2px",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+          }}
+        />
+      </span>
+      <input
+        type="checkbox"
+        className="sr-only"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+    </label>
+  );
+}
+
+function PasswordField({
+  id,
+  label,
+  value,
+  onChange,
+  placeholder,
+  autoComplete,
+  error,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  autoComplete?: string;
+  error?: string;
+}) {
+  const [show, setShow] = useState(false);
+  return (
+    <div>
+      <label htmlFor={id} className="a-label text-[10px] block mb-1.5">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          type={show ? "text" : "password"}
+          autoComplete={autoComplete}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={`a-input pr-9 py-1.5 text-[12.5px] ${error ? "is-invalid" : ""}`}
+          placeholder={placeholder}
+          aria-invalid={!!error}
+        />
+        <button
+          type="button"
+          onClick={() => setShow((s) => !s)}
+          aria-label={show ? "Hide" : "Show"}
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md"
+          style={{ color: "hsl(var(--a-ink-muted))" }}
+        >
+          {show ? <EyeOff size={13} strokeWidth={1.8} /> : <Eye size={13} strokeWidth={1.8} />}
+        </button>
+      </div>
+      {error && (
+        <p className="mt-1 text-[11px]" style={{ color: "hsl(var(--a-danger))" }}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function StrengthMeter({ score, label }: { score: number; label: string }) {
+  const segs = 4;
+  const color =
+    score <= 1 ? "hsl(var(--a-danger))" :
+    score === 2 ? "hsl(var(--a-warn))" :
+    score === 3 ? "hsl(45 92% 48%)" :
+                  "hsl(var(--a-success))";
+  return (
+    <div className="mt-1.5">
+      <div className="flex items-center gap-1">
+        {Array.from({ length: segs }, (_, i) => (
+          <span
+            key={i}
+            className="h-0.5 flex-1 rounded-full transition-colors"
+            style={{ background: i < score ? color : "hsl(var(--a-border))" }}
+          />
+        ))}
+      </div>
+      <div
+        className="mt-1 flex justify-between text-[10px]"
+        style={{ color: "hsl(var(--a-ink-muted))" }}
+      >
+        <span>Strength</span>
+        <span style={{ color, fontWeight: 600 }}>{label}</span>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// helpers
+// =============================================================================
+
+function fmtAbs(iso?: string): string {
+  if (!iso) return "—";
+  const t = new Date(iso);
+  if (Number.isNaN(t.getTime())) return iso;
+  return t.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function fmtRel(iso?: string): string {
+  if (!iso) return "—";
+  const t = new Date(iso).getTime();
+  if (!Number.isFinite(t)) return "—";
+  const diff = Date.now() - t;
+  const s = Math.round(diff / 1000);
+  if (s < 60) return `${s}s ago`;
+  const m = Math.round(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.round(h / 24);
+  return `${d}d ago`;
+}
+
+function scoreStrength(pw: string): { score: number; label: string } {
+  if (!pw) return { score: 0, label: "—" };
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (pw.length >= 12) s++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+  if (/\d/.test(pw) && /[^A-Za-z0-9]/.test(pw)) s++;
+  s = Math.min(4, s);
+  const label = s <= 1 ? "Weak" : s === 2 ? "Fair" : s === 3 ? "Good" : "Strong";
+  return { score: s, label };
+}

@@ -18,7 +18,8 @@ export default function ScrollToTopButton() {
       title="Back to top"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={[
-        "fixed bottom-5 right-5 md:bottom-8 md:right-8 z-40",
+        // stacked above the chatbot FAB (which lives at bottom-5/8 right-5/8)
+        "fixed bottom-20 right-5 md:bottom-[5.75rem] md:right-8 z-40",
         "w-11 h-11 grid place-items-center",
         "border rule bg-paper/90 backdrop-blur-sm text-ink",
         "shadow-[0_1px_0_hsl(var(--ink)/0.04),0_10px_24px_-14px_hsl(var(--ink)/0.35)]",

@@ -1,6 +1,13 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,15 +16,18 @@ import SiteWatermark from "@/components/SiteWatermark";
 import ScanlineOverlay from "@/components/ScanlineOverlay";
 import BootSequence from "@/components/BootSequence";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import Chatbot from "@/components/Chatbot";
+import Terminal from "@/components/Terminal";
 import SiteGuards from "@/components/SiteGuards";
+import AdminModal, { type AdminSection } from "@/components/admin/AdminModal";
 import { useTemplate } from "@/lib/template";
+import { recordPageView } from "@/lib/analytics";
 import Index from "./pages/Index";
 import Experience from "./pages/Experience";
 import Publications from "./pages/Publications";
 import About from "./pages/About";
 import Special from "./pages/Special";
 import NotFound from "./pages/NotFound";
-import AdminTemplates from "./pages/AdminTemplates";
 import { profile } from "@/lib/content";
 
 const queryClient = new QueryClient();
@@ -31,7 +41,6 @@ function ScrollToTopOnNav() {
   return null;
 }
 
-// For absolute URLs where react-router's <Navigate> can't help.
 function ExternalRedirect({ to }: { to: string }) {
   useEffect(() => {
     window.location.replace(to);
@@ -39,7 +48,6 @@ function ExternalRedirect({ to }: { to: string }) {
   return null;
 }
 
-// Renders template-specific chrome (boot, scanlines, etc.) only where it fits.
 function TemplateChrome() {
   const { template } = useTemplate();
   if (template !== "surveillance") return null;
@@ -51,17 +59,71 @@ function TemplateChrome() {
   );
 }
 
-// Global keyboard chord: shift+T+T opens the hidden admin page.
-function TemplateChord() {
-  const navigate = useNavigateLazy();
+function AnalyticsBeacon() {
+  const { pathname, search } = useLocation();
+  useEffect(() => {
+    void recordPageView(pathname + search);
+  }, [pathname, search]);
+  return null;
+}
+
+// /admin/* deep-links now redirect to / and open the modal at the right tab.
+function AdminRedirect({ section }: { section: AdminSection }) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    sessionStorage.setItem("portfolio.admin.openOnLoad", section);
+    navigate("/", { replace: true });
+  }, [navigate, section]);
+  return null;
+}
+
+// Top-level App with admin modal hoisted to global scope.
+function AppInner() {
+  const navigate = useNavigate();
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [adminSection, setAdminSection] = useState<AdminSection>("dashboard");
+
+  // Open admin modal: by deep-link request, by Shift+T+T chord, or by hash.
+  const openAdmin = useCallback((section?: AdminSection) => {
+    if (section) setAdminSection(section);
+    setAdminOpen(true);
+  }, []);
+
+  // Honour any deferred open-on-load request (from /admin/* redirect).
+  useEffect(() => {
+    const deferred = sessionStorage.getItem("portfolio.admin.openOnLoad");
+    if (deferred) {
+      sessionStorage.removeItem("portfolio.admin.openOnLoad");
+      const valid: AdminSection[] = ["dashboard", "templates", "settings"];
+      const s = (valid as string[]).includes(deferred) ? (deferred as AdminSection) : "dashboard";
+      openAdmin(s);
+    }
+  }, [openAdmin]);
+
+  // Honour location.hash like #admin or #admin/settings
+  const location = useLocation();
+  useEffect(() => {
+    if (!location.hash.startsWith("#admin")) return;
+    const part = location.hash.slice(6).replace(/^\//, ""); // 'settings' / 'templates' / ''
+    const valid: AdminSection[] = ["dashboard", "templates", "settings"];
+    const s = (valid as string[]).includes(part) ? (part as AdminSection) : "dashboard";
+    openAdmin(s);
+    navigate(location.pathname + location.search, { replace: true });
+  }, [location.hash, location.pathname, location.search, navigate, openAdmin]);
+
+  // Shift+T+T chord — opens modal, no navigation.
   useEffect(() => {
     let lastT = 0;
     const handler = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
       if (e.key !== "T" && e.key !== "t") return;
+      // Don't fire while typing in inputs / textareas / contenteditable.
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
       const now = Date.now();
       if (now - lastT < 600) {
-        navigate("/admin/templates");
+        e.preventDefault();
+        openAdmin();
         lastT = 0;
       } else {
         lastT = now;
@@ -69,13 +131,28 @@ function TemplateChord() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [navigate]);
-  return null;
-}
+  }, [openAdmin]);
 
-function useNavigateLazy() {
-  // useNavigate must be called inside Router; this just inlines it.
-  return useNavigate();
+  return (
+    <>
+      <SiteGuards />
+      <ScrollToTopOnNav />
+      <SiteWatermark />
+      <TemplateChrome />
+      <AnalyticsBeacon />
+      <div className="relative z-10">
+        <AnimatedRoutes />
+      </div>
+      <ScrollToTopButton />
+      <Chatbot />
+      <Terminal />
+      <AdminModal
+        open={adminOpen}
+        initialSection={adminSection}
+        onClose={() => setAdminOpen(false)}
+      />
+    </>
+  );
 }
 
 function AnimatedRoutes() {
@@ -88,7 +165,13 @@ function AnimatedRoutes() {
         <Route path="/publications" element={<Publications />} />
         <Route path="/about" element={<About />} />
         <Route path="/play" element={<Special />} />
-        <Route path="/admin/templates" element={<AdminTemplates />} />
+
+        {/* Admin deep-links now route through the modal. */}
+        <Route path="/admin" element={<AdminRedirect section="dashboard" />} />
+        <Route path="/admin/dashboard" element={<AdminRedirect section="dashboard" />} />
+        <Route path="/admin/templates" element={<AdminRedirect section="templates" />} />
+        <Route path="/admin/settings" element={<AdminRedirect section="settings" />} />
+
         <Route path="/cv" element={<ExternalRedirect to={profile.cvUrl} />} />
         <Route path="/resume" element={<ExternalRedirect to={profile.cvUrl} />} />
         <Route path="/publication-list" element={<Navigate to="/publications" replace />} />
@@ -105,15 +188,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <SiteGuards />
-        <ScrollToTopOnNav />
-        <SiteWatermark />
-        <TemplateChrome />
-        <div className="relative z-10">
-          <AnimatedRoutes />
-        </div>
-        <ScrollToTopButton />
-        <TemplateChord />
+        <AppInner />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
