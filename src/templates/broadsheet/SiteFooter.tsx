@@ -1,19 +1,19 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, ArrowUp, ArrowUpRight } from "lucide-react";
 import { profile } from "@/lib/content";
-
-const CV_URL = "https://mdmosfikurrahman.github.io/resume/";
+import { useCvUrl } from "@/lib/settings";
 
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const cvUrl = useCvUrl();
 
   const icons = [
     { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
     { Icon: Github, href: profile.links.github, label: "GitHub" },
     { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn" },
     { Icon: GraduationCap, href: profile.links.scholar, label: "Scholar" },
-    { Icon: FileText, href: profile.cvUrl, label: "Curriculum Vitae" },
+    { Icon: FileText, href: cvUrl, label: "Curriculum Vitae" },
   ];
 
   return (
@@ -55,7 +55,7 @@ export default function SiteFooter() {
             <li><Link className="a" to="/guestbook">Guestbook</Link></li>
             <li><Link className="a" to="/ask">Ask</Link></li>
             <li>
-              <a className="a inline-flex items-center gap-1" href={CV_URL} target="_blank" rel="noreferrer">
+              <a className="a inline-flex items-center gap-1" href={cvUrl} target="_blank" rel="noreferrer">
                 Curriculum Vitae <ArrowUpRight size={12} strokeWidth={1.6} />
               </a>
             </li>

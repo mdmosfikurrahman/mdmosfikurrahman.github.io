@@ -6,6 +6,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { profile } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 
 type Channel = {
   label: string;
@@ -174,6 +175,10 @@ function ChannelCard({
 }
 
 export default function Correspondence() {
+  const cvUrl = useCvUrl();
+  const items = channels.map((c) =>
+    c.label === "Curriculum Vitæ" ? { ...c, value: cvUrl, href: cvUrl } : c,
+  );
   return (
     <section id="contact" className="relative">
       <div className="halftone absolute inset-0 opacity-40 pointer-events-none" aria-hidden />
@@ -222,7 +227,7 @@ export default function Correspondence() {
             </div>
 
             <ol>
-              {channels.map((c, i) => (
+              {items.map((c, i) => (
                 <li key={c.label} className="border-b rule-soft last:border-b-0">
                   <ChannelCard c={c} index={i} />
                 </li>

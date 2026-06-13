@@ -15,6 +15,7 @@ import {
   education, distinctions, talksAndService, verifiedBadges,
   type Publication,
 } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 
 const avatar = "/profile-avatar.png";
 
@@ -51,6 +52,10 @@ const pop = {
 };
 
 function TitleSlide() {
+  const cvUrl = useCvUrl();
+  const titleChannels = channels.map((c) =>
+    c.label === "CV" ? { ...c, href: cvUrl } : c,
+  );
   return (
     <div className="relative w-full">
       {/* motion behind the cover: rotating aura + drifting orbs. These are
@@ -110,7 +115,7 @@ function TitleSlide() {
 
         <motion.div custom={5} variants={rise} initial="hidden" animate="show"
             className="mt-6 flex items-center justify-center gap-x-5 gap-y-2 flex-wrap">
-          {channels.map(({ Icon, href, label, ext }) => (
+          {titleChannels.map(({ Icon, href, label, ext }) => (
             <a key={label} href={href} target={ext ? "_blank" : undefined} rel={ext ? "noreferrer" : undefined}
                className="group inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors"
                style={{ color: "hsl(var(--muted))" }}
@@ -570,6 +575,12 @@ function ContactRow({ c }: { c: { label: string; value: string; href: string } }
 }
 
 function ContactSlide() {
+  const cvUrl = useCvUrl();
+  const contactItems = contacts.map((c) =>
+    c.label === "CV"
+      ? { ...c, value: cvUrl.replace(/^https?:\/\//, ""), href: cvUrl }
+      : c,
+  );
   return (
     <div className="grid grid-cols-12 gap-x-14 gap-y-10 items-center">
       <div className="col-span-12 lg:col-span-7">
@@ -589,7 +600,7 @@ function ContactSlide() {
       </div>
       <div className="col-span-12 lg:col-span-5 min-w-0 kn-card p-6">
         <p className="mg-label mb-1">Channels</p>
-        <ul>{contacts.map((c) => <ContactRow key={c.label} c={c} />)}</ul>
+        <ul>{contactItems.map((c) => <ContactRow key={c.label} c={c} />)}</ul>
       </div>
     </div>
   );

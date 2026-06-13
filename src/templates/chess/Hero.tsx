@@ -1,17 +1,19 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, type LucideIcon } from "lucide-react";
 import { profile, preamble, figures } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 
 const avatar = "/profile-avatar.png";
-const channels: { Icon: LucideIcon; href: string; label: string; external?: boolean }[] = [
-  { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
-  { Icon: Github, href: profile.links.github, label: "GitHub", external: true },
-  { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn", external: true },
-  { Icon: GraduationCap, href: profile.links.scholar, label: "Scholar", external: true },
-  { Icon: FileText, href: profile.cvUrl, label: "CV", external: true },
-];
 
 export default function Hero() {
+  const cvUrl = useCvUrl();
+  const channels: { Icon: LucideIcon; href: string; label: string; external?: boolean }[] = [
+    { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
+    { Icon: Github, href: profile.links.github, label: "GitHub", external: true },
+    { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn", external: true },
+    { Icon: GraduationCap, href: profile.links.scholar, label: "Scholar", external: true },
+    { Icon: FileText, href: cvUrl, label: "CV", external: true },
+  ];
   return (
     <section id="top" className="relative border-b rule">
       {/* Tournament bulletin strip */}

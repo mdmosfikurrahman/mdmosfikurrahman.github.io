@@ -57,6 +57,7 @@ export type QuestionEntry = {
 
 export type BinPayload = {
   template?: TemplateId;
+  cvUrl?: string;
   updatedAt?: string;
   auth?: AdminAuth;
   visits?: VisitEntry[];

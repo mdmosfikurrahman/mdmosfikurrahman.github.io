@@ -14,6 +14,7 @@ import {
   stats,
   reviewerFor,
 } from "./content";
+import { getCvUrl } from "./settings";
 
 export type ChatRole = "user" | "bot";
 
@@ -313,7 +314,7 @@ function certBlurb(): string {
 }
 
 function cvBlurb(): string {
-  return `CV is here: ${profile.cvUrl}\n(also reachable via /cv or /resume on this site)`;
+  return `CV is here: ${getCvUrl()}\n(also reachable via /cv or /resume on this site)`;
 }
 
 function availabilityBlurb(): string {

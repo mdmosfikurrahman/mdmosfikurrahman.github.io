@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, type LucideIcon } from "lucide-react";
 import { profile, preamble, figures } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 
 const avatar = "/profile-avatar.png";
 
@@ -11,15 +12,15 @@ type Channel = {
   external?: boolean;
 };
 
-const channels: Channel[] = [
-  { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
-  { Icon: Github, href: profile.links.github, label: "GitHub", external: true },
-  { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn", external: true },
-  { Icon: GraduationCap, href: profile.links.scholar, label: "Google Scholar", external: true },
-  { Icon: FileText, href: profile.cvUrl, label: "Curriculum Vitae", external: true },
-];
-
 export default function Hero() {
+  const cvUrl = useCvUrl();
+  const channels: Channel[] = [
+    { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
+    { Icon: Github, href: profile.links.github, label: "GitHub", external: true },
+    { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn", external: true },
+    { Icon: GraduationCap, href: profile.links.scholar, label: "Google Scholar", external: true },
+    { Icon: FileText, href: cvUrl, label: "Curriculum Vitae", external: true },
+  ];
   return (
     <section id="top" className="relative">
       <div className="mx-auto w-full max-w-[920px] px-5 sm:px-6 md:px-8 pt-16 md:pt-24 pb-12 md:pb-16">

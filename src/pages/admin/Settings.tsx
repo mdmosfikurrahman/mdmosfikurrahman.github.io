@@ -3,9 +3,11 @@ import {
   AlertTriangle,
   Bot,
   Check,
+  CloudUpload,
   Database,
   Eye,
   EyeOff,
+  FileText,
   KeyRound,
   ShieldCheck,
 } from "lucide-react";
@@ -17,12 +19,19 @@ import {
   isBinConfigured,
   setStoredMasterKey,
 } from "@/lib/binStore";
-import { fetchRemoteTemplate, type RemoteState } from "@/lib/templateRemote";
+import {
+  fetchRemoteTemplate,
+  pushRemoteCvUrl,
+  type RemoteState,
+} from "@/lib/templateRemote";
 import {
   getChatbotEnabled,
+  getCvUrl,
   setChatbotEnabled,
+  setCvUrl,
   subscribeSettings,
 } from "@/lib/settings";
+import { profile } from "@/lib/content";
 
 type SaveStatus =
   | { kind: "idle" }
@@ -45,7 +54,51 @@ export default function Settings() {
 
   // ---- Preferences ----
   const [chatbot, setChatbot] = useState<boolean>(() => getChatbotEnabled());
-  useEffect(() => subscribeSettings((s) => setChatbot(s.chatbotEnabled)), []);
+
+  // ---- CV link ----
+  const [cvInput, setCvInput] = useState<string>(() => getCvUrl());
+
+  useEffect(
+    () =>
+      subscribeSettings((s) => {
+        setChatbot(s.chatbotEnabled);
+        // Reflect an externally-applied CV link (e.g. one published on boot).
+        setCvInput(getCvUrl());
+      }),
+    [],
+  );
+  const [cvStatus, setCvStatus] = useState<SaveStatus>({ kind: "idle" });
+  const cvTrimmed = cvInput.trim();
+  const cvValid = /^https?:\/\//i.test(cvTrimmed);
+  const cvDirty = cvTrimmed !== getCvUrl();
+  // When remote sync is on, allow (re)publishing any valid URL — the point is
+  // to push to all visitors. Local-only mode has nothing to do if unchanged.
+  const cvCanSave = cvValid && (cvDirty || isBinConfigured());
+
+  const saveCvUrl = async () => {
+    const next = cvInput.trim();
+    if (!next) {
+      setCvStatus({ kind: "err", reason: "CV link can't be empty." });
+      return;
+    }
+    if (!/^https?:\/\//i.test(next)) {
+      setCvStatus({ kind: "err", reason: "Must start with http:// or https://" });
+      return;
+    }
+    setCvStatus({ kind: "saving" });
+    // Apply locally first so the public site reflects it immediately.
+    setCvUrl(next);
+    setCvInput(getCvUrl());
+    // Publish to all visitors when remote storage is configured.
+    if (isBinConfigured()) {
+      const res = await pushRemoteCvUrl(next, masterKey || undefined);
+      if (res.kind === "err") {
+        setCvStatus({ kind: "err", reason: res.reason });
+        return;
+      }
+    }
+    setCvStatus({ kind: "ok", at: Date.now() });
+  };
 
   // ---- Remote storage ----
   const [remote, setRemote] = useState<RemoteState | null>(null);
@@ -131,6 +184,71 @@ export default function Settings() {
             checked={chatbot}
             onChange={(v) => setChatbotEnabled(v)}
           />
+
+          <div
+            className="mt-3.5 pt-3.5"
+            style={{ borderTop: "1px solid hsl(var(--a-border))" }}
+          >
+            <div className="flex items-center gap-1.5 mb-1">
+              <FileText size={12} strokeWidth={1.9} aria-hidden style={{ color: "hsl(var(--a-ink-soft))" }} />
+              <span className="text-[13px] font-medium" style={{ color: "hsl(var(--a-ink))" }}>
+                CV / résumé link
+              </span>
+            </div>
+            <p className="mb-2 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+              Used everywhere — hero, footer, contact, the chatbot, and{" "}
+              <span className="a-code">/cv</span> · <span className="a-code">/resume</span>.
+              {isBinConfigured()
+                ? " Saving publishes it to every visitor."
+                : " Remote sync is off, so this applies to this browser only."}
+            </p>
+            <div className="flex gap-1.5">
+              <input
+                type="url"
+                inputMode="url"
+                value={cvInput}
+                onChange={(e) => {
+                  setCvInput(e.target.value);
+                  if (cvStatus.kind !== "idle") setCvStatus({ kind: "idle" });
+                }}
+                placeholder={profile.cvUrl}
+                className="a-input flex-1 min-w-0 text-[12px] py-1.5"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <button
+                type="button"
+                onClick={() => void saveCvUrl()}
+                disabled={cvStatus.kind === "saving" || !cvCanSave}
+                className="a-btn a-btn-primary py-1.5 px-2.5 text-[11.5px] shrink-0 inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isBinConfigured() ? (
+                  <CloudUpload size={12} strokeWidth={1.9} aria-hidden />
+                ) : (
+                  <Check size={12} strokeWidth={1.9} aria-hidden />
+                )}
+                {cvStatus.kind === "saving"
+                  ? "Saving…"
+                  : isBinConfigured()
+                    ? "Publish"
+                    : "Save"}
+              </button>
+            </div>
+            <div className="mt-1.5 min-h-[15px] text-[11px]">
+              {cvStatus.kind === "err" && (
+                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
+                  <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
+                  {cvStatus.reason}
+                </span>
+              )}
+              {cvStatus.kind === "ok" && (
+                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
+                  <Check size={11} strokeWidth={2.4} aria-hidden />
+                  {isBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
+                </span>
+              )}
+            </div>
+          </div>
         </Card>
 
         {/* Remote storage */}

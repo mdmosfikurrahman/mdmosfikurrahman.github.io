@@ -10,6 +10,7 @@ import {
   reviewerFor,
   type Distinction,
 } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 const avatar = "/profile-avatar.png";
 
 function kindIcon(kind: Distinction["kind"]) {
@@ -19,6 +20,7 @@ function kindIcon(kind: Distinction["kind"]) {
 }
 
 export default function About() {
+  const cvUrl = useCvUrl();
   const educationSorted = [...education].sort(
     (a, b) => new Date(b.from).getTime() - new Date(a.from).getTime(),
   );
@@ -316,7 +318,7 @@ export default function About() {
               </a>
               <a
                 className="a-arrow"
-                href={profile.cvUrl}
+                href={cvUrl}
                 target="_blank"
                 rel="noreferrer"
               >

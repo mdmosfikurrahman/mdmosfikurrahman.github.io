@@ -7,7 +7,8 @@
 // re-resolves tokens. Persisted in localStorage.
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchRemoteTemplate, isRemoteConfigured } from "./templateRemote";
+import { fetchRemoteState, isRemoteConfigured } from "./templateRemote";
+import { getCvUrl, setCvUrl } from "./settings";
 
 export type TemplateId =
   | "folio"
@@ -179,11 +180,18 @@ let remoteFetchPromise: Promise<void> | null = null;
 
 function kickRemoteFetch() {
   if (remoteFetchPromise || !isRemoteConfigured()) return;
-  remoteFetchPromise = fetchRemoteTemplate().then((remote) => {
+  remoteFetchPromise = fetchRemoteState().then((remote) => {
     if (!remote) return;
-    const local = readTemplate();
-    if (remote.template !== local) {
-      writeTemplate(remote.template); // dispatches portfolio:template-change
+    if (remote.template) {
+      const local = readTemplate();
+      if (remote.template !== local) {
+        writeTemplate(remote.template); // dispatches portfolio:template-change
+      }
+    }
+    // Apply the published CV link. setCvUrl notifies subscribers (useCvUrl),
+    // so every link on the page updates without a refresh.
+    if (typeof remote.cvUrl === "string" && remote.cvUrl !== getCvUrl()) {
+      setCvUrl(remote.cvUrl);
     }
   }).catch(() => { /* swallow — local state stays authoritative */ });
 }

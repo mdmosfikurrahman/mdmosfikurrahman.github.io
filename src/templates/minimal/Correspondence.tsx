@@ -1,6 +1,7 @@
 import { Copy, Check, ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import { profile } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 
 type Channel = {
   label: string;
@@ -105,6 +106,12 @@ function Row({ c }: { c: Channel }) {
 }
 
 export default function Correspondence() {
+  const cvUrl = useCvUrl();
+  const items = channels.map((c) =>
+    c.label === "CV"
+      ? { ...c, value: cvUrl.replace(/^https?:\/\//, ""), href: cvUrl }
+      : c,
+  );
   return (
     <section id="contact" className="border-t rule-soft">
       <div className="mx-auto w-full max-w-[920px] px-5 sm:px-6 md:px-8 py-20 md:py-28">
@@ -139,7 +146,7 @@ export default function Correspondence() {
           <div className="col-span-12 md:col-span-7 min-w-0">
             <p className="mg-label mb-3">Channels</p>
             <ul>
-              {channels.map((c) => <Row key={c.label} c={c} />)}
+              {items.map((c) => <Row key={c.label} c={c} />)}
             </ul>
           </div>
         </div>

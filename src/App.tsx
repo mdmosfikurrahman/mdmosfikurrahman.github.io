@@ -30,7 +30,7 @@ import Special from "./pages/Special";
 import Guestbook from "./pages/Guestbook";
 import QandA from "./pages/QandA";
 import NotFound from "./pages/NotFound";
-import { profile } from "@/lib/content";
+import { useCvUrl } from "@/lib/settings";
 
 const queryClient = new QueryClient();
 
@@ -159,6 +159,7 @@ function AppInner() {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const cvUrl = useCvUrl();
   return (
     <PageBook>
       <Routes location={location} key={location.pathname}>
@@ -178,8 +179,8 @@ function AnimatedRoutes() {
         <Route path="/admin/qanda" element={<AdminRedirect section="qanda" />} />
         <Route path="/admin/settings" element={<AdminRedirect section="settings" />} />
 
-        <Route path="/cv" element={<ExternalRedirect to={profile.cvUrl} />} />
-        <Route path="/resume" element={<ExternalRedirect to={profile.cvUrl} />} />
+        <Route path="/cv" element={<ExternalRedirect to={cvUrl} />} />
+        <Route path="/resume" element={<ExternalRedirect to={cvUrl} />} />
         <Route path="/publication-list" element={<Navigate to="/publications" replace />} />
         <Route path="/yearbook" element={<Navigate to="/about" replace />} />
         <Route path="*" element={<NotFound />} />
