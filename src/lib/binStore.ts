@@ -70,6 +70,12 @@ const ACCESS_KEY = (import.meta.env.VITE_JSONBIN_ACCESS_KEY as string | undefine
 const ENV_MASTER_KEY = (import.meta.env.VITE_JSONBIN_MASTER_KEY as string | undefined) ?? "";
 const MASTER_KEY_STORAGE = "portfolio.admin.jsonbin.masterKey";
 
+// Dedicated bin for the avatar image. Kept separate from the main bin (which
+// already holds template/cvUrl/auth/visits/guestbook/questions and is
+// deliberately capped to stay under the JSONBin free-tier size) so a photo
+// data-URI never risks crowding out that budget.
+const AVATAR_BIN_ID = (import.meta.env.VITE_JSONBIN_AVATAR_ID as string | undefined) ?? "";
+
 const API_BASE = "https://api.jsonbin.io/v3/b";
 
 export const VISITS_CAP = 500;          // keep bin under JSONBin free-tier size
@@ -164,6 +170,65 @@ export async function patchBin(
   const current = (await fetchBin()) ?? {};
   const next = mutate(current);
   return writeBin(next, masterKey);
+}
+
+// ---------------------------------------------------------------------------
+// AVATAR BIN — separate bin, same account credentials
+// ---------------------------------------------------------------------------
+
+export type AvatarBinPayload = {
+  avatarDataUrl?: string;
+  updatedAt?: string;
+};
+
+export function isAvatarBinConfigured(): boolean {
+  return AVATAR_BIN_ID.length > 0;
+}
+
+export async function fetchAvatarBin(): Promise<AvatarBinPayload | null> {
+  if (!isAvatarBinConfigured()) return null;
+  try {
+    const headers: Record<string, string> = { "X-Bin-Meta": "false" };
+    if (ACCESS_KEY) headers["X-Access-Key"] = ACCESS_KEY;
+    const res = await fetch(`${API_BASE}/${AVATAR_BIN_ID}/latest`, {
+      headers,
+      cache: "no-cache",
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return (json?.record ?? json) as AvatarBinPayload;
+  } catch {
+    return null;
+  }
+}
+
+export async function writeAvatarBin(
+  payload: AvatarBinPayload,
+  masterKey?: string,
+): Promise<WriteResult> {
+  if (!isAvatarBinConfigured()) {
+    return { kind: "err", reason: "Avatar remote storage not configured (VITE_JSONBIN_AVATAR_ID missing)." };
+  }
+  const key = (masterKey ?? getStoredMasterKey()).trim();
+  if (!key) return { kind: "err", reason: "Master key required." };
+  try {
+    const res = await fetch(`${API_BASE}/${AVATAR_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": key,
+        "X-Bin-Versioning": "false",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const text = await safeText(res);
+      return { kind: "err", reason: `JSONBin ${res.status}: ${text}` };
+    }
+    return { kind: "ok" };
+  } catch (err) {
+    return { kind: "err", reason: err instanceof Error ? err.message : "Network error" };
+  }
 }
 
 // ---------------------------------------------------------------------------

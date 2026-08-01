@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   AlertTriangle,
   Bot,
@@ -8,6 +8,7 @@ import {
   Eye,
   EyeOff,
   FileText,
+  ImagePlus,
   KeyRound,
   ShieldCheck,
 } from "lucide-react";
@@ -16,17 +17,21 @@ import {
   getBinId,
   getStoredMasterKey,
   hasEnvMasterKey,
+  isAvatarBinConfigured,
   isBinConfigured,
   setStoredMasterKey,
 } from "@/lib/binStore";
 import {
   fetchRemoteTemplate,
+  pushRemoteAvatar,
   pushRemoteCvUrl,
   type RemoteState,
 } from "@/lib/templateRemote";
 import {
+  getAvatarUrl,
   getChatbotEnabled,
   getCvUrl,
+  setAvatarUrl,
   setChatbotEnabled,
   setCvUrl,
   subscribeSettings,
@@ -64,6 +69,8 @@ export default function Settings() {
         setChatbot(s.chatbotEnabled);
         // Reflect an externally-applied CV link (e.g. one published on boot).
         setCvInput(getCvUrl());
+        // Same for an externally-applied avatar.
+        setAvatarPreview(getAvatarUrl());
       }),
     [],
   );
@@ -98,6 +105,59 @@ export default function Settings() {
       }
     }
     setCvStatus({ kind: "ok", at: Date.now() });
+  };
+
+  // ---- Avatar image ----
+  const [avatarPreview, setAvatarPreview] = useState<string>(() => getAvatarUrl());
+  const [avatarBytes, setAvatarBytes] = useState<number | null>(null);
+  const [avatarStatus, setAvatarStatus] = useState<SaveStatus>({ kind: "idle" });
+  const [avatarDragging, setAvatarDragging] = useState(false);
+  const avatarFileInput = useRef<HTMLInputElement>(null);
+  const avatarDirty = avatarPreview !== getAvatarUrl();
+  const avatarCanSave = avatarDirty || isAvatarBinConfigured();
+
+  const processAvatarFile = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      setAvatarStatus({ kind: "err", reason: "Please choose an image file." });
+      return;
+    }
+    setAvatarStatus({ kind: "saving" });
+    try {
+      const dataUrl = await resizeAndCompress(file, 480, 0.82);
+      const bytes = Math.round((dataUrl.length * 3) / 4);
+      if (bytes > 90_000) {
+        setAvatarStatus({
+          kind: "err",
+          reason: `Still ~${Math.round(bytes / 1024)}KB after compression — try a simpler/smaller photo.`,
+        });
+        return;
+      }
+      setAvatarPreview(dataUrl);
+      setAvatarBytes(bytes);
+      setAvatarStatus({ kind: "idle" });
+    } catch (err) {
+      setAvatarStatus({ kind: "err", reason: err instanceof Error ? err.message : "Couldn't process that image." });
+    }
+  };
+
+  const saveAvatar = async () => {
+    setAvatarStatus({ kind: "saving" });
+    setAvatarUrl(avatarPreview);
+    if (isAvatarBinConfigured()) {
+      const res = await pushRemoteAvatar(avatarPreview, masterKey || undefined);
+      if (res.kind === "err") {
+        setAvatarStatus({ kind: "err", reason: res.reason });
+        return;
+      }
+    }
+    setAvatarStatus({ kind: "ok", at: Date.now() });
+  };
+
+  const resetAvatar = () => {
+    setAvatarUrl("");
+    setAvatarPreview(getAvatarUrl());
+    setAvatarBytes(null);
+    setAvatarStatus({ kind: "idle" });
   };
 
   // ---- Remote storage ----
@@ -248,6 +308,104 @@ export default function Settings() {
                 </span>
               )}
             </div>
+          </div>
+        </Card>
+
+        {/* Profile picture */}
+        <Card Icon={ImagePlus} title="Profile picture" hint="JPEG / PNG / WebP">
+          <p className="mb-2 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+            Used everywhere the avatar shows up — hero, keynote deck, and the About page.
+            Resized and compressed in your browser before saving.{" "}
+            {isAvatarBinConfigured()
+              ? "Publishing sends it to every visitor."
+              : "Remote sync is off, so this applies to this browser only."}
+          </p>
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setAvatarDragging(true);
+            }}
+            onDragLeave={() => setAvatarDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setAvatarDragging(false);
+              const file = e.dataTransfer.files?.[0];
+              if (file) void processAvatarFile(file);
+            }}
+            onClick={() => avatarFileInput.current?.click()}
+            role="button"
+            tabIndex={0}
+            className="cursor-pointer rounded-lg border-2 border-dashed px-3 py-3 text-center transition-colors"
+            style={{
+              borderColor: avatarDragging ? "hsl(var(--a-accent))" : "hsl(var(--a-border))",
+              background: avatarDragging ? "hsl(var(--a-accent-wash))" : "transparent",
+            }}
+          >
+            <input
+              ref={avatarFileInput}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void processAvatarFile(file);
+                e.target.value = "";
+              }}
+            />
+            <img
+              src={avatarPreview}
+              alt="Avatar preview"
+              className="mx-auto w-14 h-14 rounded-full object-cover mb-2"
+              style={{ border: "1px solid hsl(var(--a-border))" }}
+            />
+            <p className="text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+              Drop an image, or click to browse.
+            </p>
+            {avatarBytes != null && (
+              <p className="mt-1 text-[10.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+                Compressed to ~{Math.round(avatarBytes / 1024)}KB
+              </p>
+            )}
+          </div>
+          <div className="mt-2 flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => void saveAvatar()}
+              disabled={avatarStatus.kind === "saving" || !avatarCanSave}
+              className="a-btn a-btn-primary py-1.5 px-2.5 text-[11.5px] shrink-0 inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isAvatarBinConfigured() ? (
+                <CloudUpload size={12} strokeWidth={1.9} aria-hidden />
+              ) : (
+                <Check size={12} strokeWidth={1.9} aria-hidden />
+              )}
+              {avatarStatus.kind === "saving"
+                ? "Saving…"
+                : isAvatarBinConfigured()
+                  ? "Publish"
+                  : "Save"}
+            </button>
+            <button
+              type="button"
+              onClick={resetAvatar}
+              className="a-btn a-btn-ghost py-1.5 px-2 text-[11.5px] shrink-0"
+            >
+              Reset to default
+            </button>
+          </div>
+          <div className="mt-1.5 min-h-[15px] text-[11px]">
+            {avatarStatus.kind === "err" && (
+              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
+                <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
+                {avatarStatus.reason}
+              </span>
+            )}
+            {avatarStatus.kind === "ok" && (
+              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
+                <Check size={11} strokeWidth={2.4} aria-hidden />
+                {isAvatarBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
+              </span>
+            )}
           </div>
         </Card>
 
@@ -590,6 +748,36 @@ function StrengthMeter({ score, label }: { score: number; label: string }) {
 // =============================================================================
 // helpers
 // =============================================================================
+
+// Resizes to fit within maxDim (either dimension) and re-encodes as WebP so a
+// typical headshot lands in the tens-of-KB range instead of multi-MB.
+function resizeAndCompress(file: File, maxDim: number, quality: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Couldn't read that file."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Couldn't decode that image."));
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas isn't supported in this browser."));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/webp", quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 function fmtAbs(iso?: string): string {
   if (!iso) return "—";

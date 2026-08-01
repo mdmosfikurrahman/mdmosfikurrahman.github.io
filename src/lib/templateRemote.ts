@@ -11,6 +11,9 @@ import {
   getStoredMasterKey as getStoredMasterKeyFromStore,
   setStoredMasterKey as setStoredMasterKeyFromStore,
   hasEnvMasterKey as hasEnvMasterKeyFromStore,
+  fetchAvatarBin,
+  writeAvatarBin,
+  isAvatarBinConfigured,
 } from "./binStore";
 
 export function isRemoteConfigured(): boolean {
@@ -112,6 +115,34 @@ export async function pushRemoteCvUrl(
   }
   const result = await patchBin(
     (current) => ({ ...current, cvUrl, updatedAt: new Date().toISOString() }),
+    masterKey,
+  );
+  return result.kind === "ok" ? { kind: "ok" } : { kind: "err", reason: result.reason };
+}
+
+export function isAvatarRemoteConfigured(): boolean {
+  return isAvatarBinConfigured();
+}
+
+// Visitors call this on app boot to pick up an admin-published avatar.
+export async function fetchRemoteAvatar(): Promise<string | null> {
+  const bin = await fetchAvatarBin();
+  if (!bin) return null;
+  return typeof bin.avatarDataUrl === "string" ? bin.avatarDataUrl : null;
+}
+
+// Admin publishes a new avatar image (already resized/compressed to a data
+// URI) — lives in its own bin, so this replaces that bin's whole payload
+// rather than merging into the shared one.
+export async function pushRemoteAvatar(
+  avatarDataUrl: string,
+  masterKey?: string,
+): Promise<PushResult> {
+  if (!isAvatarBinConfigured()) {
+    return { kind: "err", reason: "Avatar remote sync is not configured (VITE_JSONBIN_AVATAR_ID missing)." };
+  }
+  const result = await writeAvatarBin(
+    { avatarDataUrl, updatedAt: new Date().toISOString() },
     masterKey,
   );
   return result.kind === "ok" ? { kind: "ok" } : { kind: "err", reason: result.reason };

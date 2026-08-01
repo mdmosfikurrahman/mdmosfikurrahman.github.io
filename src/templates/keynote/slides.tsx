@@ -15,9 +15,7 @@ import {
   education, distinctions, talksAndService, verifiedBadges,
   type Publication,
 } from "@/lib/content";
-import { useCvUrl, useCvLabel } from "@/lib/settings";
-
-const avatar = "/profile-avatar.png";
+import { useCvUrl, useCvLabel, useAvatarUrl } from "@/lib/settings";
 
 function fmt(iso: string) {
   if (iso === "present") return "Present";
@@ -54,6 +52,7 @@ const pop = {
 function TitleSlide() {
   const cvUrl = useCvUrl();
   const cvLabel = useCvLabel();
+  const avatar = useAvatarUrl();
   const titleChannels = channels.map((c) =>
     c.label === "CV" ? { ...c, href: cvUrl, label: cvLabel } : c,
   );

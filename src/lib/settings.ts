@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { profile } from "./content";
+import { fetchAvatarBin, isAvatarBinConfigured } from "./binStore";
 
 const STORAGE = "portfolio.settings.v1";
 
@@ -13,11 +14,16 @@ export type Settings = {
   // value overrides the CV/résumé link everywhere on the site. The admin can
   // publish this to all visitors via the JSONBin remote (see templateRemote).
   cvUrl: string;
+  // Empty string means "use the built-in default" (profile.avatarUrl). A
+  // non-empty value is a data: URI (resized/compressed client-side) or a
+  // regular image URL, overriding the avatar everywhere on the site.
+  avatarUrl: string;
 };
 
 const DEFAULTS: Settings = {
   chatbotEnabled: true,
   cvUrl: "",
+  avatarUrl: "",
 };
 
 type Listener = (s: Settings) => void;
@@ -94,4 +100,39 @@ export function cvLabelFor(url: string): string {
 
 export function useCvLabel(): string {
   return cvLabelFor(useCvUrl());
+}
+
+// --- Avatar image ----------------------------------------------------------
+export function getAvatarUrl(): string {
+  const override = read().avatarUrl.trim();
+  return override.length > 0 ? override : profile.avatarUrl;
+}
+
+export function setAvatarUrl(v: string) {
+  const trimmed = v.trim();
+  updateSettings({ avatarUrl: trimmed === profile.avatarUrl ? "" : trimmed });
+}
+
+// Module-level guard so the avatar bin is fetched at most once per page load,
+// no matter how many components call useAvatarUrl().
+let avatarRemoteFetchPromise: Promise<void> | null = null;
+
+function kickAvatarRemoteFetch() {
+  if (avatarRemoteFetchPromise || !isAvatarBinConfigured()) return;
+  avatarRemoteFetchPromise = fetchAvatarBin()
+    .then((bin) => {
+      if (bin?.avatarDataUrl && bin.avatarDataUrl !== getAvatarUrl()) {
+        setAvatarUrl(bin.avatarDataUrl);
+      }
+    })
+    .catch(() => { /* swallow — local state stays authoritative */ });
+}
+
+export function useAvatarUrl(): string {
+  const [url, setUrl] = useState<string>(() => getAvatarUrl());
+  useEffect(() => {
+    kickAvatarRemoteFetch();
+    return subscribeSettings(() => setUrl(getAvatarUrl()));
+  }, []);
+  return url;
 }

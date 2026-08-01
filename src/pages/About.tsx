@@ -10,8 +10,7 @@ import {
   reviewerFor,
   type Distinction,
 } from "@/lib/content";
-import { useCvUrl, useCvLabel } from "@/lib/settings";
-const avatar = "/profile-avatar.png";
+import { useCvUrl, useCvLabel, useAvatarUrl } from "@/lib/settings";
 
 function kindIcon(kind: Distinction["kind"]) {
   if (kind === "exchange") return Globe2;
@@ -22,6 +21,7 @@ function kindIcon(kind: Distinction["kind"]) {
 export default function About() {
   const cvUrl = useCvUrl();
   const cvLabel = useCvLabel();
+  const avatar = useAvatarUrl();
   const educationSorted = [...education].sort(
     (a, b) => new Date(b.from).getTime() - new Date(a.from).getTime(),
   );

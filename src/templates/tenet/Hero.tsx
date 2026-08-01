@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, type LucideIcon } from "lucide-react";
 import { profile, preamble, figures } from "@/lib/content";
-import { useCvUrl, useCvLabel } from "@/lib/settings";
+import { useCvUrl, useCvLabel, useAvatarUrl } from "@/lib/settings";
 import { localIsoLocal } from "@/lib/clock";
-
-const avatar = "/profile-avatar.png";
 
 function reverseStr(s: string) { return s.split("").reverse().join(""); }
 
 export default function Hero() {
   const cvUrl = useCvUrl();
   const cvLabel = useCvLabel();
+  const avatar = useAvatarUrl();
   const channels: { Icon: LucideIcon; href: string; label: string; external?: boolean }[] = [
     { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
     { Icon: Github, href: profile.links.github, label: "GitHub", external: true },

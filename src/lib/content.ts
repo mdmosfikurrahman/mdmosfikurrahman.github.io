@@ -24,6 +24,7 @@ export const profile = {
   email: "mdmosfikurrahman.cse@gmail.com",
   phone: "+880 1797-554948",
   cvUrl: "https://mdmosfikurrahman.github.io/resume/",
+  avatarUrl: "/profile-avatar.png",
   links: {
     github: "https://github.com/mdmosfikurrahman",
     linkedin: "https://linkedin.com/in/mdmosfikurrahman",
