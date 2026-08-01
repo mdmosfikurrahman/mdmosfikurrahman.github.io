@@ -14,12 +14,15 @@ import {
 } from "lucide-react";
 import { changePassword, ensureAuth } from "@/lib/adminAuth";
 import {
+  fetchAvatarBin,
+  getAvatarBinId,
   getBinId,
   getStoredMasterKey,
   hasEnvMasterKey,
   isAvatarBinConfigured,
   isBinConfigured,
   setStoredMasterKey,
+  type AvatarBinPayload,
 } from "@/lib/binStore";
 import {
   fetchRemoteTemplate,
@@ -163,6 +166,8 @@ export default function Settings() {
   // ---- Remote storage ----
   const [remote, setRemote] = useState<RemoteState | null>(null);
   const [remoteLoading, setRemoteLoading] = useState(false);
+  const [avatarRemote, setAvatarRemote] = useState<AvatarBinPayload | null>(null);
+  const [avatarRemoteLoading, setAvatarRemoteLoading] = useState(false);
   const [masterKey, setMasterKey] = useState<string>(() => getStoredMasterKey());
   const [showKey, setShowKey] = useState(false);
 
@@ -174,6 +179,19 @@ export default function Settings() {
     setRemoteLoading(false);
   };
 
+  const refreshAvatarRemote = async () => {
+    if (!isAvatarBinConfigured()) return;
+    setAvatarRemoteLoading(true);
+    const r = await fetchAvatarBin();
+    setAvatarRemote(r);
+    setAvatarRemoteLoading(false);
+  };
+
+  const refreshAllRemote = () => {
+    void refreshRemote();
+    void refreshAvatarRemote();
+  };
+
   useEffect(() => {
     void (async () => {
       const auth = await ensureAuth();
@@ -182,7 +200,7 @@ export default function Settings() {
         setUpdatedAt(auth.updatedAt);
       }
     })();
-    void refreshRemote();
+    refreshAllRemote();
   }, []);
 
   const submitPassword = async (e: FormEvent) => {
@@ -335,10 +353,10 @@ export default function Settings() {
             onClick={() => avatarFileInput.current?.click()}
             role="button"
             tabIndex={0}
-            className="cursor-pointer rounded-lg border-2 border-dashed px-3 py-3 text-center transition-colors"
+            className="cursor-pointer rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors flex flex-col items-center gap-3"
             style={{
               borderColor: avatarDragging ? "hsl(var(--a-accent))" : "hsl(var(--a-border))",
-              background: avatarDragging ? "hsl(var(--a-accent-wash))" : "transparent",
+              background: avatarDragging ? "hsl(var(--a-accent-wash))" : "hsl(var(--a-bg))",
             }}
           >
             <input
@@ -352,19 +370,41 @@ export default function Settings() {
                 e.target.value = "";
               }}
             />
-            <img
-              src={avatarPreview}
-              alt="Avatar preview"
-              className="mx-auto w-14 h-14 rounded-full object-cover mb-2"
-              style={{ border: "1px solid hsl(var(--a-border))" }}
-            />
-            <p className="text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-              Drop an image, or click to browse.
-            </p>
-            {avatarBytes != null && (
-              <p className="mt-1 text-[10.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-                Compressed to ~{Math.round(avatarBytes / 1024)}KB
+            <div className="relative">
+              <img
+                src={avatarPreview}
+                alt="Avatar preview"
+                className="w-20 h-20 rounded-full object-cover"
+                style={{ border: "2px solid hsl(var(--a-border-strong))", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+              />
+              <span
+                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full grid place-items-center"
+                style={{ background: "hsl(var(--a-accent))", border: "2px solid hsl(var(--a-surface))" }}
+                aria-hidden
+              >
+                <ImagePlus size={11} strokeWidth={2.2} style={{ color: "hsl(var(--a-bg))" }} />
+              </span>
+            </div>
+            <div>
+              <p className="text-[13.5px] font-medium" style={{ color: "hsl(var(--a-ink))" }}>
+                Drop an image here
               </p>
+              <p className="mt-0.5 text-[12px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+                or{" "}
+                <span className="underline" style={{ color: "hsl(var(--a-accent-deep))" }}>
+                  browse files
+                </span>{" "}
+                — JPEG, PNG, or WebP
+              </p>
+            </div>
+            {avatarBytes != null && (
+              <span
+                className="inline-flex items-center gap-1 text-[10.5px] px-2 py-0.5 rounded-full"
+                style={{ background: "hsl(var(--a-accent-wash))", color: "hsl(var(--a-accent-deep))" }}
+              >
+                <Check size={10} strokeWidth={2.4} aria-hidden />
+                Compressed to ~{Math.round(avatarBytes / 1024)}KB
+              </span>
             )}
           </div>
           <div className="mt-2 flex gap-1.5">
@@ -410,29 +450,32 @@ export default function Settings() {
         </Card>
 
         {/* Remote storage */}
-        <Card Icon={Database} title="Remote storage" hint="JSONBin" flex>
-          <div className="grid grid-cols-3 gap-2 text-[11.5px] mb-2">
-            <Stat label="Status">
-              {isBinConfigured() ? (
-                <span style={{ color: "hsl(var(--a-success))" }}>● connected</span>
-              ) : (
-                <span style={{ color: "hsl(var(--a-danger))" }}>○ disabled</span>
-              )}
-            </Stat>
-            <Stat label="Bin">
-              <span className="a-code truncate inline-block max-w-full">
-                {getBinId() ? `${getBinId().slice(0, 8)}…` : "—"}
-              </span>
-            </Stat>
-            <Stat label="Health">
-              <span className="tabular-nums" style={{ color: "hsl(var(--a-ink))" }}>
-                {remoteLoading ? "…" : remote?.updatedAt ? fmtRel(remote.updatedAt) : "—"}
-              </span>
-            </Stat>
+        <Card Icon={Database} title="Remote storage" hint="JSONBin · 2 bins" flex>
+          <div className="space-y-2.5 mb-3">
+            <BinRow
+              name="Main bin"
+              scope="template · CV link · guestbook · Q&A · auth"
+              configured={isBinConfigured()}
+              binId={getBinId()}
+              loading={remoteLoading}
+              updatedAt={remote?.updatedAt}
+            />
+            <div style={{ borderTop: "1px solid hsl(var(--a-border))" }} />
+            <BinRow
+              name="Avatar bin"
+              scope="profile picture"
+              configured={isAvatarBinConfigured()}
+              binId={getAvatarBinId()}
+              loading={avatarRemoteLoading}
+              updatedAt={avatarRemote?.updatedAt}
+            />
           </div>
 
           <label className="a-label block mb-1.5 text-[10px]">
             Master key{" "}
+            <span className="normal-case tracking-normal font-normal" style={{ color: "hsl(var(--a-ink-faint))" }}>
+              (shared by both bins)
+            </span>{" "}
             {hasEnvMasterKey() && (
               <span className="ml-1.5 inline-flex items-center gap-1 normal-case tracking-normal text-[10.5px] font-medium"
                     style={{ color: "hsl(var(--a-success))" }}>
@@ -470,10 +513,10 @@ export default function Settings() {
             </button>
             <button
               type="button"
-              onClick={() => void refreshRemote()}
+              onClick={refreshAllRemote}
               className="a-btn a-btn-ghost py-1.5 px-2 text-[11.5px] shrink-0"
             >
-              {remoteLoading ? "Sync…" : "Refresh"}
+              {remoteLoading || avatarRemoteLoading ? "Sync…" : "Refresh"}
             </button>
           </div>
         </Card>
@@ -615,6 +658,54 @@ function Stat({ label, children }: { label: string; children: ReactNode }) {
     <div>
       <div className="a-label text-[10px] mb-0.5">{label}</div>
       <div className="truncate">{children}</div>
+    </div>
+  );
+}
+
+function BinRow({
+  name,
+  scope,
+  configured,
+  binId,
+  loading,
+  updatedAt,
+}: {
+  name: string;
+  scope: string;
+  configured: boolean;
+  binId: string;
+  loading: boolean;
+  updatedAt?: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline gap-1.5 mb-1">
+        <span className="text-[11.5px] font-semibold" style={{ color: "hsl(var(--a-ink))" }}>
+          {name}
+        </span>
+        <span className="text-[10px] truncate" style={{ color: "hsl(var(--a-ink-faint))" }}>
+          {scope}
+        </span>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-[11.5px]">
+        <Stat label="Status">
+          {configured ? (
+            <span style={{ color: "hsl(var(--a-success))" }}>● connected</span>
+          ) : (
+            <span style={{ color: "hsl(var(--a-danger))" }}>○ disabled</span>
+          )}
+        </Stat>
+        <Stat label="Bin">
+          <span className="a-code truncate inline-block max-w-full">
+            {binId ? `${binId.slice(0, 8)}…` : "—"}
+          </span>
+        </Stat>
+        <Stat label="Health">
+          <span className="tabular-nums" style={{ color: "hsl(var(--a-ink))" }}>
+            {loading ? "…" : updatedAt ? fmtRel(updatedAt) : "—"}
+          </span>
+        </Stat>
+      </div>
     </div>
   );
 }

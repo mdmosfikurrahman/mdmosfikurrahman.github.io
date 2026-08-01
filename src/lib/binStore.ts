@@ -185,6 +185,10 @@ export function isAvatarBinConfigured(): boolean {
   return AVATAR_BIN_ID.length > 0;
 }
 
+export function getAvatarBinId(): string {
+  return AVATAR_BIN_ID;
+}
+
 export async function fetchAvatarBin(): Promise<AvatarBinPayload | null> {
   if (!isAvatarBinConfigured()) return null;
   try {
