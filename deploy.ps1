@@ -92,6 +92,18 @@ if (-not (Test-Path -LiteralPath '.\dist')) {
     throw "Build did not produce a dist/ folder"
 }
 
+# .env's values are already inlined into dist/ by Vite at this point (that's
+# the whole reason it had to exist before the build). Remove it now so it
+# can never leak onto the deploy branch as a stray untracked file when we
+# switch branches below - the exact same class of problem this script
+# already guards node_modules against, just for a different file. Nothing
+# is lost: .env.example remains the source of truth and gets copied back
+# next run. A genuinely different local override belongs in .env.local
+# (Vite loads it too, and this script never touches it).
+if (Test-Path -LiteralPath '.\.env') {
+    Remove-Item -LiteralPath '.\.env' -Force
+}
+
 # -----------------------------------------------------------------------------
 # 2. Back up dist outside the repo (so it survives branch switch + wipe)
 # -----------------------------------------------------------------------------
@@ -173,12 +185,18 @@ Write-Step "Staging and committing"
 git add -A
 Assert-LastExit "git add failed"
 
-git diff --cached --quiet
-if ($LASTEXITCODE -eq 0) {
+# `git diff --cached --quiet` proved unreliable here (its exit code came out
+# stale/wrong after `git add -A` emitted CRLF-conversion warnings on stderr),
+# reporting "no changes" even when the build genuinely changed — which then
+# left real, uncommitted differences sitting in the working tree and made
+# the branch-return checkout below fail. `git status --porcelain` is a plain
+# text check, immune to that: empty output unambiguously means nothing is
+# staged. Same pattern as the dirty-check above.
+$stagedOutput = git status --porcelain
+if ($LASTEXITCODE -ne 0) { throw "git status failed (exit $LASTEXITCODE)" }
+if (-not $stagedOutput) {
     Write-Host "   No changes to commit; skipping push." -ForegroundColor DarkYellow
-    $LASTEXITCODE = 0
 } else {
-    $LASTEXITCODE = 0
     $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     git commit -m "Deploy from $SourceBranch at $stamp"
     Assert-LastExit "git commit failed"
