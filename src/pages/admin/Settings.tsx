@@ -218,7 +218,7 @@ export default function Settings() {
   return (
     <div className="h-full p-4 md:p-5 grid grid-cols-1 md:grid-cols-[1fr_1.05fr] gap-3 overflow-hidden">
       {/* LEFT COLUMN */}
-      <div className="flex flex-col gap-3 min-h-0">
+      <div className="flex flex-col gap-3 min-h-0 overflow-y-auto pr-1">
         {/* Account card */}
         <Card Icon={KeyRound} title="Admin account" hint="Single user">
           <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[12.5px]">
