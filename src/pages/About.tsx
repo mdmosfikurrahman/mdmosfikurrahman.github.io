@@ -176,10 +176,12 @@ export default function About() {
           <p>
             At REVE Systems (2023–24), I shipped production modules on the national NBR
             Customs Bond Management System: a full-stack engagement across Spring Boot,
-            React, and Oracle, with a ~25% throughput lift earned through query tuning and
-            OAuth2 hardening. Since November 2024 at iBOS, the work has been backend
-            architecture and system design for an OTA platform: scalable, configurable,
-            rule-driven services across Java, .NET, and Node. Service-boundary-first work.
+            Thymeleaf, and Oracle, collaborating with senior engineers on system design,
+            with a ~25% throughput lift earned through query tuning and OAuth2 hardening.
+            Since November 2024 at iBOS, the work has been backend architecture and
+            system design for Travilo, a multi-client OTA SaaS platform on .NET 9 —
+            scalable, configurable, rule-driven services, on-call production support, and
+            mentoring the junior engineers on the team. Service-boundary-first work.
             Details under wraps until launch.
           </p>
         </Act>

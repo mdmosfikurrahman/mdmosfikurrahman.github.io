@@ -53,14 +53,14 @@ export const roles: Role[] = [
     to: "present",
     place: "Dhaka, BD",
     summary:
-      "Backend architect for an OTA platform at iBOS Ltd. — a sister concern of Akij Resource Ltd. — that I designed and built, now serving 10k+ daily users. Scalable, configurable, rule-driven systems across Java, .NET, and Node, with hands-on Docker and deployment.",
+      "Backend architect for Travilo, a multi-client OTA SaaS platform at iBOS Ltd. — a sister concern of Akij Resource Ltd. — spanning B2B, B2C, and API/consortium clients, now serving 10k+ daily users. Scalable, configurable, rule-driven systems on .NET 9, with hands-on Docker and Kubernetes deployment.",
     bullets: [
-      "Designed and built the backend architecture for a production OTA platform serving 10k+ daily users.",
-      "Owned system design: rule-driven logic, supplier-integration flows, and microservice-based workflows.",
-      "Working across multiple stacks (.NET and Java), with hands-on Docker and deployment experience.",
-      "Shaping service boundaries and domain models to keep the estate maintainable as it scales.",
+      "Designed and built the backend architecture for Travilo, a multi-client OTA SaaS platform serving 10k+ daily users across 7 .NET 9 microservices.",
+      "Owned system design: rule-driven pricing/markup/discount logic, ancillary services, supplier-integration flows, and booking workflows.",
+      "Lead the team technically — personally training and mentoring junior engineers, running daily scrum/sprint planning, code reviews, and pair programming.",
+      "Provide on-call production support, including weekend/emergency response, and shape service boundaries to keep the estate maintainable as it scales.",
     ],
-    stack: ["Java", "Spring Boot", ".NET", "Node.js", "Drools", "gRPC", "Docker", "Kubernetes"],
+    stack: [".NET 9", "SQL Server", "MongoDB", "DynamoDB", "Drools", "gRPC", "GraphQL", "Docker", "Kubernetes"],
   },
   {
     company: "REVE Systems Ltd.",
@@ -70,15 +70,15 @@ export const roles: Role[] = [
     to: "2024-10",
     place: "Dhaka, BD",
     summary:
-      "Enterprise backend in Java and Spring Boot for the national Customs Bond Management System. Built full-stack modules with React and Oracle; focused on throughput, security, and compliance.",
+      "Enterprise backend in Java and Spring Boot for the national Customs Bond Management System, digitizing manual customs-compliance processing for garment exporters. Built full-stack modules with Thymeleaf and Oracle, collaborating with senior engineers on system design; focused on throughput, security, and compliance.",
     bullets: [
-      "Shipped production modules on a national compliance system (NBR Customs Bond).",
-      "Built full-stack features: React front, Spring Boot back, Oracle data layer.",
+      "Shipped production modules on a national compliance system (NBR Customs Bond), collaborating with senior engineers and architects on overall system design.",
+      "Built full-stack features: Thymeleaf front, Spring Boot back, Oracle data layer.",
       "Improved system throughput ~25% through query tuning and access-path refactoring.",
       "Hardened authentication and authorisation via OAuth2 and Spring Security.",
-      "Automated BGMEA / BKMEA sync for garment-export declaration processing.",
+      "Automated BGMEA / BKMEA sync for garment-export declaration processing, working closely with the Business Analysis team.",
     ],
-    stack: ["Java", "Spring Boot", "React", "Oracle", "OAuth2"],
+    stack: ["Java", "Spring Boot", "Thymeleaf", "Oracle", "OAuth2"],
   },
   {
     company: "BJIT Group",
@@ -91,6 +91,7 @@ export const roles: Role[] = [
       "Backend for Rakuten Echiba e-commerce and the Denka corporate CMS. GraphQL-based BFF, schema-stitched resolvers, and database optimisation, with delivery to Japanese stakeholders.",
     bullets: [
       "Built GraphQL BFF services handling complex nested data with resolver batching.",
+      "Collaborated with Rakuten engineers and the internal BJIT team on schema design and backend implementation approaches.",
       "Reduced query latency via schema stitching and join-path optimisation.",
       "Delivered CMS and multilingual content logic for Denka corporate site.",
       "Contributed reusable service patterns to internal GraphQL schema tooling.",
@@ -119,14 +120,14 @@ export const projects: Project[] = [
     year: "2024–",
     role: "Backend architecture & system design",
     blurb:
-      "A production online-travel platform I designed and built, now serving 10k+ daily users. Backend architecture around supplier integration, rule-driven pricing logic, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes.",
+      "A production OTA SaaS platform I designed and built, spanning B2B, B2C, and API/consortium clients, now serving 10k+ daily users. Backend architecture around supplier integration, rule-driven pricing/markup/discount logic, ancillary services, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes, plus an admin panel for centralized platform management.",
     highlights: [
-      "Designed and built the end-to-end backend architecture for a production OTA platform now serving 10k+ daily users.",
-      "Modelled supplier-integration flows and a rule-driven pricing engine so business changes are configuration, not code.",
-      "Decomposed the estate into microservice workflows with clear service boundaries to keep it maintainable as it scales.",
-      "Delivered across Java, .NET, and Node with hands-on Docker packaging and deployment.",
+      "Designed and built the end-to-end backend architecture for Travilo, a multi-client OTA SaaS platform now serving 10k+ daily users across 7 .NET 9 microservices.",
+      "Modelled supplier-integration flows and a rule-driven pricing/markup/discount engine so business changes are configuration, not code.",
+      "Decomposed the estate into microservice workflows with clear service boundaries, plus an admin panel for centralized platform management.",
+      "Delivered on .NET 9 with hands-on Docker packaging and Kubernetes deployment; provide on-call production support for platform uptime.",
     ],
-    stack: ["Java", "Spring Boot", ".NET", "Node.js", "Drools", "gRPC", "Docker", "Kubernetes"],
+    stack: [".NET 9", "SQL Server", "MongoDB", "DynamoDB", "Drools", "gRPC", "GraphQL", "Docker", "Kubernetes"],
     tags: ["architecture", "microservices", "rule engine", "OTA"],
     flagship: true,
   },
@@ -140,11 +141,11 @@ export const projects: Project[] = [
       "National-scale customs-bond system for Bangladesh's National Board of Revenue, used for garment-export compliance.",
     highlights: [
       "Shipped production modules on a live national compliance system (NBR Customs Bond).",
-      "Owned the Legal Case and Utilization Declaration modules end to end — React front, Spring Boot back, Oracle data layer.",
+      "Delivered the Legal Case and Utilization Declaration modules end to end, collaborating with senior engineers on overall system design — Thymeleaf front, Spring Boot back, Oracle data layer.",
       "Automated BGMEA / BKMEA synchronisation for garment-export declaration processing.",
       "Improved system throughput ~25% via query tuning and access-path refactoring; hardened auth with OAuth2 and Spring Security.",
     ],
-    stack: ["Java", "Spring Boot", "React", "Oracle", "OAuth2"],
+    stack: ["Java", "Spring Boot", "Thymeleaf", "Oracle", "OAuth2"],
     tags: ["Spring Boot", "React", "Oracle", "compliance"],
   },
   {
@@ -586,15 +587,15 @@ export const skillGroups: { label: string; items: string[] }[] = [
   },
   {
     label: "Backend",
-    items: ["Spring Boot", "Spring Security", "ASP.NET Core", "JPA / JDBC", "Node.js", "GraphQL"],
+    items: ["Spring Boot", "Spring Security", "ASP.NET Core", "JPA / JDBC", "JUnit", "Mockito", "GraphQL"],
   },
   {
     label: "Data",
-    items: ["Oracle", "PostgreSQL", "SQL Server", "MySQL", "Query optimisation"],
+    items: ["Oracle", "PostgreSQL", "SQL Server", "MySQL", "MongoDB", "DynamoDB", "Query optimisation"],
   },
   {
     label: "Platform",
-    items: ["Docker", "Kubernetes", "gRPC", "OAuth2", "JWT", "CI/CD"],
+    items: ["Docker", "Kubernetes", "gRPC", "OAuth2", "JWT", "CI/CD", "Agile/Scrum", "Azure Monitor / ELK"],
   },
   {
     label: "Architecture",
@@ -843,11 +844,11 @@ export const stats = {
 export const preamble: string[] = [
   "I design the quiet half of software: the services, schemas, and workflows that hold a product together once traffic shows up. Paid work on backends in Java and .NET, published work in applied ML and systems.",
   `${capitalize(word(stats.years))} years shipping production systems across ${word(stats.companies)} companies, and ${word(stats.publications)} peer-reviewed papers along the way, ${word(stats.firstAuthor)} as first author.`,
-  "Currently shaping backend architecture at iBOS: configurable systems, rule-driven logic, and microservice workflows across Java, .NET, and Node. Earlier, national-scale compliance software for the NBR, and backend services for Rakuten in Japan.",
+  "Currently shaping backend architecture at iBOS: configurable systems, rule-driven logic, and microservice workflows on .NET 9. Earlier, national-scale compliance software for the NBR, and backend services for Rakuten in Japan.",
 ];
 
 export const figures = [
-  { k: "in industry", v: `${stats.years}+ yr`, note: "Java · .NET · Node" },
+  { k: "in industry", v: `${stats.years}+ yr`, note: "Java · .NET" },
   { k: "publications", v: String(stats.publications), note: `peer-reviewed · ${stats.firstAuthor} as first author` },
   { k: "reviewer for", v: String(stats.reviewer), note: "journals & conferences" },
   { k: "systems shipped", v: String(stats.systems), note: "national · global · product" },
