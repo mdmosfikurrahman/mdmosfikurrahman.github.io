@@ -10,7 +10,7 @@ import {
   reviewerFor,
   type Distinction,
 } from "@/lib/content";
-import { useCvUrl } from "@/lib/settings";
+import { useCvUrl, useCvLabel } from "@/lib/settings";
 const avatar = "/profile-avatar.png";
 
 function kindIcon(kind: Distinction["kind"]) {
@@ -21,6 +21,7 @@ function kindIcon(kind: Distinction["kind"]) {
 
 export default function About() {
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
   const educationSorted = [...education].sort(
     (a, b) => new Date(b.from).getTime() - new Date(a.from).getTime(),
   );
@@ -324,7 +325,7 @@ export default function About() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Curriculum Vitae <ArrowUpRight size={14} strokeWidth={1.6} />
+                {cvLabel} <ArrowUpRight size={14} strokeWidth={1.6} />
               </a>
             </div>
           </div>

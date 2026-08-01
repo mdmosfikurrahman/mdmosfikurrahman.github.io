@@ -1,19 +1,20 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, ArrowUp } from "lucide-react";
 import { profile } from "@/lib/content";
-import { useCvUrl } from "@/lib/settings";
+import { useCvUrl, useCvLabel } from "@/lib/settings";
 
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   const toTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
 
   const icons = [
     { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
     { Icon: Github, href: profile.links.github, label: "GitHub" },
     { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn" },
     { Icon: GraduationCap, href: profile.links.scholar, label: "Scholar" },
-    { Icon: FileText, href: cvUrl, label: "CV" },
+    { Icon: FileText, href: cvUrl, label: cvLabel },
   ];
 
   return (

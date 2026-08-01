@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, GraduationCap, FileText, type LucideIcon } from "lucide-react";
 import { profile, preamble, figures } from "@/lib/content";
-import { useCvUrl } from "@/lib/settings";
+import { useCvUrl, useCvLabel } from "@/lib/settings";
 
 const avatar = "/profile-avatar.png";
 
@@ -14,12 +14,13 @@ type Channel = {
 
 export default function Hero() {
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
   const channels: Channel[] = [
     { Icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
     { Icon: Github, href: profile.links.github, label: "GitHub", external: true },
     { Icon: Linkedin, href: profile.links.linkedin, label: "LinkedIn", external: true },
     { Icon: GraduationCap, href: profile.links.scholar, label: "Google Scholar", external: true },
-    { Icon: FileText, href: cvUrl, label: "Curriculum Vitae", external: true },
+    { Icon: FileText, href: cvUrl, label: cvLabel, external: true },
   ];
   const today = new Date().toLocaleDateString("en-GB", {
     day: "2-digit",

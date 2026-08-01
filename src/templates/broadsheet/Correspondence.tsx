@@ -6,7 +6,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { profile } from "@/lib/content";
-import { useCvUrl } from "@/lib/settings";
+import { useCvUrl, useCvLabel } from "@/lib/settings";
 
 type Channel = {
   label: string;
@@ -176,8 +176,9 @@ function ChannelCard({
 
 export default function Correspondence() {
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
   const items = channels.map((c) =>
-    c.label === "Curriculum Vitæ" ? { ...c, value: cvUrl, href: cvUrl } : c,
+    c.label === "Curriculum Vitæ" ? { ...c, value: cvUrl, href: cvUrl, label: cvLabel } : c,
   );
   return (
     <section id="contact" className="relative">

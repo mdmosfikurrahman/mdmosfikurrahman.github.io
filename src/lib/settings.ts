@@ -85,3 +85,13 @@ export function useCvUrl(): string {
   useEffect(() => subscribeSettings(() => setUrl(getCvUrl())), []);
   return url;
 }
+
+// Button/link text mirrors the linked document: "Resume" when the URL points
+// at the resume, "CV" otherwise (e.g. the longer academic curriculum vitae).
+export function cvLabelFor(url: string): string {
+  return /resume/i.test(url) ? "Resume" : "CV";
+}
+
+export function useCvLabel(): string {
+  return cvLabelFor(useCvUrl());
+}

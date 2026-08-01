@@ -15,7 +15,7 @@ import {
   education, distinctions, talksAndService, verifiedBadges,
   type Publication,
 } from "@/lib/content";
-import { useCvUrl } from "@/lib/settings";
+import { useCvUrl, useCvLabel } from "@/lib/settings";
 
 const avatar = "/profile-avatar.png";
 
@@ -53,8 +53,9 @@ const pop = {
 
 function TitleSlide() {
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
   const titleChannels = channels.map((c) =>
-    c.label === "CV" ? { ...c, href: cvUrl } : c,
+    c.label === "CV" ? { ...c, href: cvUrl, label: cvLabel } : c,
   );
   return (
     <div className="relative w-full">
@@ -576,9 +577,10 @@ function ContactRow({ c }: { c: { label: string; value: string; href: string } }
 
 function ContactSlide() {
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
   const contactItems = contacts.map((c) =>
     c.label === "CV"
-      ? { ...c, value: cvUrl.replace(/^https?:\/\//, ""), href: cvUrl }
+      ? { ...c, value: cvUrl.replace(/^https?:\/\//, ""), href: cvUrl, label: cvLabel }
       : c,
   );
   return (

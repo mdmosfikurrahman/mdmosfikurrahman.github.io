@@ -1,7 +1,7 @@
 import { Copy, Check, ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import { profile } from "@/lib/content";
-import { useCvUrl } from "@/lib/settings";
+import { useCvUrl, useCvLabel } from "@/lib/settings";
 
 type Channel = {
   label: string;
@@ -107,9 +107,10 @@ function Row({ c }: { c: Channel }) {
 
 export default function Correspondence() {
   const cvUrl = useCvUrl();
+  const cvLabel = useCvLabel();
   const items = channels.map((c) =>
     c.label === "CV"
-      ? { ...c, value: cvUrl.replace(/^https?:\/\//, ""), href: cvUrl }
+      ? { ...c, value: cvUrl.replace(/^https?:\/\//, ""), href: cvUrl, label: cvLabel }
       : c,
   );
   return (
