@@ -4,7 +4,6 @@ import {
   Bot,
   Check,
   CloudUpload,
-  Database,
   Eye,
   EyeOff,
   FileText,
@@ -13,23 +12,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { changePassword, ensureAuth } from "@/lib/adminAuth";
-import {
-  fetchAvatarBin,
-  getAvatarBinId,
-  getBinId,
-  getStoredMasterKey,
-  hasEnvMasterKey,
-  isAvatarBinConfigured,
-  isBinConfigured,
-  setStoredMasterKey,
-  type AvatarBinPayload,
-} from "@/lib/binStore";
-import {
-  fetchRemoteTemplate,
-  pushRemoteAvatar,
-  pushRemoteCvUrl,
-  type RemoteState,
-} from "@/lib/templateRemote";
+import { getStoredMasterKey, isAvatarBinConfigured, isBinConfigured } from "@/lib/binStore";
+import { pushRemoteAvatar, pushRemoteCvUrl } from "@/lib/templateRemote";
 import {
   getAvatarUrl,
   getChatbotEnabled,
@@ -101,7 +85,7 @@ export default function Settings() {
     setCvInput(getCvUrl());
     // Publish to all visitors when remote storage is configured.
     if (isBinConfigured()) {
-      const res = await pushRemoteCvUrl(next, masterKey || undefined);
+      const res = await pushRemoteCvUrl(next, getStoredMasterKey() || undefined);
       if (res.kind === "err") {
         setCvStatus({ kind: "err", reason: res.reason });
         return;
@@ -147,7 +131,7 @@ export default function Settings() {
     setAvatarStatus({ kind: "saving" });
     setAvatarUrl(avatarPreview);
     if (isAvatarBinConfigured()) {
-      const res = await pushRemoteAvatar(avatarPreview, masterKey || undefined);
+      const res = await pushRemoteAvatar(avatarPreview, getStoredMasterKey() || undefined);
       if (res.kind === "err") {
         setAvatarStatus({ kind: "err", reason: res.reason });
         return;
@@ -163,35 +147,6 @@ export default function Settings() {
     setAvatarStatus({ kind: "idle" });
   };
 
-  // ---- Remote storage ----
-  const [remote, setRemote] = useState<RemoteState | null>(null);
-  const [remoteLoading, setRemoteLoading] = useState(false);
-  const [avatarRemote, setAvatarRemote] = useState<AvatarBinPayload | null>(null);
-  const [avatarRemoteLoading, setAvatarRemoteLoading] = useState(false);
-  const [masterKey, setMasterKey] = useState<string>(() => getStoredMasterKey());
-  const [showKey, setShowKey] = useState(false);
-
-  const refreshRemote = async () => {
-    if (!isBinConfigured()) return;
-    setRemoteLoading(true);
-    const r = await fetchRemoteTemplate();
-    setRemote(r);
-    setRemoteLoading(false);
-  };
-
-  const refreshAvatarRemote = async () => {
-    if (!isAvatarBinConfigured()) return;
-    setAvatarRemoteLoading(true);
-    const r = await fetchAvatarBin();
-    setAvatarRemote(r);
-    setAvatarRemoteLoading(false);
-  };
-
-  const refreshAllRemote = () => {
-    void refreshRemote();
-    void refreshAvatarRemote();
-  };
-
   useEffect(() => {
     void (async () => {
       const auth = await ensureAuth();
@@ -200,7 +155,6 @@ export default function Settings() {
         setUpdatedAt(auth.updatedAt);
       }
     })();
-    refreshAllRemote();
   }, []);
 
   const submitPassword = async (e: FormEvent) => {
@@ -226,11 +180,6 @@ export default function Settings() {
     } else {
       setPwStatus({ kind: "err", reason: res.reason });
     }
-  };
-
-  const saveMasterKey = (val: string) => {
-    setMasterKey(val);
-    setStoredMasterKey(val);
   };
 
   return (
@@ -448,83 +397,6 @@ export default function Settings() {
             )}
           </div>
         </Card>
-
-        {/* Remote storage */}
-        <Card Icon={Database} title="Remote storage" hint="JSONBin · 2 bins" flex>
-          <div
-            className="rounded-lg overflow-hidden mb-3"
-            style={{ border: "1px solid hsl(var(--a-border))" }}
-          >
-            <BinRow
-              name="Main bin"
-              scope="template · CV link · guestbook · Q&A · auth"
-              configured={isBinConfigured()}
-              binId={getBinId()}
-              loading={remoteLoading}
-              updatedAt={remote?.updatedAt}
-            />
-            <div style={{ borderTop: "1px solid hsl(var(--a-border))" }}>
-              <BinRow
-                name="Avatar bin"
-                scope="profile picture"
-                configured={isAvatarBinConfigured()}
-                binId={getAvatarBinId()}
-                loading={avatarRemoteLoading}
-                updatedAt={avatarRemote?.updatedAt}
-                alt
-              />
-            </div>
-          </div>
-
-          <label className="a-label block mb-1.5 text-[10px]">
-            Master key{" "}
-            <span className="normal-case tracking-normal font-normal" style={{ color: "hsl(var(--a-ink-faint))" }}>
-              (shared by both bins)
-            </span>{" "}
-            {hasEnvMasterKey() && (
-              <span className="ml-1.5 inline-flex items-center gap-1 normal-case tracking-normal text-[10.5px] font-medium"
-                    style={{ color: "hsl(var(--a-success))" }}>
-                <Check size={10} strokeWidth={2.5} aria-hidden /> from .env
-              </span>
-            )}
-          </label>
-          <div className="flex gap-1.5">
-            <div className="relative flex-1 min-w-0">
-              <input
-                type={showKey ? "text" : "password"}
-                value={masterKey}
-                onChange={(e) => saveMasterKey(e.target.value)}
-                placeholder={hasEnvMasterKey() ? "•••• (using .env)" : "$2a$10$…"}
-                className="a-input pr-9 text-[12px] py-1.5"
-                autoComplete="off"
-                spellCheck={false}
-              />
-              <button
-                type="button"
-                onClick={() => setShowKey((v) => !v)}
-                aria-label={showKey ? "Hide" : "Show"}
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded"
-                style={{ color: "hsl(var(--a-ink-muted))" }}
-              >
-                {showKey ? <EyeOff size={13} strokeWidth={1.8} /> : <Eye size={13} strokeWidth={1.8} />}
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={() => saveMasterKey("")}
-              className="a-btn a-btn-danger py-1.5 px-2 text-[11.5px] shrink-0"
-            >
-              Clear
-            </button>
-            <button
-              type="button"
-              onClick={refreshAllRemote}
-              className="a-btn a-btn-ghost py-1.5 px-2 text-[11.5px] shrink-0"
-            >
-              {remoteLoading || avatarRemoteLoading ? "Sync…" : "Refresh"}
-            </button>
-          </div>
-        </Card>
       </div>
 
       {/* RIGHT COLUMN — Change password form */}
@@ -658,65 +530,6 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function Stat({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div>
-      <div className="a-label text-[10px] mb-0.5">{label}</div>
-      <div className="truncate">{children}</div>
-    </div>
-  );
-}
-
-function BinRow({
-  name,
-  scope,
-  configured,
-  binId,
-  loading,
-  updatedAt,
-  alt,
-}: {
-  name: string;
-  scope: string;
-  configured: boolean;
-  binId: string;
-  loading: boolean;
-  updatedAt?: string;
-  alt?: boolean;
-}) {
-  return (
-    <div
-      className="px-3 py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1"
-      style={{ background: alt ? "hsl(var(--a-border) / 0.12)" : "transparent" }}
-    >
-      <div className="min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[12.5px] font-semibold" style={{ color: "hsl(var(--a-ink))" }}>
-            {name}
-          </span>
-          <span
-            className="inline-flex items-center gap-1.5 text-[10.5px] font-medium"
-            style={{ color: configured ? "hsl(var(--a-success))" : "hsl(var(--a-danger))" }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "currentColor" }} aria-hidden />
-            {configured ? "Connected" : "Disabled"}
-          </span>
-        </div>
-        <div className="mt-0.5 text-[10.5px] truncate" style={{ color: "hsl(var(--a-ink-faint))" }}>
-          {scope}
-        </div>
-      </div>
-      <div className="flex items-center gap-3 text-[11px] shrink-0">
-        <span className="a-code" style={{ color: "hsl(var(--a-ink-soft))" }}>
-          {binId ? `${binId.slice(0, 10)}…` : "—"}
-        </span>
-        <span className="tabular-nums" style={{ color: "hsl(var(--a-ink-muted))" }}>
-          {loading ? "Syncing…" : updatedAt ? fmtRel(updatedAt) : "Never synced"}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 function ToggleRow({
   label,
@@ -889,21 +702,6 @@ function fmtAbs(iso?: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function fmtRel(iso?: string): string {
-  if (!iso) return "—";
-  const t = new Date(iso).getTime();
-  if (!Number.isFinite(t)) return "—";
-  const diff = Date.now() - t;
-  const s = Math.round(diff / 1000);
-  if (s < 60) return `${s}s ago`;
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.round(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.round(h / 24);
-  return `${d}d ago`;
 }
 
 function scoreStrength(pw: string): { score: number; label: string } {
