@@ -451,7 +451,10 @@ export default function Settings() {
 
         {/* Remote storage */}
         <Card Icon={Database} title="Remote storage" hint="JSONBin · 2 bins" flex>
-          <div className="space-y-2.5 mb-3">
+          <div
+            className="rounded-lg overflow-hidden mb-3"
+            style={{ border: "1px solid hsl(var(--a-border))" }}
+          >
             <BinRow
               name="Main bin"
               scope="template · CV link · guestbook · Q&A · auth"
@@ -460,15 +463,17 @@ export default function Settings() {
               loading={remoteLoading}
               updatedAt={remote?.updatedAt}
             />
-            <div style={{ borderTop: "1px solid hsl(var(--a-border))" }} />
-            <BinRow
-              name="Avatar bin"
-              scope="profile picture"
-              configured={isAvatarBinConfigured()}
-              binId={getAvatarBinId()}
-              loading={avatarRemoteLoading}
-              updatedAt={avatarRemote?.updatedAt}
-            />
+            <div style={{ borderTop: "1px solid hsl(var(--a-border))" }}>
+              <BinRow
+                name="Avatar bin"
+                scope="profile picture"
+                configured={isAvatarBinConfigured()}
+                binId={getAvatarBinId()}
+                loading={avatarRemoteLoading}
+                updatedAt={avatarRemote?.updatedAt}
+                alt
+              />
+            </div>
           </div>
 
           <label className="a-label block mb-1.5 text-[10px]">
@@ -669,6 +674,7 @@ function BinRow({
   binId,
   loading,
   updatedAt,
+  alt,
 }: {
   name: string;
   scope: string;
@@ -676,35 +682,37 @@ function BinRow({
   binId: string;
   loading: boolean;
   updatedAt?: string;
+  alt?: boolean;
 }) {
   return (
-    <div>
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="text-[11.5px] font-semibold" style={{ color: "hsl(var(--a-ink))" }}>
-          {name}
-        </span>
-        <span className="text-[10px] truncate" style={{ color: "hsl(var(--a-ink-faint))" }}>
+    <div
+      className="px-3 py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1"
+      style={{ background: alt ? "hsl(var(--a-border) / 0.12)" : "transparent" }}
+    >
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[12.5px] font-semibold" style={{ color: "hsl(var(--a-ink))" }}>
+            {name}
+          </span>
+          <span
+            className="inline-flex items-center gap-1.5 text-[10.5px] font-medium"
+            style={{ color: configured ? "hsl(var(--a-success))" : "hsl(var(--a-danger))" }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "currentColor" }} aria-hidden />
+            {configured ? "Connected" : "Disabled"}
+          </span>
+        </div>
+        <div className="mt-0.5 text-[10.5px] truncate" style={{ color: "hsl(var(--a-ink-faint))" }}>
           {scope}
-        </span>
+        </div>
       </div>
-      <div className="grid grid-cols-3 gap-2 text-[11.5px]">
-        <Stat label="Status">
-          {configured ? (
-            <span style={{ color: "hsl(var(--a-success))" }}>● connected</span>
-          ) : (
-            <span style={{ color: "hsl(var(--a-danger))" }}>○ disabled</span>
-          )}
-        </Stat>
-        <Stat label="Bin">
-          <span className="a-code truncate inline-block max-w-full">
-            {binId ? `${binId.slice(0, 8)}…` : "—"}
-          </span>
-        </Stat>
-        <Stat label="Health">
-          <span className="tabular-nums" style={{ color: "hsl(var(--a-ink))" }}>
-            {loading ? "…" : updatedAt ? fmtRel(updatedAt) : "—"}
-          </span>
-        </Stat>
+      <div className="flex items-center gap-3 text-[11px] shrink-0">
+        <span className="a-code" style={{ color: "hsl(var(--a-ink-soft))" }}>
+          {binId ? `${binId.slice(0, 10)}…` : "—"}
+        </span>
+        <span className="tabular-nums" style={{ color: "hsl(var(--a-ink-muted))" }}>
+          {loading ? "Syncing…" : updatedAt ? fmtRel(updatedAt) : "Never synced"}
+        </span>
       </div>
     </div>
   );
