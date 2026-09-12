@@ -749,6 +749,31 @@
     font-weight: 700;
   }
 
+  /* Laptop screens are short. Scale the slide down a little rather than make
+     the presenter scroll: at 1366x700 eight of the research deck's slides
+     overflow at full size, and almost none do once scaled. */
+  @media (max-height: 860px) {
+    .template-keynote .kn-fit { zoom: 0.92; }
+  }
+  @media (max-height: 780px) {
+    .template-keynote .kn-fit { zoom: 0.85; }
+  }
+  @media (max-height: 700px) {
+    .template-keynote .kn-fit { zoom: 0.78; }
+  }
+
+  /* "scroll" hint on slides taller than the stage */
+  .template-keynote .kn-nudge {
+    animation: kn-nudge 1.6s ease-in-out infinite;
+  }
+  @keyframes kn-nudge {
+    0%, 100% { transform: translateY(0); opacity: 0.55; }
+    50%      { transform: translateY(2px); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .template-keynote .kn-nudge { animation: none; }
+  }
+
   .template-keynote .a {
     color: hsl(var(--ink));
     text-decoration: underline;

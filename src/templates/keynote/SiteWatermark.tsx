@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useRef, useState, type WheelEvent } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Sun, Moon, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Sun, Moon, ExternalLink } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { useTemplate } from "@/lib/template";
 import { profile } from "@/lib/content";
@@ -44,27 +44,37 @@ export default function KeynoteDeck() {
   const next = useCallback(() => setState(([c]) => [Math.min(total - 1, c + 1), 1]), [total]);
   const prev = useCallback(() => setState(([c]) => [Math.max(0, c - 1), -1]), []);
 
-  // Wheel / trackpad: advance only when the slide is scrolled to its edge,
-  // so tall dossier slides still scroll internally first. One gesture = one
-  // slide (cooldown lock prevents skipping several at once).
+  // The scrolling element of the current slide. Tall slides (paper dossiers,
+  // publication lists) have to scroll internally before the deck advances,
+  // or their bottom is unreachable on a laptop screen.
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const [overflowing, setOverflowing] = useState(false);
+
+  // A slide counts as scrollable the moment it overflows at all. The previous
+  // 120px threshold meant a slide overflowing by less than that could never be
+  // scrolled: the wheel advanced instead and the tail was simply unreadable.
+  const scrollInfo = useCallback(() => {
+    const el = stageRef.current;
+    if (!el) return null;
+    const oy = getComputedStyle(el).overflowY;
+    if (oy !== "auto" && oy !== "scroll") return null;
+    const max = el.scrollHeight - el.clientHeight;
+    if (max <= 8) return null;
+    return { el, max, atTop: el.scrollTop <= 2, atBottom: el.scrollTop >= max - 2 };
+  }, []);
+
+  // Wheel / trackpad: scroll the slide first, advance only at its edge.
+  // One gesture = one slide (cooldown lock prevents skipping several).
   const wheelLock = useRef(false);
   const onWheel = useCallback((e: WheelEvent<HTMLDivElement>) => {
-    const el = e.currentTarget;
     const down = e.deltaY > 0;
-    // Defer to internal scrolling ONLY when the slide is actually scrollable
-    // (overflow-y auto/scroll) AND meaningfully overflows. The cover is
-    // overflow-hidden, so the wheel always advances there.
-    const oy = getComputedStyle(el).overflowY;
-    const scrollable = (oy === "auto" || oy === "scroll")
-      && el.scrollHeight - el.clientHeight > 120;
-    const atTop = el.scrollTop <= 4;
-    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
-    if (scrollable && ((down && !atBottom) || (!down && !atTop))) return;
+    const s = scrollInfo();
+    if (s && ((down && !s.atBottom) || (!down && !s.atTop))) return;
     if (Math.abs(e.deltaY) < 4 || wheelLock.current) return;
     wheelLock.current = true;
     window.setTimeout(() => { wheelLock.current = false; }, 650);
     if (down) next(); else prev();
-  }, [next, prev]);
+  }, [next, prev, scrollInfo]);
 
   const onHome = loc.pathname === "/";
 
@@ -73,14 +83,53 @@ export default function KeynoteDeck() {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
-      if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); next(); }
-      else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); prev(); }
-      else if (e.key === "Home") { e.preventDefault(); go(0, -1); }
+      // Left/right always move the deck, which is what a presenter's clicker
+      // sends. Up/down/page/space read a tall slide first and only move the
+      // deck once it is at its edge, so a long slide is never skipped unread.
+      if (e.key === "ArrowRight") { e.preventDefault(); next(); return; }
+      if (e.key === "ArrowLeft") { e.preventDefault(); prev(); return; }
+      const fwd = ["ArrowDown", "PageDown", " "].includes(e.key);
+      const back = ["ArrowUp", "PageUp"].includes(e.key);
+      if (fwd || back) {
+        e.preventDefault();
+        const s = scrollInfo();
+        if (s && ((fwd && !s.atBottom) || (back && !s.atTop))) {
+          const step = s.el.clientHeight * 0.82;
+          s.el.scrollBy({ top: fwd ? step : -step, behavior: "smooth" });
+          return;
+        }
+        if (fwd) next(); else prev();
+        return;
+      }
+      if (e.key === "Home") { e.preventDefault(); go(0, -1); }
       else if (e.key === "End") { e.preventDefault(); go(total - 1, 1); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onHome, next, prev, go, total]);
+  }, [onHome, next, prev, go, total, scrollInfo]);
+
+  // Does the current slide overflow? AnimatePresence runs mode="wait", so the
+  // incoming slide only mounts once the outgoing one has finished exiting:
+  // measuring on an index change would read the old element. The measurement
+  // is therefore driven by the slide's own onAnimationComplete, plus resize.
+  // Shown only while there is still something below the fold, so the hint
+  // disappears once the presenter has read to the end of the slide.
+  const measure = useCallback(() => {
+    const el = stageRef.current;
+    if (!el) { setOverflowing(false); return; }
+    const max = el.scrollHeight - el.clientHeight;
+    setOverflowing(max > 8 && el.scrollTop < max - 8);
+  }, []);
+
+  useEffect(() => {
+    if (!onHome) return;
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [onHome, measure]);
+
+  // Hide the hint the moment the slide changes; onAnimationComplete restores
+  // it if the new slide is also tall.
+  useEffect(() => { setOverflowing(false); }, [index]);
 
   // Lock background scroll while the deck owns the screen.
   useEffect(() => {
@@ -151,22 +200,44 @@ export default function KeynoteDeck() {
         <AnimatePresence custom={dir} mode="wait" initial={false}>
           <motion.div
             key={index}
+            ref={stageRef}
             custom={dir}
             variants={variants}
             initial="enter"
             animate="center"
             exit="exit"
             transition={{ duration: 0.42, ease: EASE }}
+            onAnimationComplete={measure}
             onWheel={onWheel}
-            className={`absolute inset-0 ${index === 0 ? "overflow-hidden" : "overflow-y-auto overflow-x-hidden"}`}
+            onScroll={measure}
+            // Every slide scrolls, the cover included. On a 700px-high laptop
+            // the cover overflows by ~470px, and with overflow-hidden that
+            // content was simply unreachable.
+            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
           >
-            <div className="min-h-full flex items-center justify-center px-4 sm:px-8 lg:px-12 py-5 sm:py-7">
-              <div className="w-full max-w-[1400px] mx-auto">
+            {/* `m-auto` centres the slide when it fits and collapses to zero
+                when it does not. `items-center` would centre the overflow too,
+                putting the top of a tall slide above the scroll origin where
+                it can never be reached. */}
+            <div className="min-h-full flex px-4 sm:px-8 lg:px-12 py-5 sm:py-7">
+              <div className="w-full max-w-[1400px] m-auto kn-fit">
                 {slide.render()}
               </div>
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Tall slides say so, otherwise a presenter cannot tell the slide
+            continues below the fold. */}
+        {overflowing && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none select-none
+                          flex items-center gap-1.5 px-2.5 py-1 rounded-full kn-step"
+               style={{ background: "hsl(var(--paper-glass) / 0.72)", border: "1px solid hsl(var(--rule))",
+                        backdropFilter: "blur(4px)" }}>
+            <ChevronDown size={13} strokeWidth={2.2} className="kn-nudge" />
+            <span>scroll</span>
+          </div>
+        )}
 
         {/* side arrows */}
         <button onClick={prev} disabled={index === 0} aria-label="Previous slide"
