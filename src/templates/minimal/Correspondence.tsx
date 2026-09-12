@@ -41,6 +41,13 @@ const channels: Channel[] = [
     copyLabel: "Copy link",
   },
   {
+    label: "ORCID",
+    whisper: "Persistent author identifier.",
+    value: profile.links.orcid.replace(/^https?:\/\//, ""),
+    href: profile.links.orcid,
+    copyLabel: "Copy link",
+  },
+  {
     label: "CV",
     whisper: "The full record.",
     value: profile.cvUrl.replace(/^https?:\/\//, ""),

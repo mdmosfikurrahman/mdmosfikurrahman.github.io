@@ -90,7 +90,7 @@ export default function Hero() {
               <figcaption className="mt-4 font-display text-[10px] uppercase tracking-[0.24em] leading-relaxed"
                           style={{ color: "hsl(var(--muted))" }}>
                 <span style={{ color: "hsl(var(--accent))" }}>✦</span> Ancestor: MMR-1997 <br />
-                <span style={{ color: "hsl(var(--accent))" }}>✦</span> Class: Engineer II
+                <span style={{ color: "hsl(var(--accent))" }}>✦</span> Class: Engineering Team Lead
               </figcaption>
             </figure>
 

@@ -135,6 +135,9 @@ export default function About() {
                       <a className="a" href={profile.links.scholar} target="_blank" rel="noreferrer">
                         Scholar
                       </a>
+                      <a className="a" href={profile.links.orcid} target="_blank" rel="noreferrer">
+                        ORCID
+                      </a>
                     </dd>
                   </div>
                 </dl>

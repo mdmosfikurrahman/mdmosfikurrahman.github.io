@@ -17,19 +17,21 @@ export const profile = {
   name: "Md. Mosfikur Rahman",
   shortName: "Mosfikur",
   role: "Backend architect · Dhaka",
-  roleLong: "Engineer II, iBOS Ltd.",
+  roleLong: "Engineering Team Lead, Akij iBOS Ltd.",
   tagline:
     "Designing the quiet half of software: services, schemas, and workflows, based in Dhaka.",
   location: "Dhaka, Bangladesh",
   email: "mdmosfikurrahman.cse@gmail.com",
   phone: "+880 1797-554948",
-  cvUrl: "https://mdmosfikurrahman.github.io/resume/",
+  // Default for useCvUrl(). The admin console can override it per browser,
+  // and useCvLabel() adapts the button text to whichever document is linked.
+  cvUrl: "https://mdmosfikurrahman.github.io/cv/",
   avatarUrl: "/profile-avatar.png",
   links: {
     github: "https://github.com/mdmosfikurrahman",
     linkedin: "https://linkedin.com/in/mdmosfikurrahman",
     scholar: "https://scholar.google.com/citations?user=1GAfMAEAAAAJ",
-    orcid: "https://orcid.org/",
+    orcid: "https://orcid.org/0000-0002-2370-2983",
   },
 };
 
@@ -47,9 +49,9 @@ export type Role = {
 
 export const roles: Role[] = [
   {
-    company: "iBOS Ltd.",
+    company: "Akij iBOS Ltd.",
     companyUrl: "https://ibos.io/",
-    title: "Engineer II · Backend architecture",
+    title: "Engineering Team Lead · Software Engineer L-II",
     from: "2024-11",
     to: "present",
     place: "Dhaka, BD",
@@ -571,15 +573,19 @@ export const publications: Publication[] = [
   },
 ];
 
+// Manuscript counts per venue. Journals 7 + 12 + 1 + 29 = 49, conferences
+// 15 + 9 + 5 = 29, so 78 in total. Keep REVIEWS_COMPLETED in step.
 export const reviewerFor = [
-  "ISA Transactions",
-  "Journal of King Saud University · Computer and Information Sciences",
-  "Natural Language Processing Journal",
-  "Current Research in Behavioral Sciences",
-  "4th ICDLAIR, 2022",
-  "Intl. Conf. on Information Systems and Management Science, 2022",
-  "Intl. Conf. on Communication and Information Systems, 2022",
+  "ISA Transactions · Elsevier Q1 (7)",
+  "Journal of King Saud University · Computer and Information Sciences (12)",
+  "Natural Language Processing Journal (1)",
+  "Current Research in Behavioral Sciences · Elsevier (29)",
+  "4th ICDLAIR, 2022 (15)",
+  "Intl. Conf. on Information Systems and Management Science, 2022 (9)",
+  "Intl. Conf. on Communication and Information Systems, 2022 (5)",
 ];
+
+const REVIEWS_COMPLETED = 78;
 
 export const skillGroups: { label: string; items: string[] }[] = [
   {
@@ -839,6 +845,7 @@ export const stats = {
   publications: publications.length,
   firstAuthor: publications.filter((p) => (p.tags || []).includes("first-author")).length,
   reviewer: reviewerFor.length,
+  reviewsCompleted: REVIEWS_COMPLETED,
   systems: 5, // OTA · CBMS · Rakuten · Denka · TraFoo
 };
 
@@ -851,7 +858,7 @@ export const preamble: string[] = [
 export const figures = [
   { k: "in industry", v: `${stats.years}+ yr`, note: "Java · .NET" },
   { k: "publications", v: String(stats.publications), note: `peer-reviewed · ${stats.firstAuthor} as first author` },
-  { k: "reviewer for", v: String(stats.reviewer), note: "journals & conferences" },
+  { k: "manuscripts reviewed", v: String(stats.reviewsCompleted), note: `across ${stats.reviewer} journals & conferences` },
   { k: "systems shipped", v: String(stats.systems), note: "national · global · product" },
 ];
 

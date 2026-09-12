@@ -56,6 +56,15 @@ const channels: Channel[] = [
     copyLabel: "Copy link",
   },
   {
+    label: "ORCID",
+    prompt: "Verify the research identity",
+    whisper: "persistent author identifier",
+    actionLabel: "Visit",
+    value: profile.links.orcid,
+    href: profile.links.orcid,
+    copyLabel: "Copy link",
+  },
+  {
     label: "Curriculum Vitæ",
     prompt: "Read the full record",
     whisper: "experience, research, service",
