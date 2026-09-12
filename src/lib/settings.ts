@@ -3,13 +3,26 @@
 // pub/sub so toggles take effect immediately, without a page refresh.
 
 import { useEffect, useState } from "react";
-import { profile } from "./content";
+import { freelance, profile } from "./content";
 import { fetchAvatarBin, isAvatarBinConfigured } from "./binStore";
 
 const STORAGE = "portfolio.settings.v1";
 
+export type HireLink = {
+  label: string;
+  url: string;
+};
+
 export type Settings = {
   chatbotEnabled: boolean;
+  // Shows the freelance "Hire" section on the industry templates. Off hides it
+  // everywhere at once, which is the point: availability changes far more often
+  // than the site does, and this needs no deploy.
+  hireMeEnabled: boolean;
+  // Label → URL pairs shown as the buttons in that section: one per live gig,
+  // profile, or anything else worth linking. An empty array means "use the
+  // built-in defaults" (freelance.gigs in content.ts), exactly like cvUrl.
+  hireLinks: HireLink[];
   // Empty string means "use the built-in default" (profile.cvUrl). A non-empty
   // value overrides the CV/résumé link everywhere on the site. The admin can
   // publish this to all visitors via the JSONBin remote (see templateRemote).
@@ -22,6 +35,8 @@ export type Settings = {
 
 const DEFAULTS: Settings = {
   chatbotEnabled: true,
+  hireMeEnabled: true,
+  hireLinks: [],
   cvUrl: "",
   avatarUrl: "",
 };
@@ -69,6 +84,53 @@ export function subscribeSettings(cb: Listener): () => void {
 // Convenience accessors
 export const getChatbotEnabled = (): boolean => read().chatbotEnabled;
 export const setChatbotEnabled = (v: boolean) => updateSettings({ chatbotEnabled: v });
+
+export const getHireMeEnabled = (): boolean => read().hireMeEnabled;
+export const setHireMeEnabled = (v: boolean) => updateSettings({ hireMeEnabled: v });
+
+// Live, render-time reader — mirrors useCvUrl(), so a published or locally
+// flipped toggle shows/hides the section without a refresh.
+export function useHireMeEnabled(): boolean {
+  const [on, setOn] = useState<boolean>(() => getHireMeEnabled());
+  useEffect(() => subscribeSettings((s) => setOn(s.hireMeEnabled)), []);
+  return on;
+}
+
+// --- Hire section links ----------------------------------------------------
+// Same override-or-default shape as the CV link: an empty stored array falls
+// back to the built-in gig list, so the site still says something sensible if
+// the admin has never touched it.
+function sanitiseHireLinks(list: unknown): HireLink[] {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((r) => ({
+      label: typeof (r as HireLink)?.label === "string" ? (r as HireLink).label.trim() : "",
+      url: typeof (r as HireLink)?.url === "string" ? (r as HireLink).url.trim() : "",
+    }))
+    .filter((r) => r.label.length > 0 && r.url.length > 0)
+    .slice(0, 8);
+}
+
+export function getHireLinks(): HireLink[] {
+  const override = sanitiseHireLinks(read().hireLinks);
+  return override.length > 0 ? override : freelance.gigs.map((g) => ({ ...g }));
+}
+
+export function setHireLinks(list: HireLink[]) {
+  updateSettings({ hireLinks: sanitiseHireLinks(list) });
+}
+
+// The stored override on its own — the admin editor needs to know whether it
+// is showing saved rows or the built-in defaults.
+export function getStoredHireLinks(): HireLink[] {
+  return sanitiseHireLinks(read().hireLinks);
+}
+
+export function useHireLinks(): HireLink[] {
+  const [links, setLinks] = useState<HireLink[]>(() => getHireLinks());
+  useEffect(() => subscribeSettings(() => setLinks(getHireLinks())), []);
+  return links;
+}
 
 // --- CV / résumé link -----------------------------------------------------
 // Resolves the override down to the built-in default so callers never have to.

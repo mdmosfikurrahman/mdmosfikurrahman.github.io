@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { fetchRemoteState, isRemoteConfigured } from "./templateRemote";
-import { getCvUrl, setCvUrl } from "./settings";
+import { getCvUrl, setCvUrl, getHireMeEnabled, setHireMeEnabled, setHireLinks } from "./settings";
 
 export type TemplateId =
   | "folio"
@@ -145,6 +145,19 @@ export const TEMPLATES: TemplateMeta[] = [
   },
 ];
 
+// The industry-facing templates: the ones a client or recruiter lands on.
+// The three keynote decks are deliberately absent — they are interview and
+// seminar surfaces, where a freelance pitch would be off-key. Anything gated
+// on "is this audience commercial?" should use this list.
+export const INDUSTRY_TEMPLATES: ReadonlyArray<TemplateId> = [
+  "folio", "broadsheet", "surveillance", "minimal",
+  "animus", "inception", "heist", "chess", "tenet",
+];
+
+export function isIndustryTemplate(t: TemplateId): boolean {
+  return INDUSTRY_TEMPLATES.includes(t);
+}
+
 const KEY = "portfolio.template";
 
 export function readTemplate(): TemplateId {
@@ -192,6 +205,16 @@ function kickRemoteFetch() {
     // so every link on the page updates without a refresh.
     if (typeof remote.cvUrl === "string" && remote.cvUrl !== getCvUrl()) {
       setCvUrl(remote.cvUrl);
+    }
+    // Same for the published freelance-availability toggle: absent means the
+    // admin has never published one, so the visitor's local default stands.
+    if (typeof remote.hireMe === "boolean" && remote.hireMe !== getHireMeEnabled()) {
+      setHireMeEnabled(remote.hireMe);
+    }
+    // And the published link rows for that section, so a new gig reaches every
+    // visitor the moment it is saved in the console.
+    if (Array.isArray(remote.hireLinks)) {
+      setHireLinks(remote.hireLinks);
     }
   }).catch(() => { /* swallow — local state stays authoritative */ });
 }

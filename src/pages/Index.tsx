@@ -5,6 +5,7 @@ import NowSection from "@/components/sections/NowSection";
 import SelectedWork from "@/components/sections/SelectedWork";
 import ResearchStrip from "@/components/sections/ResearchStrip";
 import SkillsMatrix from "@/components/sections/SkillsMatrix";
+import Hire from "@/components/sections/Hire";
 import Correspondence from "@/components/sections/Correspondence";
 
 export default function Index() {
@@ -17,6 +18,7 @@ export default function Index() {
         <SelectedWork />
         <ResearchStrip />
         <SkillsMatrix />
+        <Hire />
         <Correspondence />
       </main>
       <SiteFooter />

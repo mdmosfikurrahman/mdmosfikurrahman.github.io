@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } 
 import {
   AlertTriangle,
   Bot,
+  Briefcase,
   Check,
   CloudUpload,
   Eye,
@@ -9,19 +10,26 @@ import {
   FileText,
   ImagePlus,
   KeyRound,
+  Plus,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";
 import { changePassword, ensureAuth } from "@/lib/adminAuth";
 import { getStoredMasterKey, isAvatarBinConfigured, isBinConfigured } from "@/lib/binStore";
-import { pushRemoteAvatar, pushRemoteCvUrl } from "@/lib/templateRemote";
+import { pushRemoteAvatar, pushRemoteCvUrl, pushRemoteHireLinks, pushRemoteHireMe } from "@/lib/templateRemote";
 import {
   getAvatarUrl,
   getChatbotEnabled,
   getCvUrl,
+  getHireLinks,
+  getHireMeEnabled,
   setAvatarUrl,
   setChatbotEnabled,
   setCvUrl,
+  setHireLinks,
+  setHireMeEnabled,
   subscribeSettings,
+  type HireLink,
 } from "@/lib/settings";
 import { profile } from "@/lib/content";
 
@@ -47,6 +55,13 @@ export default function Settings() {
   // ---- Preferences ----
   const [chatbot, setChatbot] = useState<boolean>(() => getChatbotEnabled());
 
+  // ---- Freelance section ----
+  const [hireMe, setHireMe] = useState<boolean>(() => getHireMeEnabled());
+  const [hireStatus, setHireStatus] = useState<SaveStatus>({ kind: "idle" });
+  const [hireRows, setHireRows] = useState<HireLink[]>(() => getHireLinks());
+  const [hireRowsDirty, setHireRowsDirty] = useState(false);
+  const [hireRowsStatus, setHireRowsStatus] = useState<SaveStatus>({ kind: "idle" });
+
   // ---- CV link ----
   const [cvInput, setCvInput] = useState<string>(() => getCvUrl());
 
@@ -54,6 +69,13 @@ export default function Settings() {
     () =>
       subscribeSettings((s) => {
         setChatbot(s.chatbotEnabled);
+        setHireMe(s.hireMeEnabled);
+        // Don't stamp on half-typed rows: only re-sync the editor when the
+        // admin has no unsaved edits (e.g. a published list arriving on boot).
+        setHireRowsDirty((dirty) => {
+          if (!dirty) setHireRows(getHireLinks());
+          return dirty;
+        });
         // Reflect an externally-applied CV link (e.g. one published on boot).
         setCvInput(getCvUrl());
         // Same for an externally-applied avatar.
@@ -92,6 +114,63 @@ export default function Settings() {
       }
     }
     setCvStatus({ kind: "ok", at: Date.now() });
+  };
+
+  // ---- Freelance section handlers ----
+  // The toggle applies locally at once (the public site reacts immediately),
+  // then publishes so every visitor picks it up on their next boot.
+  const toggleHireMe = async (v: boolean) => {
+    setHireMeEnabled(v);
+    if (!isBinConfigured()) {
+      setHireStatus({ kind: "ok", at: Date.now() });
+      return;
+    }
+    setHireStatus({ kind: "saving" });
+    const res = await pushRemoteHireMe(v, getStoredMasterKey() || undefined);
+    setHireStatus(res.kind === "ok" ? { kind: "ok", at: Date.now() } : { kind: "err", reason: res.reason });
+  };
+
+  const hireRowsValid = hireRows.every(
+    (r) => r.label.trim().length === 0 || /^https?:\/\//i.test(r.url.trim()),
+  );
+
+  const saveHireLinks = async () => {
+    const cleaned = hireRows
+      .map((r) => ({ label: r.label.trim(), url: r.url.trim() }))
+      .filter((r) => r.label.length > 0 && r.url.length > 0);
+    const bad = cleaned.find((r) => !/^https?:\/\//i.test(r.url));
+    if (bad) {
+      setHireRowsStatus({ kind: "err", reason: `"${bad.label}" — URL must start with http:// or https://` });
+      return;
+    }
+    setHireRowsStatus({ kind: "saving" });
+    setHireLinks(cleaned);
+    setHireRowsDirty(false);
+    setHireRows(getHireLinks());
+    if (isBinConfigured()) {
+      const res = await pushRemoteHireLinks(cleaned, getStoredMasterKey() || undefined);
+      if (res.kind === "err") {
+        setHireRowsStatus({ kind: "err", reason: res.reason });
+        return;
+      }
+    }
+    setHireRowsStatus({ kind: "ok", at: Date.now() });
+  };
+
+  const editHireRow = (i: number, patch: Partial<HireLink>) => {
+    setHireRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+    setHireRowsDirty(true);
+    if (hireRowsStatus.kind !== "idle") setHireRowsStatus({ kind: "idle" });
+  };
+
+  const addHireRow = () => {
+    setHireRows((rows) => (rows.length >= 8 ? rows : [...rows, { label: "", url: "" }]));
+    setHireRowsDirty(true);
+  };
+
+  const removeHireRow = (i: number) => {
+    setHireRows((rows) => rows.filter((_, idx) => idx !== i));
+    setHireRowsDirty(true);
   };
 
   // ---- Avatar image ----
@@ -212,6 +291,36 @@ export default function Settings() {
             onChange={(v) => setChatbotEnabled(v)}
           />
 
+          <div className="mt-3.5 pt-3.5" style={{ borderTop: "1px solid hsl(var(--a-border))" }}>
+            <ToggleRow
+              label="Show freelance section"
+              description={
+                isBinConfigured()
+                  ? "The Hire band on the industry templates — never on the keynote decks. Publishes to every visitor."
+                  : "The Hire band on the industry templates — never on the keynote decks. This browser only."
+              }
+              checked={hireMe}
+              onChange={(v) => void toggleHireMe(v)}
+            />
+            <div className="mt-1.5 min-h-[15px] text-[11px]">
+              {hireStatus.kind === "saving" && (
+                <span style={{ color: "hsl(var(--a-ink-muted))" }}>Publishing…</span>
+              )}
+              {hireStatus.kind === "err" && (
+                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
+                  <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
+                  {hireStatus.reason}
+                </span>
+              )}
+              {hireStatus.kind === "ok" && (
+                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
+                  <Check size={11} strokeWidth={2.4} aria-hidden />
+                  {isBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
+                </span>
+              )}
+            </div>
+          </div>
+
           <div
             className="mt-3.5 pt-3.5"
             style={{ borderTop: "1px solid hsl(var(--a-border))" }}
@@ -275,6 +384,92 @@ export default function Settings() {
                 </span>
               )}
             </div>
+          </div>
+        </Card>
+
+        {/* Freelance links */}
+        <Card Icon={Briefcase} title="Freelance links" hint="Label → URL">
+          <p className="mb-2.5 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
+            The buttons in the Hire section — one row per live gig or profile. Leave the list
+            empty to fall back to the built-in defaults.
+            {isBinConfigured()
+              ? " Publishing sends the list to every visitor."
+              : " Remote sync is off, so this applies to this browser only."}
+          </p>
+
+          <ul className="space-y-1.5">
+            {hireRows.map((row, i) => (
+              <li key={i} className="flex gap-1.5 items-center">
+                <input
+                  type="text"
+                  value={row.label}
+                  onChange={(e) => editHireRow(i, { label: e.target.value })}
+                  placeholder="Label"
+                  className="a-input w-[34%] min-w-0 text-[12px] py-1.5"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <input
+                  type="url"
+                  inputMode="url"
+                  value={row.url}
+                  onChange={(e) => editHireRow(i, { url: e.target.value })}
+                  placeholder="https://…"
+                  className="a-input flex-1 min-w-0 text-[12px] py-1.5"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeHireRow(i)}
+                  aria-label={`Remove ${row.label || "row"}`}
+                  className="p-1.5 rounded-md shrink-0"
+                  style={{ color: "hsl(var(--a-ink-muted))" }}
+                >
+                  <Trash2 size={13} strokeWidth={1.8} aria-hidden />
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-2 flex gap-1.5">
+            <button
+              type="button"
+              onClick={addHireRow}
+              disabled={hireRows.length >= 8}
+              className="a-btn py-1.5 px-2.5 text-[11.5px] inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus size={12} strokeWidth={2} aria-hidden />
+              Add link
+            </button>
+            <button
+              type="button"
+              onClick={() => void saveHireLinks()}
+              disabled={hireRowsStatus.kind === "saving" || !hireRowsValid || (!hireRowsDirty && !isBinConfigured())}
+              className="a-btn a-btn-primary py-1.5 px-2.5 text-[11.5px] ml-auto inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isBinConfigured() ? (
+                <CloudUpload size={12} strokeWidth={1.9} aria-hidden />
+              ) : (
+                <Check size={12} strokeWidth={1.9} aria-hidden />
+              )}
+              {hireRowsStatus.kind === "saving" ? "Saving…" : isBinConfigured() ? "Publish" : "Save"}
+            </button>
+          </div>
+
+          <div className="mt-1.5 min-h-[15px] text-[11px]">
+            {hireRowsStatus.kind === "err" && (
+              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
+                <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
+                {hireRowsStatus.reason}
+              </span>
+            )}
+            {hireRowsStatus.kind === "ok" && (
+              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
+                <Check size={11} strokeWidth={2.4} aria-hidden />
+                {isBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
+              </span>
+            )}
           </div>
         </Card>
 

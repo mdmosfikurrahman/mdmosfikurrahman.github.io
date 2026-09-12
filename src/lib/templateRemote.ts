@@ -3,6 +3,7 @@
 // admin auth + analytics without writes wiping each other out.
 
 import type { TemplateId } from "./template";
+import type { HireLink } from "./settings";
 import {
   fetchBin,
   patchBin,
@@ -39,6 +40,9 @@ export function setStoredMasterKey(key: string) {
 export type RemoteState = {
   template: TemplateId;
   cvUrl?: string;
+  // Published freelance-availability toggle. Absent means "never published",
+  // in which case the visitor's local default (on) stands.
+  hireMe?: boolean;
   updatedAt?: string;
 };
 
@@ -73,7 +77,12 @@ export async function fetchRemoteCvUrl(): Promise<string | null> {
 
 // Single-fetch boot helper: pulls template + cvUrl together so a visitor's
 // boot only hits the network once. Either field may be absent.
-export async function fetchRemoteState(): Promise<{ template?: TemplateId; cvUrl?: string } | null> {
+export async function fetchRemoteState(): Promise<{
+  template?: TemplateId;
+  cvUrl?: string;
+  hireMe?: boolean;
+  hireLinks?: HireLink[];
+} | null> {
   const bin = await fetchBin();
   if (!bin) return null;
   const t = bin.template;
@@ -82,7 +91,9 @@ export async function fetchRemoteState(): Promise<{ template?: TemplateId; cvUrl
       ? (t as TemplateId)
       : undefined;
   const cvUrl = typeof bin.cvUrl === "string" ? bin.cvUrl : undefined;
-  return { template, cvUrl };
+  const hireMe = typeof bin.hireMe === "boolean" ? bin.hireMe : undefined;
+  const hireLinks = Array.isArray(bin.hireLinks) ? (bin.hireLinks as HireLink[]) : undefined;
+  return { template, cvUrl, hireMe, hireLinks };
 }
 
 export type PushResult =
@@ -115,6 +126,39 @@ export async function pushRemoteCvUrl(
   }
   const result = await patchBin(
     (current) => ({ ...current, cvUrl, updatedAt: new Date().toISOString() }),
+    masterKey,
+  );
+  return result.kind === "ok" ? { kind: "ok" } : { kind: "err", reason: result.reason };
+}
+
+// Admin publishes the freelance-availability toggle — merges into the existing
+// bin payload, so flipping availability reaches every visitor on their next
+// boot without a rebuild or a deploy.
+export async function pushRemoteHireMe(
+  hireMe: boolean,
+  masterKey?: string,
+): Promise<PushResult> {
+  if (!isBinConfigured()) {
+    return { kind: "err", reason: "Remote sync is not configured (VITE_JSONBIN_ID missing)." };
+  }
+  const result = await patchBin(
+    (current) => ({ ...current, hireMe, updatedAt: new Date().toISOString() }),
+    masterKey,
+  );
+  return result.kind === "ok" ? { kind: "ok" } : { kind: "err", reason: result.reason };
+}
+
+// Admin publishes the Hire section's link rows (label → URL). Same merge
+// semantics as the toggle above: one bin, one PATCH, everyone gets it on boot.
+export async function pushRemoteHireLinks(
+  hireLinks: HireLink[],
+  masterKey?: string,
+): Promise<PushResult> {
+  if (!isBinConfigured()) {
+    return { kind: "err", reason: "Remote sync is not configured (VITE_JSONBIN_ID missing)." };
+  }
+  const result = await patchBin(
+    (current) => ({ ...current, hireLinks, updatedAt: new Date().toISOString() }),
     masterKey,
   );
   return result.kind === "ok" ? { kind: "ok" } : { kind: "err", reason: result.reason };

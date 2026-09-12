@@ -856,6 +856,58 @@ export const preamble: string[] = [
   "Currently shaping backend architecture at iBOS: configurable systems, rule-driven logic, and microservice workflows on .NET 9. Earlier, national-scale compliance software for the NBR, and backend services for Rakuten in Japan.",
 ];
 
+// --- Freelance availability -------------------------------------------------
+// Rendered by the Hire section, and only on the industry templates — never on
+// the keynote decks, which are interview and seminar surfaces where a pitch
+// would be off-key. `hireMeEnabled` in settings.ts hides it site-wide without
+// a deploy, and the admin can publish that toggle to every visitor.
+export type FreelanceService = {
+  title: string;
+  detail: string;
+};
+
+export const freelance = {
+  available: true,
+  label: "Available for freelance work",
+  headline: "Need a backend built properly?",
+  blurb:
+    "I take a small number of freelance engagements alongside my day job — backend work in .NET and Java, scoped tightly and finished. The standard I build to is public: Flavian, my clean-architecture foundation for .NET 9, is on GitHub for you to read before you commit to anything.",
+  capacity: "Ten to fifteen hours a week, two engagements at a time.",
+  responseTime: "Replies within the hour · GMT+6",
+  services: [
+    {
+      title: ".NET 9 microservices",
+      detail:
+        "Layered, dependency direction enforced, EF Core 9, validation, JWT, Swagger, and a migration path that survives the second deploy.",
+    },
+    {
+      title: "Spring Boot REST APIs",
+      detail:
+        "JPA mapped sanely, Bean Validation, centralised exception handling, OpenAPI 3.0 your frontend can build from, Dockerised.",
+    },
+    {
+      title: "Slow queries and ORM performance",
+      detail:
+        "Execution plans read, not guessed: N+1 behind lazy loading, wrong-order indexes, filtering in memory. Before and after timings included.",
+    },
+    {
+      title: "Next.js wired to your API",
+      detail:
+        "Typed API layer, httpOnly-cookie auth with single-flight refresh, middleware route guards — against your design system, not a new one.",
+    },
+  ] as FreelanceService[],
+  links: {
+    // Empty entries are skipped by the Hire section.
+    fiverr: "https://www.fiverr.com/mosfikur_rahman",
+    upwork: "",
+  },
+  // Live gigs, in publish order. Add the next one here when it goes live.
+  gigs: [
+    { label: ".NET 9 microservice", url: "https://www.fiverr.com/s/2pKpNEX" },
+    { label: "Spring Boot REST API", url: "https://www.fiverr.com/s/YLRLA2a" },
+  ],
+};
+
 export const figures = [
   { k: "in industry", v: `${stats.years}+ yr`, note: "Java · .NET" },
   { k: "publications", v: String(stats.publications), note: `peer-reviewed · ${stats.firstAuthor} as first author` },
