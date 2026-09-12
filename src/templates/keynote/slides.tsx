@@ -108,7 +108,7 @@ function TitleSlide() {
            className="mt-3 max-w-[64ch] text-[clamp(0.92rem,1.15vw,1.05rem)] leading-[1.55]"
            style={{ color: "hsl(var(--muted))" }}>
           Backend architect at <strong style={{ color: "hsl(var(--ink-soft))" }}>Akij iBOS Ltd.</strong>
-          {" "}— I designed and built an OTA platform now serving 10k+ daily users —
+          {" "}— I designed and built an OTA platform of eight microservices serving 742 B2B agency accounts —
           alongside ten peer-reviewed papers, an IEEE Best Paper, and journal
           peer-review service.
         </motion.p>

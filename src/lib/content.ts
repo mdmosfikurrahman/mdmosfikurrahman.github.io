@@ -16,10 +16,10 @@ function word(n: number): string {
 export const profile = {
   name: "Md. Mosfikur Rahman",
   shortName: "Mosfikur",
-  role: "Backend architect · Dhaka",
+  role: "Backend architect · applied ML · Dhaka",
   roleLong: "Engineering Team Lead, Akij iBOS Ltd.",
   tagline:
-    "Designing the quiet half of software: services, schemas, and workflows, based in Dhaka.",
+    "Designing the quiet half of software: services, schemas, and workflows — and studying the machine learning that keeps them standing.",
   location: "Dhaka, Bangladesh",
   email: "mdmosfikurrahman.cse@gmail.com",
   phone: "+880 1797-554948",
@@ -56,12 +56,13 @@ export const roles: Role[] = [
     to: "present",
     place: "Dhaka, BD",
     summary:
-      "Backend architect for Travilo, a multi-client OTA SaaS platform at iBOS Ltd. — a sister concern of Akij Resource Ltd. — spanning B2B, B2C, and API/consortium clients, now serving 10k+ daily users. Scalable, configurable, rule-driven systems on .NET 9, with hands-on Docker and Kubernetes deployment.",
+      "Backend architect for Travilo, a multi-client OTA SaaS platform at Akij iBOS Ltd. — a sister concern of Akij Resource Ltd. — spanning B2B, B2C, and API/consortium clients across three live white-label deployments serving 742 B2B agency accounts. Scalable, configurable, rule-driven systems on .NET 9, with hands-on Docker and Kubernetes deployment.",
     bullets: [
-      "Designed and built the backend architecture for Travilo, a multi-client OTA SaaS platform serving 10k+ daily users across 7 .NET 9 microservices.",
-      "Owned system design: rule-driven pricing/markup/discount logic, ancillary services, supplier-integration flows, and booking workflows.",
-      "Lead the team technically — personally training and mentoring junior engineers, running daily scrum/sprint planning, code reviews, and pair programming.",
-      "Provide on-call production support, including weekend/emergency response, and shape service boundaries to keep the estate maintainable as it scales.",
+      "Designed and built the backend architecture for Travilo, a multi-client OTA SaaS platform of eight .NET 9 microservices, from an empty repository to three live white-label deployments serving 742 B2B agency accounts and 1,000+ bookings a month.",
+      "Built the flight-search aggregation layer: gRPC fan-out to eleven supplier and GDS connectors (Sabre, Amadeus, Travelport), streamed over Server-Sent Events — 1,000+ live fares aggregated in under ten seconds, the first on screen in about four.",
+      "Modelled pricing, markup, discount, and ancillary logic as tenant configuration rather than code, putting 96 live rules in operations' hands and taking deployments off the path of commercial changes.",
+      "Built the platform observability layer, capturing every incoming and inter-service call behind a unified Azure, AWS, and Cloudflare abstraction; it is now the primary tool for production diagnosis and on-call triage.",
+      "Lead a team of ten across backend, frontend, and supplier integration — mentoring, daily scrum, code review, and pair programming — alongside on-call production support.",
     ],
     stack: [".NET 9", "SQL Server", "MongoDB", "DynamoDB", "Drools", "gRPC", "GraphQL", "Docker", "Kubernetes"],
   },
@@ -123,9 +124,9 @@ export const projects: Project[] = [
     year: "2024–",
     role: "Backend architecture & system design",
     blurb:
-      "A production OTA SaaS platform I designed and built, spanning B2B, B2C, and API/consortium clients, now serving 10k+ daily users. Backend architecture around supplier integration, rule-driven pricing/markup/discount logic, ancillary services, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes, plus an admin panel for centralized platform management.",
+      "A production OTA SaaS platform I designed and built, spanning B2B, B2C, and API/consortium clients across three live white-label deployments serving 742 B2B agency accounts. Backend architecture around supplier integration, rule-driven pricing/markup/discount logic, ancillary services, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes, plus an admin panel for centralized platform management.",
     highlights: [
-      "Designed and built the end-to-end backend architecture for Travilo, a multi-client OTA SaaS platform now serving 10k+ daily users across 7 .NET 9 microservices.",
+      "Designed and built the end-to-end backend architecture for Travilo, a multi-client OTA SaaS platform of eight .NET 9 microservices, from an empty repository to three live white-label deployments serving 742 B2B agency accounts.",
       "Modelled supplier-integration flows and a rule-driven pricing/markup/discount engine so business changes are configuration, not code.",
       "Decomposed the estate into microservice workflows with clear service boundaries, plus an admin panel for centralized platform management.",
       "Delivered on .NET 9 with hands-on Docker packaging and Kubernetes deployment; provide on-call production support for platform uptime.",

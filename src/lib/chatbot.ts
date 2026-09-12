@@ -605,7 +605,7 @@ const intents: Intent[] = [
     patterns: ["joke", "fun fact", "hobby", "hobbies", "interest", "interests", "personality", "favourite", "favorite"],
     handle: () => ({
       text:
-        `Not much of a joke-teller — but here's a real one: ${DISPLAY_NAME} shipped a 10k+ DAU OTA backend before turning 28. ` +
+        `Not much of a joke-teller — but here's a real one: ${DISPLAY_NAME} shipped an eight-service OTA backend before turning 28. ` +
         `Outside work: applied ML, systems papers, the occasional invited talk, and quietly polishing personal side-projects.`,
       chips: ["His research", "Distinctions", "Side projects"],
     }),
