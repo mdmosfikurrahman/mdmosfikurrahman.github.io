@@ -1,4 +1,4 @@
-// Visitor analytics — one entry per page view, grouped by sessionId.
+// Visitor analytics: one entry per page view, grouped by sessionId.
 // Geo lookup is cached (12h in localStorage); UA parsing is local. Writes go
 // to the same JSONBin. The visits array is capped so the bin stays small.
 
@@ -61,7 +61,7 @@ type CachedGeo = { at: number; data: GeoResponse };
 // Provider fallback chain. Each adapter returns a normalised GeoResponse or
 // null when the provider failed (HTTP error, rate-limit body, missing fields,
 // or blocked by network). We accept a result as "good" only if it carries at
-// least country + ip — partial responses don't poison the cache.
+// least country + ip: partial responses don't poison the cache.
 type GeoProvider = { name: string; load: () => Promise<GeoResponse | null> };
 
 function isGoodGeo(g: GeoResponse | null): g is GeoResponse {
@@ -183,7 +183,7 @@ function getOrCreateSessionId(): string {
 
 // Records the *current* navigation path. Skips bots and same-path repeats
 // within DEDUPE_MS (avoids StrictMode double-mount and back/forward chatter).
-// Also skips admin routes — those are owner-only and shouldn't pollute the
+// Also skips admin routes: those are owner-only and shouldn't pollute the
 // visitor analytics.
 export async function recordPageView(path?: string): Promise<void> {
   if (typeof window === "undefined") return;
@@ -191,7 +191,7 @@ export async function recordPageView(path?: string): Promise<void> {
 
   const ua = navigator.userAgent || "";
 
-  // One-time bot check per session — cheap to repeat but cleaner this way.
+  // One-time bot check per session: cheap to repeat but cleaner this way.
   if (sessionStorage.getItem(SESSION_BOT_FLAG) === "1") return;
   if (isBot(ua)) {
     sessionStorage.setItem(SESSION_BOT_FLAG, "1");
@@ -237,7 +237,7 @@ export async function recordPageView(path?: string): Promise<void> {
   });
 }
 
-// Back-compat alias — App.tsx will call recordPageView going forward.
+// Back-compat alias: App.tsx will call recordPageView going forward.
 export const recordVisit = recordPageView;
 
 // Read-side helpers for the dashboard.

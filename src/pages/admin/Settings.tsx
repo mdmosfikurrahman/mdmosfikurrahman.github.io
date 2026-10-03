@@ -5,6 +5,7 @@ import {
   Briefcase,
   Check,
   CloudUpload,
+  Database,
   Eye,
   EyeOff,
   FileText,
@@ -13,16 +14,25 @@ import {
   Plus,
   ShieldCheck,
   Trash2,
+  type LucideIcon,
 } from "lucide-react";
 import { changePassword, ensureAuth } from "@/lib/adminAuth";
-import { getStoredMasterKey, isAvatarBinConfigured, isBinConfigured } from "@/lib/binStore";
-import { pushRemoteAvatar, pushRemoteCvUrl, pushRemoteHireLinks, pushRemoteHireMe } from "@/lib/templateRemote";
+import { pageZoom } from "@/lib/zoom";
+import {
+  getBinId,
+  getStoredMasterKey,
+  hasEnvMasterKey,
+  isAvatarBinConfigured,
+  isBinConfigured,
+} from "@/lib/binStore";
+import { pushRemoteAvatar, pushRemoteCvUrl, pushRemoteHireLinks, pushRemoteHireMe } from "@/lib/remote";
 import {
   getAvatarUrl,
   getChatbotEnabled,
   getCvUrl,
   getHireLinks,
   getHireMeEnabled,
+  getStoredHireLinks,
   setAvatarUrl,
   setChatbotEnabled,
   setCvUrl,
@@ -38,6 +48,16 @@ type SaveStatus =
   | { kind: "saving" }
   | { kind: "ok"; at: number }
   | { kind: "err"; reason: string };
+
+const GROUPS: { id: string; label: string; Icon: LucideIcon }[] = [
+  { id: "account", label: "Account", Icon: KeyRound },
+  { id: "password", label: "Password", Icon: ShieldCheck },
+  { id: "features", label: "Visitor features", Icon: Bot },
+  { id: "cv", label: "CV link", Icon: FileText },
+  { id: "avatar", label: "Profile picture", Icon: ImagePlus },
+  { id: "freelance", label: "Freelance links", Icon: Briefcase },
+  { id: "storage", label: "Publishing", Icon: Database },
+];
 
 export default function Settings() {
   // ---- Account ----
@@ -87,7 +107,7 @@ export default function Settings() {
   const cvTrimmed = cvInput.trim();
   const cvValid = /^https?:\/\//i.test(cvTrimmed);
   const cvDirty = cvTrimmed !== getCvUrl();
-  // When remote sync is on, allow (re)publishing any valid URL — the point is
+  // When remote sync is on, allow (re)publishing any valid URL: the point is
   // to push to all visitors. Local-only mode has nothing to do if unchanged.
   const cvCanSave = cvValid && (cvDirty || isBinConfigured());
 
@@ -140,7 +160,7 @@ export default function Settings() {
       .filter((r) => r.label.length > 0 && r.url.length > 0);
     const bad = cleaned.find((r) => !/^https?:\/\//i.test(r.url));
     if (bad) {
-      setHireRowsStatus({ kind: "err", reason: `"${bad.label}" — URL must start with http:// or https://` });
+      setHireRowsStatus({ kind: "err", reason: `"${bad.label}": URL must start with http:// or https://` });
       return;
     }
     setHireRowsStatus({ kind: "saving" });
@@ -194,7 +214,7 @@ export default function Settings() {
       if (bytes > 90_000) {
         setAvatarStatus({
           kind: "err",
-          reason: `Still ~${Math.round(bytes / 1024)}KB after compression — try a simpler/smaller photo.`,
+          reason: `Still ~${Math.round(bytes / 1024)}KB after compression. Try a simpler or smaller photo.`,
         });
         return;
       }
@@ -261,85 +281,197 @@ export default function Settings() {
     }
   };
 
+  // ---- Section nav ----
+  // The active link follows the scroll position of the console body. A click
+  // holds its choice until the smooth scroll settles, so a section too short
+  // to reach the top still shows as the one picked.
+  const pageRef = useRef<HTMLDivElement>(null);
+  const navHold = useRef(0);
+  const [activeGroup, setActiveGroup] = useState<string>(GROUPS[0].id);
+  useEffect(() => {
+    const scroller = pageRef.current?.closest<HTMLElement>(".sc-content");
+    if (!scroller) return;
+    const update = () => {
+      if (Date.now() < navHold.current) return;
+      const line = scroller.getBoundingClientRect().top + 120 * pageZoom();
+      let current = GROUPS[0].id;
+      for (const g of GROUPS) {
+        const el = document.getElementById(`sc-${g.id}`);
+        if (el && el.getBoundingClientRect().top <= line) current = g.id;
+      }
+      if (scroller.scrollTop > 0 && scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) {
+        current = GROUPS[GROUPS.length - 1].id;
+      }
+      setActiveGroup(current);
+    };
+    const release = () => {
+      navHold.current = 0;
+    };
+    update();
+    scroller.addEventListener("scroll", update, { passive: true });
+    scroller.addEventListener("scrollend", release);
+    return () => {
+      scroller.removeEventListener("scroll", update);
+      scroller.removeEventListener("scrollend", release);
+    };
+  }, []);
+  const goTo = (id: string) => {
+    navHold.current = Date.now() + 1200;
+    setActiveGroup(id);
+    document.getElementById(`sc-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const remote = isBinConfigured();
+  const remoteAvatar = isAvatarBinConfigured();
+  const publishVerb = remote ? "Publish" : "Save";
+
   return (
-    <div className="h-full p-4 md:p-5 grid grid-cols-1 md:grid-cols-[1fr_1.05fr] gap-3 overflow-hidden">
-      {/* LEFT COLUMN */}
-      <div className="flex flex-col gap-3 min-h-0 overflow-y-auto pr-1">
-        {/* Account card */}
-        <Card Icon={KeyRound} title="Admin account" hint="Single user">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[12.5px]">
-            <Row label="Username">
-              <span className="a-code">{username || "—"}</span>
-            </Row>
-            <Row label="Last changed">
-              <span className="tabular-nums" style={{ color: "hsl(var(--a-ink))" }}>
-                {fmtAbs(updatedAt)}
-              </span>
-            </Row>
-            <Row label="Hash">
-              <span style={{ color: "hsl(var(--a-ink))" }}>SHA-256 · username-salted</span>
-            </Row>
-          </dl>
-        </Card>
+    <div ref={pageRef} className="sc-page">
+      <div className="sc-settings">
+        <nav className="sc-subnav" aria-label="Settings sections">
+          {GROUPS.map(({ id, label, Icon }) => (
+            <a
+              key={id}
+              href={`#sc-${id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                goTo(id);
+              }}
+              aria-current={activeGroup === id ? "true" : undefined}
+            >
+              <Icon size={15} strokeWidth={1.8} aria-hidden />
+              {label}
+            </a>
+          ))}
+        </nav>
 
-        {/* Preferences */}
-        <Card Icon={Bot} title="Preferences" hint="Visitor-facing toggles">
-          <ToggleRow
-            label="Show chatbot"
-            description="The floating assistant on the public portfolio."
-            checked={chatbot}
-            onChange={(v) => setChatbotEnabled(v)}
-          />
+        <div className="sc-settings-body">
+          <Section id="account" title="Account" description="The single admin user for this console.">
+            <dl className="sc-dl">
+              <dt>Username</dt>
+              <dd>
+                <code className="sc-code">{username || "Loading…"}</code>
+              </dd>
+              <dt>Last changed</dt>
+              <dd className="sc-mono">{username ? fmtAbs(updatedAt) : "Loading…"}</dd>
+              <dt>Hash</dt>
+              <dd>SHA-256 · username-salted</dd>
+            </dl>
+          </Section>
 
-          <div className="mt-3.5 pt-3.5" style={{ borderTop: "1px solid hsl(var(--a-border))" }}>
-            <ToggleRow
-              label="Show freelance section"
-              description={
-                isBinConfigured()
-                  ? "The Hire band on the industry templates — never on the keynote decks. Publishes to every visitor."
-                  : "The Hire band on the industry templates — never on the keynote decks. This browser only."
-              }
-              checked={hireMe}
-              onChange={(v) => void toggleHireMe(v)}
-            />
-            <div className="mt-1.5 min-h-[15px] text-[11px]">
-              {hireStatus.kind === "saving" && (
-                <span style={{ color: "hsl(var(--a-ink-muted))" }}>Publishing…</span>
-              )}
-              {hireStatus.kind === "err" && (
-                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
-                  <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
-                  {hireStatus.reason}
-                </span>
-              )}
-              {hireStatus.kind === "ok" && (
-                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
-                  <Check size={11} strokeWidth={2.4} aria-hidden />
-                  {isBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className="mt-3.5 pt-3.5"
-            style={{ borderTop: "1px solid hsl(var(--a-border))" }}
+          <Section
+            id="password"
+            title="Password"
+            description="At least 8 characters. This is soft auth, so pick a long passphrase."
           >
-            <div className="flex items-center gap-1.5 mb-1">
-              <FileText size={12} strokeWidth={1.9} aria-hidden style={{ color: "hsl(var(--a-ink-soft))" }} />
-              <span className="text-[13px] font-medium" style={{ color: "hsl(var(--a-ink))" }}>
-                CV / résumé link
-              </span>
+            <form onSubmit={submitPassword} className="sc-form">
+              <PasswordField
+                id="cur-pw"
+                label="Current password"
+                autoComplete="current-password"
+                value={current}
+                onChange={setCurrent}
+                placeholder="••••••••"
+              />
+              <div>
+                <PasswordField
+                  id="new-pw"
+                  label="New password"
+                  autoComplete="new-password"
+                  value={next}
+                  onChange={setNext}
+                  placeholder="At least 8 characters"
+                />
+                {next.length > 0 && <StrengthMeter score={strength.score} label={strength.label} />}
+              </div>
+              <PasswordField
+                id="conf-pw"
+                label="Confirm new password"
+                autoComplete="new-password"
+                value={confirm}
+                onChange={setConfirm}
+                placeholder="Type the new password again"
+                error={confirmMismatch ? "Doesn't match." : undefined}
+              />
+
+              <div className="sc-form-foot">
+                <button
+                  type="submit"
+                  disabled={
+                    pwStatus.kind === "saving" ||
+                    !current ||
+                    !next ||
+                    !confirm ||
+                    confirmMismatch ||
+                    next.length < 8
+                  }
+                  className="sc-btn sc-btn--primary"
+                >
+                  {pwStatus.kind === "saving" ? "Saving…" : "Update password"}
+                </button>
+                {pwStatus.kind === "err" && (
+                  <span className="sc-status sc-status--err">
+                    <AlertTriangle size={13} strokeWidth={2.2} aria-hidden />
+                    {pwStatus.reason}
+                  </span>
+                )}
+                {pwStatus.kind === "ok" && (
+                  <span className="sc-status sc-status--ok">
+                    <Check size={13} strokeWidth={2.4} aria-hidden /> Password updated.
+                  </span>
+                )}
+              </div>
+            </form>
+          </Section>
+
+          <Section id="features" title="Visitor features" description="What the public site shows. Changes apply at once.">
+            <div className="sc-stack">
+              <ToggleRow
+                id="toggle-chatbot"
+                label="Show chatbot"
+                description="The floating assistant on the public portfolio."
+                checked={chatbot}
+                onChange={(v) => setChatbotEnabled(v)}
+              />
+              <div>
+                <ToggleRow
+                  id="toggle-hire"
+                  label="Show freelance section"
+                  description={
+                    remote
+                      ? "The freelance line in Contact, the footer link and the /hire page. Never inside Present mode. Publishes to every visitor."
+                      : "The freelance line in Contact, the footer link and the /hire page. Never inside Present mode. This browser only."
+                  }
+                  checked={hireMe}
+                  onChange={(v) => void toggleHireMe(v)}
+                />
+                <Status
+                  status={hireStatus}
+                  ok={remote ? "Published to all visitors." : "Saved for this browser."}
+                  saving="Publishing…"
+                />
+              </div>
             </div>
-            <p className="mb-2 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-              Used everywhere — hero, footer, contact, the chatbot, and{" "}
-              <span className="a-code">/cv</span> · <span className="a-code">/resume</span>.
-              {isBinConfigured()
-                ? " Saving publishes it to every visitor."
-                : " Remote sync is off, so this applies to this browser only."}
-            </p>
-            <div className="flex gap-1.5">
+          </Section>
+
+          <Section
+            id="cv"
+            title="CV link"
+            description={
+              <>
+                Used by the header CV button, About, Contact, the footer, the chatbot, the presentation deck, and{" "}
+                <code className="sc-code">/cv</code> · <code className="sc-code">/resume</code>.
+                {remote ? " Saving publishes it to every visitor." : " Remote sync is off, so this applies to this browser only."}
+              </>
+            }
+            aside={cvDirty && cvTrimmed.length > 0 ? <Unsaved /> : undefined}
+          >
+            <label htmlFor="cv-url" className="sc-label">
+              CV URL
+            </label>
+            <div className="sc-inline">
               <input
+                id="cv-url"
                 type="url"
                 inputMode="url"
                 value={cvInput}
@@ -348,7 +480,7 @@ export default function Settings() {
                   if (cvStatus.kind !== "idle") setCvStatus({ kind: "idle" });
                 }}
                 placeholder={profile.cvUrl}
-                className="a-input flex-1 min-w-0 text-[12px] py-1.5"
+                className="sc-input is-mono"
                 autoComplete="off"
                 spellCheck={false}
               />
@@ -356,319 +488,220 @@ export default function Settings() {
                 type="button"
                 onClick={() => void saveCvUrl()}
                 disabled={cvStatus.kind === "saving" || !cvCanSave}
-                className="a-btn a-btn-primary py-1.5 px-2.5 text-[11.5px] shrink-0 inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="sc-btn sc-btn--primary"
               >
-                {isBinConfigured() ? (
-                  <CloudUpload size={12} strokeWidth={1.9} aria-hidden />
-                ) : (
-                  <Check size={12} strokeWidth={1.9} aria-hidden />
-                )}
-                {cvStatus.kind === "saving"
-                  ? "Saving…"
-                  : isBinConfigured()
-                    ? "Publish"
-                    : "Save"}
+                {remote ? <CloudUpload size={15} strokeWidth={1.9} aria-hidden /> : <Check size={15} strokeWidth={1.9} aria-hidden />}
+                {cvStatus.kind === "saving" ? "Saving…" : publishVerb}
               </button>
             </div>
-            <div className="mt-1.5 min-h-[15px] text-[11px]">
-              {cvStatus.kind === "err" && (
-                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
-                  <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
-                  {cvStatus.reason}
-                </span>
-              )}
-              {cvStatus.kind === "ok" && (
-                <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
-                  <Check size={11} strokeWidth={2.4} aria-hidden />
-                  {isBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
-                </span>
-              )}
+            <div className="mt-2">
+              <Status status={cvStatus} ok={remote ? "Published to all visitors." : "Saved for this browser."} />
             </div>
-          </div>
-        </Card>
+          </Section>
 
-        {/* Freelance links */}
-        <Card Icon={Briefcase} title="Freelance links" hint="Label → URL">
-          <p className="mb-2.5 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-            The buttons in the Hire section — one row per live gig or profile. Leave the list
-            empty to fall back to the built-in defaults.
-            {isBinConfigured()
-              ? " Publishing sends the list to every visitor."
-              : " Remote sync is off, so this applies to this browser only."}
-          </p>
-
-          <ul className="space-y-1.5">
-            {hireRows.map((row, i) => (
-              <li key={i} className="flex gap-1.5 items-center">
-                <input
-                  type="text"
-                  value={row.label}
-                  onChange={(e) => editHireRow(i, { label: e.target.value })}
-                  placeholder="Label"
-                  className="a-input w-[34%] min-w-0 text-[12px] py-1.5"
-                  autoComplete="off"
-                  spellCheck={false}
-                />
-                <input
-                  type="url"
-                  inputMode="url"
-                  value={row.url}
-                  onChange={(e) => editHireRow(i, { url: e.target.value })}
-                  placeholder="https://…"
-                  className="a-input flex-1 min-w-0 text-[12px] py-1.5"
-                  autoComplete="off"
-                  spellCheck={false}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeHireRow(i)}
-                  aria-label={`Remove ${row.label || "row"}`}
-                  className="p-1.5 rounded-md shrink-0"
-                  style={{ color: "hsl(var(--a-ink-muted))" }}
-                >
-                  <Trash2 size={13} strokeWidth={1.8} aria-hidden />
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-2 flex gap-1.5">
-            <button
-              type="button"
-              onClick={addHireRow}
-              disabled={hireRows.length >= 8}
-              className="a-btn py-1.5 px-2.5 text-[11.5px] inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Plus size={12} strokeWidth={2} aria-hidden />
-              Add link
-            </button>
-            <button
-              type="button"
-              onClick={() => void saveHireLinks()}
-              disabled={hireRowsStatus.kind === "saving" || !hireRowsValid || (!hireRowsDirty && !isBinConfigured())}
-              className="a-btn a-btn-primary py-1.5 px-2.5 text-[11.5px] ml-auto inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isBinConfigured() ? (
-                <CloudUpload size={12} strokeWidth={1.9} aria-hidden />
-              ) : (
-                <Check size={12} strokeWidth={1.9} aria-hidden />
-              )}
-              {hireRowsStatus.kind === "saving" ? "Saving…" : isBinConfigured() ? "Publish" : "Save"}
-            </button>
-          </div>
-
-          <div className="mt-1.5 min-h-[15px] text-[11px]">
-            {hireRowsStatus.kind === "err" && (
-              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
-                <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
-                {hireRowsStatus.reason}
-              </span>
-            )}
-            {hireRowsStatus.kind === "ok" && (
-              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
-                <Check size={11} strokeWidth={2.4} aria-hidden />
-                {isBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
-              </span>
-            )}
-          </div>
-        </Card>
-
-        {/* Profile picture */}
-        <Card Icon={ImagePlus} title="Profile picture" hint="JPEG / PNG / WebP">
-          <p className="mb-2 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-            Used everywhere the avatar shows up — hero, keynote deck, and the About page.
-            Resized and compressed in your browser before saving.{" "}
-            {isAvatarBinConfigured()
-              ? "Publishing sends it to every visitor."
-              : "Remote sync is off, so this applies to this browser only."}
-          </p>
-          <div
-            onDragOver={(e) => {
-              e.preventDefault();
-              setAvatarDragging(true);
-            }}
-            onDragLeave={() => setAvatarDragging(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setAvatarDragging(false);
-              const file = e.dataTransfer.files?.[0];
-              if (file) void processAvatarFile(file);
-            }}
-            onClick={() => avatarFileInput.current?.click()}
-            role="button"
-            tabIndex={0}
-            className="cursor-pointer rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors flex flex-col items-center gap-3"
-            style={{
-              borderColor: avatarDragging ? "hsl(var(--a-accent))" : "hsl(var(--a-border))",
-              background: avatarDragging ? "hsl(var(--a-accent-wash))" : "hsl(var(--a-bg))",
-            }}
+          <Section
+            id="avatar"
+            title="Profile picture"
+            description={`Used wherever the portrait shows: the header, hero, About page, footer, chatbot and presentation deck. Resized and compressed in your browser before saving. ${
+              remoteAvatar ? "Publishing sends it to every visitor." : "Remote sync is off, so this applies to this browser only."
+            }`}
+            aside={avatarDirty ? <Unsaved /> : undefined}
           >
-            <input
-              ref={avatarFileInput}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) void processAvatarFile(file);
-                e.target.value = "";
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setAvatarDragging(true);
               }}
-            />
-            <div className="relative">
-              <img
-                src={avatarPreview}
-                alt="Avatar preview"
-                className="w-20 h-20 rounded-full object-cover"
-                style={{ border: "2px solid hsl(var(--a-border-strong))", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+              onDragLeave={() => setAvatarDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setAvatarDragging(false);
+                const file = e.dataTransfer.files?.[0];
+                if (file) void processAvatarFile(file);
+              }}
+              onClick={() => avatarFileInput.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  avatarFileInput.current?.click();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Choose a profile picture"
+              data-dragging={avatarDragging ? "true" : undefined}
+              className="sc-drop"
+            >
+              <input
+                ref={avatarFileInput}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) void processAvatarFile(file);
+                  e.target.value = "";
+                }}
               />
-              <span
-                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full grid place-items-center"
-                style={{ background: "hsl(var(--a-accent))", border: "2px solid hsl(var(--a-surface))" }}
-                aria-hidden
-              >
-                <ImagePlus size={11} strokeWidth={2.2} style={{ color: "hsl(var(--a-bg))" }} />
-              </span>
+              <img src={avatarPreview} alt="Avatar preview" />
+              <div className="min-w-0">
+                <b>Drop an image here</b>
+                <p>
+                  or <u>browse files</u>. JPEG, PNG or WebP.
+                </p>
+                {avatarBytes != null && (
+                  <span className="sc-badge sc-badge--ok">
+                    <Check size={12} strokeWidth={2.4} aria-hidden />
+                    Compressed to ~{Math.round(avatarBytes / 1024)}KB
+                  </span>
+                )}
+              </div>
             </div>
-            <div>
-              <p className="text-[13.5px] font-medium" style={{ color: "hsl(var(--a-ink))" }}>
-                Drop an image here
-              </p>
-              <p className="mt-0.5 text-[12px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-                or{" "}
-                <span className="underline" style={{ color: "hsl(var(--a-accent-deep))" }}>
-                  browse files
-                </span>{" "}
-                — JPEG, PNG, or WebP
-              </p>
-            </div>
-            {avatarBytes != null && (
-              <span
-                className="inline-flex items-center gap-1 text-[10.5px] px-2 py-0.5 rounded-full"
-                style={{ background: "hsl(var(--a-accent-wash))", color: "hsl(var(--a-accent-deep))" }}
+            <div className="sc-row-actions">
+              <button
+                type="button"
+                onClick={() => void saveAvatar()}
+                disabled={avatarStatus.kind === "saving" || !avatarCanSave}
+                className="sc-btn sc-btn--primary"
               >
-                <Check size={10} strokeWidth={2.4} aria-hidden />
-                Compressed to ~{Math.round(avatarBytes / 1024)}KB
-              </span>
-            )}
-          </div>
-          <div className="mt-2 flex gap-1.5">
-            <button
-              type="button"
-              onClick={() => void saveAvatar()}
-              disabled={avatarStatus.kind === "saving" || !avatarCanSave}
-              className="a-btn a-btn-primary py-1.5 px-2.5 text-[11.5px] shrink-0 inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isAvatarBinConfigured() ? (
-                <CloudUpload size={12} strokeWidth={1.9} aria-hidden />
+                {remoteAvatar ? <CloudUpload size={15} strokeWidth={1.9} aria-hidden /> : <Check size={15} strokeWidth={1.9} aria-hidden />}
+                {avatarStatus.kind === "saving" ? "Saving…" : remoteAvatar ? "Publish" : "Save"}
+              </button>
+              <button type="button" onClick={resetAvatar} className="sc-btn sc-btn--ghost">
+                Reset to default
+              </button>
+            </div>
+            <div className="mt-2">
+              <Status status={avatarStatus} ok={remoteAvatar ? "Published to all visitors." : "Saved for this browser."} />
+            </div>
+          </Section>
+
+          <Section
+            id="freelance"
+            title="Freelance links"
+            description={`The gig links on the /hire page, one row per live gig or profile. Leave the list empty to fall back to the built-in defaults.${
+              remote ? " Publishing sends the list to every visitor." : " Remote sync is off, so this applies to this browser only."
+            }`}
+            aside={
+              hireRowsDirty ? (
+                <Unsaved />
+              ) : getStoredHireLinks().length > 0 ? (
+                <span className="sc-badge sc-badge--ok">Custom list</span>
               ) : (
-                <Check size={12} strokeWidth={1.9} aria-hidden />
-              )}
-              {avatarStatus.kind === "saving"
-                ? "Saving…"
-                : isAvatarBinConfigured()
-                  ? "Publish"
-                  : "Save"}
-            </button>
-            <button
-              type="button"
-              onClick={resetAvatar}
-              className="a-btn a-btn-ghost py-1.5 px-2 text-[11.5px] shrink-0"
-            >
-              Reset to default
-            </button>
-          </div>
-          <div className="mt-1.5 min-h-[15px] text-[11px]">
-            {avatarStatus.kind === "err" && (
-              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
-                <AlertTriangle size={11} strokeWidth={2.2} aria-hidden />
-                {avatarStatus.reason}
-              </span>
-            )}
-            {avatarStatus.kind === "ok" && (
-              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
-                <Check size={11} strokeWidth={2.4} aria-hidden />
-                {isAvatarBinConfigured() ? "Published to all visitors." : "Saved for this browser."}
-              </span>
-            )}
-          </div>
-        </Card>
-      </div>
-
-      {/* RIGHT COLUMN — Change password form */}
-      <Card Icon={ShieldCheck} title="Change password" hint="≥ 8 characters" flex>
-        <form onSubmit={submitPassword} className="space-y-3 flex-1 flex flex-col min-h-0">
-          <PasswordField
-            id="cur-pw"
-            label="Current password"
-            autoComplete="current-password"
-            value={current}
-            onChange={setCurrent}
-            placeholder="••••••••"
-          />
-          <div>
-            <PasswordField
-              id="new-pw"
-              label="New password"
-              autoComplete="new-password"
-              value={next}
-              onChange={setNext}
-              placeholder="at least 8 characters"
-            />
-            {next.length > 0 && <StrengthMeter score={strength.score} label={strength.label} />}
-          </div>
-          <PasswordField
-            id="conf-pw"
-            label="Confirm new password"
-            autoComplete="new-password"
-            value={confirm}
-            onChange={setConfirm}
-            placeholder="re-type new password"
-            error={confirmMismatch ? "Doesn't match." : undefined}
-          />
-
-          <div
-            className="text-[11.5px] flex items-center gap-1.5 mt-auto min-h-[16px]"
-            style={{ color: "hsl(var(--a-ink-muted))" }}
+                <span className="sc-badge sc-badge--off">Built-in defaults</span>
+              )
+            }
           >
-            {pwStatus.kind === "err" && (
-              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-danger))" }}>
-                <AlertTriangle size={12} strokeWidth={2.2} aria-hidden />
-                {pwStatus.reason}
-              </span>
-            )}
-            {pwStatus.kind === "ok" && (
-              <span className="inline-flex items-center gap-1.5" style={{ color: "hsl(var(--a-success))" }}>
-                <Check size={12} strokeWidth={2.4} aria-hidden /> Password updated.
-              </span>
-            )}
-          </div>
+            <div className="sc-linkrows">
+              {hireRows.length > 0 && (
+                <div className="sc-linkrow sc-linkhead" aria-hidden>
+                  <span>Label</span>
+                  <span>URL</span>
+                  <span />
+                </div>
+              )}
+              {hireRows.map((row, i) => (
+                <div key={i} className="sc-linkrow">
+                  <input
+                    type="text"
+                    value={row.label}
+                    onChange={(e) => editHireRow(i, { label: e.target.value })}
+                    placeholder="Label"
+                    aria-label={`Label for link ${i + 1}`}
+                    className="sc-input"
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                  <input
+                    type="url"
+                    inputMode="url"
+                    value={row.url}
+                    onChange={(e) => editHireRow(i, { url: e.target.value })}
+                    placeholder="https://…"
+                    aria-label={`URL for link ${i + 1}`}
+                    className="sc-input is-mono"
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeHireRow(i)}
+                    aria-label={`Remove ${row.label || "row"}`}
+                    title="Remove"
+                    className="sc-iconbtn sc-iconbtn--danger"
+                  >
+                    <Trash2 size={15} strokeWidth={1.8} aria-hidden />
+                  </button>
+                </div>
+              ))}
+              {hireRows.length === 0 && <p className="sc-help">The list is empty. Saving it restores the built-in defaults.</p>}
+            </div>
 
-          <div className="flex items-center gap-2 pt-2 shrink-0"
-               style={{ borderTop: "1px solid hsl(var(--a-border))" }}>
-            <button
-              type="submit"
-              disabled={
-                pwStatus.kind === "saving" ||
-                !current ||
-                !next ||
-                !confirm ||
-                confirmMismatch ||
-                next.length < 8
-              }
-              className="a-btn a-btn-primary px-4 py-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {pwStatus.kind === "saving" ? "Saving…" : "Update password"}
-            </button>
-            <span
-              className="text-[11px] ml-auto inline-flex items-center gap-1"
-              style={{ color: "hsl(var(--a-ink-muted))" }}
-            >
-              <AlertTriangle size={11} strokeWidth={1.9} aria-hidden />
-              Soft auth — pick a long passphrase.
-            </span>
-          </div>
-        </form>
-      </Card>
+            <div className="sc-row-actions">
+              <button
+                type="button"
+                onClick={addHireRow}
+                disabled={hireRows.length >= 8}
+                className="sc-btn sc-btn--outline"
+              >
+                <Plus size={15} strokeWidth={2} aria-hidden />
+                Add link
+              </button>
+              <button
+                type="button"
+                onClick={() => void saveHireLinks()}
+                disabled={hireRowsStatus.kind === "saving" || !hireRowsValid || (!hireRowsDirty && !remote)}
+                className="sc-btn sc-btn--primary sc-push"
+              >
+                {remote ? <CloudUpload size={15} strokeWidth={1.9} aria-hidden /> : <Check size={15} strokeWidth={1.9} aria-hidden />}
+                {hireRowsStatus.kind === "saving" ? "Saving…" : publishVerb}
+              </button>
+            </div>
+            <div className="mt-2">
+              <Status status={hireRowsStatus} ok={remote ? "Published to all visitors." : "Saved for this browser."} />
+            </div>
+          </Section>
+
+          <Section
+            id="storage"
+            title="Publishing"
+            description="Where published settings go. Read-only here; the bin and keys come from the build environment."
+          >
+            <dl className="sc-dl">
+              <dt>Remote sync</dt>
+              <dd>
+                {remote ? <span className="sc-badge sc-badge--ok">Connected</span> : <span className="sc-badge sc-badge--off">Off</span>}
+              </dd>
+              {remote && (
+                <>
+                  <dt>Settings bin</dt>
+                  <dd>
+                    <code className="sc-code">…{getBinId().slice(-6)}</code>
+                  </dd>
+                </>
+              )}
+              <dt>Avatar storage</dt>
+              <dd>
+                {remoteAvatar ? (
+                  <span className="sc-badge sc-badge--ok">Connected</span>
+                ) : (
+                  <span className="sc-badge sc-badge--off">Off</span>
+                )}
+              </dd>
+              <dt>Master key</dt>
+              <dd>
+                {hasEnvMasterKey() ? (
+                  <span className="sc-badge sc-badge--ok">From the build environment</span>
+                ) : getStoredMasterKey() ? (
+                  <span className="sc-badge sc-badge--ok">Stored in this browser</span>
+                ) : (
+                  <span className="sc-badge sc-badge--warn">Not set, publishing will fail</span>
+                )}
+              </dd>
+            </dl>
+          </Section>
+        </div>
+      </div>
     </div>
   );
 }
@@ -677,95 +710,92 @@ export default function Settings() {
 // pieces
 // =============================================================================
 
-function Card({
-  Icon,
+function Section({
+  id,
   title,
-  hint,
+  description,
+  aside,
   children,
-  flex,
 }: {
-  Icon: typeof KeyRound;
+  id: string;
   title: string;
-  hint?: string;
+  description?: ReactNode;
+  aside?: ReactNode;
   children: ReactNode;
-  flex?: boolean;
 }) {
   return (
-    <section className={`a-card p-3.5 md:p-4 ${flex ? "flex flex-col min-h-0 flex-1" : ""}`}>
-      <header className="flex items-center gap-2 mb-3">
-        <span
-          className="w-6 h-6 rounded-md grid place-items-center shrink-0"
-          style={{ background: "hsl(var(--a-accent-wash))" }}
-        >
-          <Icon size={12} strokeWidth={1.8} style={{ color: "hsl(var(--a-accent-deep))" }} aria-hidden />
-        </span>
-        <span className="text-[13px] font-semibold tracking-tight"
-              style={{ color: "hsl(var(--a-ink))" }}>
-          {title}
-        </span>
-        {hint && (
-          <span className="ml-auto text-[10.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-            {hint}
-          </span>
-        )}
+    <section id={`sc-${id}`} className="sc-section" aria-labelledby={`sc-${id}-title`}>
+      <header className="sc-section-head">
+        <div>
+          <h2 id={`sc-${id}-title`}>{title}</h2>
+          {description && <p>{description}</p>}
+        </div>
+        {aside}
       </header>
-      {children}
+      <div className="sc-card">{children}</div>
     </section>
   );
 }
 
-function Row({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <>
-      <dt className="a-label text-[10px] mt-1" style={{ alignSelf: "start" }}>
-        {label}
-      </dt>
-      <dd className="min-w-0 truncate">{children}</dd>
-    </>
-  );
+function Unsaved() {
+  return <span className="sc-badge sc-badge--warn">Unsaved changes</span>;
 }
 
+function Status({ status, ok, saving }: { status: SaveStatus; ok: string; saving?: string }) {
+  if (status.kind === "saving" && saving) {
+    return <span className="sc-status sc-status--muted">{saving}</span>;
+  }
+  if (status.kind === "err") {
+    return (
+      <span className="sc-status sc-status--err" role="alert">
+        <AlertTriangle size={13} strokeWidth={2.2} aria-hidden />
+        {status.reason}
+      </span>
+    );
+  }
+  if (status.kind === "ok") {
+    return (
+      <span className="sc-status sc-status--ok">
+        <Check size={13} strokeWidth={2.4} aria-hidden />
+        {ok}
+      </span>
+    );
+  }
+  return null;
+}
 
 function ToggleRow({
+  id,
   label,
   description,
   checked,
   onChange,
 }: {
+  id: string;
   label: string;
   description: string;
   checked: boolean;
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-3 cursor-pointer select-none">
-      <div className="min-w-0">
-        <div className="text-[13px] font-medium" style={{ color: "hsl(var(--a-ink))" }}>
-          {label}
-        </div>
-        <p className="mt-0.5 text-[11.5px]" style={{ color: "hsl(var(--a-ink-muted))" }}>
-          {description}
-        </p>
-      </div>
-      <span
-        className="relative w-10 h-[22px] rounded-full transition-colors shrink-0"
-        style={{ background: checked ? "hsl(var(--a-accent))" : "hsl(var(--a-border))" }}
-      >
-        <span
-          className="absolute top-[2px] w-[18px] h-[18px] rounded-full transition-all"
-          style={{
-            background: "white",
-            left: checked ? "20px" : "2px",
-            boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
-          }}
-        />
+    <label className="sc-toggle-row" htmlFor={id}>
+      <span className="sc-toggle-copy">
+        <b id={`${id}-label`}>{label}</b>
+        <span id={`${id}-desc`}>{description}</span>
       </span>
-      <input
-        type="checkbox"
-        className="sr-only"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
+      <span className="sc-switch">
+        <input
+          id={id}
+          type="checkbox"
+          role="switch"
+          className="sc-switch-input"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          aria-labelledby={`${id}-label`}
+          aria-describedby={`${id}-desc`}
+        />
+        <span className="sc-switch-track" aria-hidden />
+      </span>
     </label>
   );
 }
@@ -790,17 +820,16 @@ function PasswordField({
   const [show, setShow] = useState(false);
   return (
     <div>
-      <label htmlFor={id} className="a-label text-[10px] block mb-1.5">
+      <label htmlFor={id} className="sc-label">
         {label}
       </label>
-      <div className="relative">
+      <div className="sc-field" data-invalid={error ? "true" : undefined}>
         <input
           id={id}
           type={show ? "text" : "password"}
           autoComplete={autoComplete}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`a-input pr-9 py-1.5 text-[12.5px] ${error ? "is-invalid" : ""}`}
           placeholder={placeholder}
           aria-invalid={!!error}
         />
@@ -808,17 +837,12 @@ function PasswordField({
           type="button"
           onClick={() => setShow((s) => !s)}
           aria-label={show ? "Hide" : "Show"}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md"
-          style={{ color: "hsl(var(--a-ink-muted))" }}
+          className="sc-field-btn"
         >
-          {show ? <EyeOff size={13} strokeWidth={1.8} /> : <Eye size={13} strokeWidth={1.8} />}
+          {show ? <EyeOff size={15} strokeWidth={1.8} /> : <Eye size={15} strokeWidth={1.8} />}
         </button>
       </div>
-      {error && (
-        <p className="mt-1 text-[11px]" style={{ color: "hsl(var(--a-danger))" }}>
-          {error}
-        </p>
-      )}
+      {error && <p className="sc-field-error">{error}</p>}
     </div>
   );
 }
@@ -826,25 +850,18 @@ function PasswordField({
 function StrengthMeter({ score, label }: { score: number; label: string }) {
   const segs = 4;
   const color =
-    score <= 1 ? "hsl(var(--a-danger))" :
-    score === 2 ? "hsl(var(--a-warn))" :
-    score === 3 ? "hsl(45 92% 48%)" :
-                  "hsl(var(--a-success))";
+    score <= 1 ? "hsl(var(--signal-crit))" :
+    score === 2 ? "hsl(var(--signal-warn))" :
+    score === 3 ? "hsl(var(--gold))" :
+                  "hsl(var(--signal-pos))";
   return (
-    <div className="mt-1.5">
-      <div className="flex items-center gap-1">
+    <div className="sc-strength">
+      <div className="sc-strength-bars">
         {Array.from({ length: segs }, (_, i) => (
-          <span
-            key={i}
-            className="h-0.5 flex-1 rounded-full transition-colors"
-            style={{ background: i < score ? color : "hsl(var(--a-border))" }}
-          />
+          <span key={i} style={i < score ? { background: color } : undefined} />
         ))}
       </div>
-      <div
-        className="mt-1 flex justify-between text-[10px]"
-        style={{ color: "hsl(var(--a-ink-muted))" }}
-      >
+      <div className="sc-strength-text">
         <span>Strength</span>
         <span style={{ color, fontWeight: 600 }}>{label}</span>
       </div>
@@ -887,7 +904,7 @@ function resizeAndCompress(file: File, maxDim: number, quality: number): Promise
 }
 
 function fmtAbs(iso?: string): string {
-  if (!iso) return "—";
+  if (!iso) return "Not recorded";
   const t = new Date(iso);
   if (Number.isNaN(t.getTime())) return iso;
   return t.toLocaleString(undefined, {
@@ -900,7 +917,7 @@ function fmtAbs(iso?: string): string {
 }
 
 function scoreStrength(pw: string): { score: number; label: string } {
-  if (!pw) return { score: 0, label: "—" };
+  if (!pw) return { score: 0, label: "None" };
   let s = 0;
   if (pw.length >= 8) s++;
   if (pw.length >= 12) s++;

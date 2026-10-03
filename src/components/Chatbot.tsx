@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { MessageSquare, RefreshCw, Send, Sparkles, X } from "lucide-react";
 import {
@@ -10,7 +10,7 @@ import {
   type ChatContext,
   type ChatMessage,
 } from "@/lib/chatbot";
-import { getChatbotEnabled, subscribeSettings } from "@/lib/settings";
+import { getChatbotEnabled, subscribeSettings, useAvatarUrl } from "@/lib/settings";
 
 const STORAGE_KEY = "portfolio-chatbot-v2";
 
@@ -56,6 +56,9 @@ export default function Chatbot() {
   useEffect(() => subscribeSettings((s) => setEnabled(s.chatbotEnabled)), []);
 
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("portfolio:chat", { detail: open }));
+  }, [open]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [ctx, setCtx] = useState<ChatContext>(emptyContext());
   const [input, setInput] = useState("");
@@ -221,7 +224,7 @@ export default function Chatbot() {
     [streamingId, streamProgress],
   );
 
-  const initials = useMemo(() => "MR", []);
+  const avatar = useAvatarUrl();
   const busy = thinking || !!streamingId;
 
   if (hideOnRoute) return null;
@@ -229,7 +232,7 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* FAB — gentle attention pulse before first open */}
+      {/* FAB: gentle attention pulse before first open */}
       <button
         type="button"
         aria-label={open ? "Close chatbot" : "Open chatbot"}
@@ -238,9 +241,9 @@ export default function Chatbot() {
         className={[
           "group fixed bottom-5 right-5 md:bottom-8 md:right-8 z-50",
           "w-12 h-12 grid place-items-center",
-          "bg-ink text-paper",
+          "bg-[hsl(var(--accent))] text-[hsl(var(--accent-ink))]",
           "rounded-full",
-          "shadow-[0_2px_0_hsl(var(--ink)/0.06),0_18px_36px_-14px_hsl(var(--ink)/0.55)]",
+          "shadow-[0_2px_0_hsl(var(--ink)/0.06),0_18px_36px_-14px_hsl(var(--accent)/0.7)]",
           "hover:scale-[1.04] active:scale-[0.96]",
           "transition-transform duration-200 ease-out print:hidden",
         ].join(" ")}
@@ -278,7 +281,7 @@ export default function Chatbot() {
           "fixed z-50 print:hidden",
           // sizing
           "bottom-20 right-3 left-3 md:left-auto md:right-8 md:bottom-24",
-          "md:w-[400px] max-h-[min(660px,calc(100vh-7rem))]",
+          "md:w-[400px] max-h-[min(660px,calc(100vh/var(--zoom,1)_-_7rem))]",
           "flex flex-col",
           "rounded-[14px] overflow-hidden",
           "bg-paper",
@@ -301,17 +304,13 @@ export default function Chatbot() {
           }}
         >
           <div className="relative">
-            <div
-              className="w-9 h-9 grid place-items-center text-[12px] font-semibold tracking-wide rounded-full"
-              style={{
-                background:
-                  "linear-gradient(135deg, hsl(var(--ink)) 0%, hsl(var(--ink-soft)) 100%)",
-                color: "hsl(var(--paper))",
-              }}
+            <img
+              src={avatar}
+              alt=""
+              className="w-9 h-9 rounded-full object-cover"
+              style={{ objectPosition: "center 22%", boxShadow: "0 0 0 1px hsl(var(--rule))", background: "hsl(var(--paper-deep))" }}
               aria-hidden
-            >
-              {initials}
-            </div>
+            />
             {/* online indicator */}
             <span
               aria-hidden
@@ -404,7 +403,7 @@ export default function Chatbot() {
           {pristine && !thinking && (
             <div className="pt-2 pb-1">
               <div
-                className="text-[10.5px] uppercase tracking-[0.12em] mb-2.5 font-semibold"
+                className="text-[11px] uppercase tracking-[0.12em] mb-2.5 font-semibold"
                 style={{ color: "hsl(var(--whisper))" }}
               >
                 Try asking
@@ -469,7 +468,7 @@ export default function Chatbot() {
                 onSend();
               }
             }}
-            placeholder={busy ? "Thinking…" : "Ask anything — work, papers, contact"}
+            placeholder={busy ? "Thinking…" : "Ask about work, papers or contact"}
             rows={1}
             disabled={busy}
             className="flex-1 resize-none bg-transparent outline-none text-[13.5px] leading-[1.5] py-2 px-2 max-h-32 placeholder:opacity-50 disabled:opacity-60"
@@ -496,7 +495,7 @@ export default function Chatbot() {
 
         {/* Footer attribution */}
         <div
-          className="px-4 py-2 text-[10px] tracking-wide text-center"
+          className="px-4 py-2 text-[11px] tracking-wide text-center"
           style={{
             color: "hsl(var(--whisper))",
             borderTop: "1px solid hsl(var(--rule))",

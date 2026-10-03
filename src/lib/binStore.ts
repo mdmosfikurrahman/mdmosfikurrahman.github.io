@@ -1,8 +1,8 @@
-// Unified JSONBin payload — every concern (template, auth, analytics) lives
+// Unified JSONBin payload: every concern (settings, auth, analytics) lives
 // in a single bin. Reads return the whole object; writes go through `patchBin`
 // which read-modify-writes so concurrent concerns don't wipe each other out.
 
-import type { TemplateId } from "./template";
+import type { HireLink } from "./settings";
 
 export type VisitEntry = {
   ts: string;            // ISO timestamp
@@ -27,42 +27,14 @@ export type AdminAuth = {
   updatedAt?: string;
 };
 
-// --- Guestbook -----------------------------------------------------------
-export type GuestbookStatus = "pending" | "approved" | "rejected";
-export type GuestbookEntry = {
-  id: string;                 // ULID-ish: ts-base36 + random suffix
-  name: string;
-  message: string;
-  ts: string;                 // ISO submission time
-  status: GuestbookStatus;
-  ipHash?: string;            // for moderation context
-  country?: string;
-  device?: string;
-  moderatedAt?: string;
-};
-
-// --- Q&A inbox -----------------------------------------------------------
-export type QuestionStatus = "pending" | "answered" | "published" | "rejected";
-export type QuestionEntry = {
-  id: string;
-  question: string;
-  askedAt: string;
-  status: QuestionStatus;
-  answer?: string;
-  answeredAt?: string;
-  ipHash?: string;
-  country?: string;
-  device?: string;
-};
-
 export type BinPayload = {
-  template?: TemplateId;
+  template?: string;   // legacy: written by the old template picker, no longer read
   cvUrl?: string;
+  hireMe?: boolean;
+  hireLinks?: HireLink[];
   updatedAt?: string;
   auth?: AdminAuth;
   visits?: VisitEntry[];
-  guestbook?: GuestbookEntry[];
-  questions?: QuestionEntry[];
 };
 
 const BIN_ID = (import.meta.env.VITE_JSONBIN_ID as string | undefined) ?? "";
@@ -71,7 +43,7 @@ const ENV_MASTER_KEY = (import.meta.env.VITE_JSONBIN_MASTER_KEY as string | unde
 const MASTER_KEY_STORAGE = "portfolio.admin.jsonbin.masterKey";
 
 // Dedicated bin for the avatar image. Kept separate from the main bin (which
-// already holds template/cvUrl/auth/visits/guestbook/questions and is
+// already holds template/cvUrl/auth/visits and is
 // deliberately capped to stay under the JSONBin free-tier size) so a photo
 // data-URI never risks crowding out that budget.
 const AVATAR_BIN_ID = (import.meta.env.VITE_JSONBIN_AVATAR_ID as string | undefined) ?? "";
@@ -79,8 +51,6 @@ const AVATAR_BIN_ID = (import.meta.env.VITE_JSONBIN_AVATAR_ID as string | undefi
 const API_BASE = "https://api.jsonbin.io/v3/b";
 
 export const VISITS_CAP = 500;          // keep bin under JSONBin free-tier size
-export const GUESTBOOK_CAP = 500;
-export const QUESTIONS_CAP = 700;
 
 export function isBinConfigured(): boolean {
   return BIN_ID.length > 0;
@@ -130,7 +100,7 @@ export async function fetchBin(): Promise<BinPayload | null> {
 }
 
 // ---------------------------------------------------------------------------
-// WRITE — replaces the entire bin payload
+// WRITE: replaces the entire bin payload
 // ---------------------------------------------------------------------------
 
 export async function writeBin(payload: BinPayload, masterKey?: string): Promise<WriteResult> {
@@ -160,20 +130,22 @@ export async function writeBin(payload: BinPayload, masterKey?: string): Promise
 }
 
 // ---------------------------------------------------------------------------
-// PATCH — read-modify-write, preserving sibling fields
+// PATCH: read-modify-write, preserving sibling fields
 // ---------------------------------------------------------------------------
 
+// A failed read is not an empty bin. Writing after one would replace the whole
+// record (login, settings, visits) with just this change, so nothing is written.
 export async function patchBin(
   mutate: (current: BinPayload) => BinPayload,
   masterKey?: string,
 ): Promise<WriteResult> {
-  const current = (await fetchBin()) ?? {};
-  const next = mutate(current);
-  return writeBin(next, masterKey);
+  const current = await fetchBin();
+  if (!current) return { kind: "err", reason: "Could not read the current record, so nothing was written." };
+  return writeBin(mutate(current), masterKey);
 }
 
 // ---------------------------------------------------------------------------
-// AVATAR BIN — separate bin, same account credentials
+// AVATAR BIN: separate bin, same account credentials
 // ---------------------------------------------------------------------------
 
 export type AvatarBinPayload = {
@@ -236,7 +208,7 @@ export async function writeAvatarBin(
 }
 
 // ---------------------------------------------------------------------------
-// crypto — SHA-256 hex
+// crypto: SHA-256 hex
 // ---------------------------------------------------------------------------
 
 export async function sha256(text: string): Promise<string> {

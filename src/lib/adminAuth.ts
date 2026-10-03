@@ -1,9 +1,9 @@
-// Admin auth — username + sha256(passwordSalt) stored in JSONBin.
+// Admin auth: username + sha256(passwordSalt) stored in JSONBin.
 // Salt is the username itself: `sha256(`${username}:${password}`)`. This is
 // soft auth (the master key is in the bundle), but it keeps casual visitors
 // out and lets the owner change the password without a redeploy.
 
-import { fetchBin, patchBin, sha256, type AdminAuth, type WriteResult } from "./binStore";
+import { fetchBin, isBinConfigured, patchBin, sha256, type AdminAuth, type WriteResult } from "./binStore";
 
 export const DEFAULT_USERNAME = "root@admin";
 export const DEFAULT_PASSWORD = "EpDe#F16!";
@@ -13,25 +13,26 @@ export async function deriveHash(username: string, password: string): Promise<st
   return sha256(`${username.trim()}:${password}`);
 }
 
-// Returns the auth record in the bin, seeding the default if absent.
-// Seeding only succeeds if a master key is available.
-export async function ensureAuth(): Promise<AdminAuth | null> {
-  const bin = await fetchBin();
-  if (bin?.auth?.username && bin.auth.passwordHash) {
-    return bin.auth;
-  }
-  // Seed default credentials on first run.
-  const passwordHash = await deriveHash(DEFAULT_USERNAME, DEFAULT_PASSWORD);
-  const seeded: AdminAuth = {
+async function defaultAuth(): Promise<AdminAuth> {
+  return {
     username: DEFAULT_USERNAME,
-    passwordHash,
+    passwordHash: await deriveHash(DEFAULT_USERNAME, DEFAULT_PASSWORD),
     updatedAt: new Date().toISOString(),
   };
-  const res = await patchBin((current) => ({ ...current, auth: seeded }));
-  if (res.kind === "ok") return seeded;
-  // If seeding failed (no master key), still return the seeded values for
-  // local verification — but warn callers via console.
-  console.warn("[admin] Could not seed auth to JSONBin:", res.reason);
+}
+
+// Returns the auth record in the bin, seeding the default only into a bin that
+// was read and has none. A failed read returns null: seeding then would reset
+// the real password to the default.
+export async function ensureAuth(): Promise<AdminAuth | null> {
+  const bin = await fetchBin();
+  if (!bin) return isBinConfigured() ? null : defaultAuth();
+  if (bin.auth?.username && bin.auth.passwordHash) {
+    return bin.auth;
+  }
+  const seeded = await defaultAuth();
+  const res = await patchBin((current) => (current.auth?.passwordHash ? current : { ...current, auth: seeded }));
+  if (res.kind !== "ok") console.warn("[admin] Could not seed auth to JSONBin:", res.reason);
   return seeded;
 }
 
@@ -44,7 +45,7 @@ export async function verifyCredentials(
   password: string,
 ): Promise<VerifyResult> {
   const auth = await ensureAuth();
-  if (!auth) return { kind: "err", reason: "Auth not configured." };
+  if (!auth) return { kind: "err", reason: "Could not reach the login store. Try again in a moment." };
   if (username.trim().toLowerCase() !== auth.username.trim().toLowerCase()) {
     return { kind: "err", reason: "Invalid credentials." };
   }
@@ -62,7 +63,8 @@ export async function changePassword(
   nextPassword: string,
 ): Promise<ChangePasswordResult> {
   const bin = await fetchBin();
-  const auth = bin?.auth;
+  if (!bin) return { kind: "err", reason: "Could not read the login record. Try again in a moment." };
+  const auth = bin.auth;
   if (!auth) return { kind: "err", reason: "No auth record found." };
   const currentHash = await deriveHash(auth.username, currentPassword);
   if (currentHash !== auth.passwordHash) {

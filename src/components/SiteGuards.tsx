@@ -5,7 +5,7 @@ import { useEffect } from "react";
 // Security theater, mostly: a determined user can disable JS, use
 // View-Source via the browser menu bar, use curl, fetch() the HTML directly,
 // or point a phone camera at the monitor. This component raises friction for
-// casual attempts only — PrintScreen and hardware screen capture cannot be
+// casual attempts only: PrintScreen and hardware screen capture cannot be
 // blocked from a webpage.
 
 const BLUR_CLASS = "guards-blur";
@@ -31,29 +31,29 @@ export default function SiteGuards() {
       const ctrlOrMeta = e.ctrlKey || e.metaKey;
       const shift = e.shiftKey;
 
-      // F12 — DevTools
+      // F12: DevTools
       if (key === "F12") {
         e.preventDefault();
         return;
       }
 
-      // Ctrl/Cmd + Shift + (I / J / C / K) — DevTools panels
+      // Ctrl/Cmd + Shift + (I / J / C / K): DevTools panels
       if (ctrlOrMeta && shift && ["I", "J", "C", "K"].includes(upper)) {
         e.preventDefault();
         return;
       }
 
-      // Ctrl/Cmd + (U) — View Source
-      // Ctrl/Cmd + (S) — Save Page
-      // Ctrl/Cmd + (P) — Print
-      // Ctrl/Cmd + (A) — Select All
-      // Ctrl/Cmd + (C / X) — Copy / Cut
+      // Ctrl/Cmd + (U): View Source
+      // Ctrl/Cmd + (S): Save Page
+      // Ctrl/Cmd + (P): Print
+      // Ctrl/Cmd + (A): Select All
+      // Ctrl/Cmd + (C / X): Copy / Cut
       if (ctrlOrMeta && ["U", "S", "P", "A", "C", "X"].includes(upper)) {
         e.preventDefault();
         return;
       }
 
-      // PrintScreen — best-effort clipboard clobber (browsers may block without
+      // PrintScreen: best-effort clipboard clobber (browsers may block without
       // permission; OS usually overwrites with the bitmap after our call).
       if (key === "PrintScreen" || key === "F13") {
         navigator.clipboard?.writeText("").catch(() => {});
@@ -63,7 +63,11 @@ export default function SiteGuards() {
       }
     };
 
-    const onCopy = (e: ClipboardEvent) => e.preventDefault();
+    // The site's own copy buttons raise window.__siteCopy for their single call.
+    const onCopy = (e: ClipboardEvent) => {
+      if (window.__siteCopy) return;
+      e.preventDefault();
+    };
     const onCut = (e: ClipboardEvent) => e.preventDefault();
     const onDragStart = (e: DragEvent) => e.preventDefault();
     const onSelectStart = (e: Event) => {
@@ -80,7 +84,7 @@ export default function SiteGuards() {
       e.preventDefault();
     };
 
-    // DevTools detector — window-chrome size delta. Docked devtools shrink
+    // DevTools detector: window-chrome size delta. Docked devtools shrink
     // the inner viewport; undocked devtools can't be detected reliably.
     const detectDevtools = () => {
       const threshold = 160;
@@ -95,16 +99,16 @@ export default function SiteGuards() {
     const devtoolsInterval = window.setInterval(detectDevtools, 500);
     detectDevtools();
 
-    // Tab visibility only — blur when the tab is truly hidden (switched away
+    // Tab visibility only: blur when the tab is truly hidden (switched away
     // or minimised). Window-focus changes (cursor leaving, URL-bar click,
-    // extension icon click) intentionally do NOT trigger blur — too noisy.
+    // extension icon click) intentionally do NOT trigger blur: too noisy.
     const onVisibilityChange = () => {
       tabHidden = document.hidden;
       applyBlur();
     };
 
     // A second devtools-detection channel: `debugger` statement triggers a
-    // real pause only when devtools are open. We time its execution — if it
+    // real pause only when devtools are open. We time its execution: if it
     // takes noticeably long, devtools are open.
     const debuggerInterval = window.setInterval(() => {
       const start = performance.now();

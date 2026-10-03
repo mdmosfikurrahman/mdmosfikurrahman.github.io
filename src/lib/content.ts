@@ -19,7 +19,7 @@ export const profile = {
   role: "Backend architect · applied ML · Dhaka",
   roleLong: "Engineering Team Lead, Akij iBOS Ltd.",
   tagline:
-    "Designing the quiet half of software: services, schemas, and workflows — and studying the machine learning that keeps them standing.",
+    "Designing the quiet half of software (services, schemas, and workflows) and studying the machine learning that keeps them standing.",
   location: "Dhaka, Bangladesh",
   email: "mdmosfikurrahman.cse@gmail.com",
   phone: "+880 1797-554948",
@@ -32,6 +32,9 @@ export const profile = {
     linkedin: "https://linkedin.com/in/mdmosfikurrahman",
     scholar: "https://scholar.google.com/citations?user=1GAfMAEAAAAJ",
     orcid: "https://orcid.org/0000-0002-2370-2983",
+    facebook: "https://www.facebook.com/mdmosfikurrahman.matul",
+    // wa.me takes the number in international form, digits only.
+    whatsapp: "https://wa.me/8801797554948",
   },
 };
 
@@ -56,13 +59,13 @@ export const roles: Role[] = [
     to: "present",
     place: "Dhaka, BD",
     summary:
-      "Backend architect for Travilo, a multi-client OTA SaaS platform at Akij iBOS Ltd. — a sister concern of Akij Resource Ltd. — spanning B2B, B2C, and API/consortium clients across three live white-label deployments serving 742 B2B agency accounts. Scalable, configurable, rule-driven systems on .NET 9, with hands-on Docker and Kubernetes deployment.",
+      "Backend architect for Travilo, a multi-client OTA SaaS platform at Akij iBOS Ltd. (a sister concern of Akij Resource Ltd.), spanning B2B, B2C, and API/consortium clients across live white-label deployments. Scalable, configurable, rule-driven systems on .NET 9, with hands-on Docker and Kubernetes deployment.",
     bullets: [
-      "Designed and built the backend architecture for Travilo, a multi-client OTA SaaS platform of eight .NET 9 microservices, from an empty repository to three live white-label deployments serving 742 B2B agency accounts and 1,000+ bookings a month.",
-      "Built the flight-search aggregation layer: gRPC fan-out to eleven supplier and GDS connectors (Sabre, Amadeus, Travelport), streamed over Server-Sent Events — 1,000+ live fares aggregated in under ten seconds, the first on screen in about four.",
-      "Modelled pricing, markup, discount, and ancillary logic as tenant configuration rather than code, putting 96 live rules in operations' hands and taking deployments off the path of commercial changes.",
+      "Designed and built the backend architecture for Travilo, a multi-client OTA SaaS platform of .NET 9 microservices, from an empty repository to live white-label deployments for B2B, B2C and API clients.",
+      "Built the flight-search aggregation layer: a gRPC fan-out to supplier and GDS connectors (Sabre, Amadeus, Travelport and more), streamed over Server-Sent Events so the first fares reach the screen while slower suppliers are still answering.",
+      "Modelled pricing, markup, discount, and ancillary logic as tenant configuration rather than code, putting the live rules in operations' hands and taking deployments off the path of commercial changes.",
       "Built the platform observability layer, capturing every incoming and inter-service call behind a unified Azure, AWS, and Cloudflare abstraction; it is now the primary tool for production diagnosis and on-call triage.",
-      "Lead a team of ten across backend, frontend, and supplier integration — mentoring, daily scrum, code review, and pair programming — alongside on-call production support.",
+      "Lead the engineering team across backend, frontend, and supplier integration (mentoring, daily scrum, code review, and pair programming), alongside on-call production support.",
     ],
     stack: [".NET 9", "SQL Server", "MongoDB", "DynamoDB", "Drools", "gRPC", "GraphQL", "Docker", "Kubernetes"],
   },
@@ -124,9 +127,9 @@ export const projects: Project[] = [
     year: "2024–",
     role: "Backend architecture & system design",
     blurb:
-      "A production OTA SaaS platform I designed and built, spanning B2B, B2C, and API/consortium clients across three live white-label deployments serving 742 B2B agency accounts. Backend architecture around supplier integration, rule-driven pricing/markup/discount logic, ancillary services, and configurable microservice workflows — designed configuration-first, so product changes rarely mean code changes, plus an admin panel for centralized platform management.",
+      "A production OTA SaaS platform I designed and built, spanning B2B, B2C, and API/consortium clients across live white-label deployments. Backend architecture around supplier integration, rule-driven pricing/markup/discount logic, ancillary services, and configurable microservice workflows, designed configuration-first so product changes rarely mean code changes, plus an admin panel for centralized platform management.",
     highlights: [
-      "Designed and built the end-to-end backend architecture for Travilo, a multi-client OTA SaaS platform of eight .NET 9 microservices, from an empty repository to three live white-label deployments serving 742 B2B agency accounts.",
+      "Designed and built the end-to-end backend architecture for Travilo, a multi-client OTA SaaS platform of .NET 9 microservices, from an empty repository to live white-label deployments.",
       "Modelled supplier-integration flows and a rule-driven pricing/markup/discount engine so business changes are configuration, not code.",
       "Decomposed the estate into microservice workflows with clear service boundaries, plus an admin panel for centralized platform management.",
       "Delivered on .NET 9 with hands-on Docker packaging and Kubernetes deployment; provide on-call production support for platform uptime.",
@@ -145,7 +148,7 @@ export const projects: Project[] = [
       "National-scale customs-bond system for Bangladesh's National Board of Revenue, used for garment-export compliance.",
     highlights: [
       "Shipped production modules on a live national compliance system (NBR Customs Bond).",
-      "Delivered the Legal Case and Utilization Declaration modules end to end, collaborating with senior engineers on overall system design — Thymeleaf front, Spring Boot back, Oracle data layer.",
+      "Delivered the Legal Case and Utilization Declaration modules end to end, collaborating with senior engineers on overall system design: Thymeleaf front, Spring Boot back, Oracle data layer.",
       "Automated BGMEA / BKMEA synchronisation for garment-export declaration processing.",
       "Improved system throughput ~25% via query tuning and access-path refactoring; hardened auth with OAuth2 and Spring Security.",
     ],
@@ -164,7 +167,7 @@ export const projects: Project[] = [
       "Built GraphQL BFF services handling complex nested data with resolver batching.",
       "Reduced query latency through schema stitching and join-path optimisation.",
       "Contributed reusable service patterns to internal GraphQL schema tooling used across teams.",
-      "Delivered to Japanese enterprise review standards — correctness and operational calmness.",
+      "Delivered to Japanese enterprise review standards: correctness and operational calmness.",
     ],
     stack: ["Java", "Spring Boot", "GraphQL", "Oracle"],
     tags: ["GraphQL", "Java", "Spring Boot"],
@@ -683,57 +686,31 @@ export const certifications = [
     group: "Data Science",
     issuer: "IBM · Coursera",
     items: [
-      "What is Data Science?",
-      "Tools for Data Science",
-      "Data Science Methodology",
-      "Python for Data Science and AI",
-      "Python Project for Data Science",
-      "Databases and SQL for Data Science",
+      "IBM Data Science Professional Certificate",
+      "Applied Data Science Capstone",
+      "Machine Learning with Python",
       "Data Analysis with Python",
       "Data Visualization with Python",
-      "Machine Learning with Python",
-      "Applied Data Science Capstone",
-      "IBM Data Science Professional Certificate",
+      "Databases and SQL for Data Science",
+      "Data Science Methodology",
     ],
   },
   {
     group: "Data Science",
     issuer: "DataCamp",
     items: [
-      "Introduction to Python",
-      "Intermediate Python",
-      "Python Data Science Toolbox (Part 1)",
       "Python Data Science Toolbox (Part 2)",
-      "Introduction to Importing Data in Python",
+      "Python Data Science Toolbox (Part 1)",
+      "Intermediate Python",
     ],
   },
   {
     group: "Machine Learning",
     issuer: "DataCamp",
     items: [
-      "Image Processing in Python",
       "Image Processing with Keras in Python",
+      "Image Processing in Python",
     ],
-  },
-  {
-    group: "Programming",
-    issuer: "Coursera · DataCamp · Cisco Networking Academy",
-    items: [
-      "Create Your First Python Program (Coursera)",
-      "AI For Everyone (Coursera)",
-      "Python Programming (DataCamp)",
-      "PCAP · Programming Essentials in Python (Cisco)",
-    ],
-  },
-  {
-    group: "Cyber Security",
-    issuer: "Cisco Networking Academy",
-    items: ["Introduction to Cybersecurity", "Cybersecurity Essentials"],
-  },
-  {
-    group: "Public Health",
-    issuer: "Coursera",
-    items: ["COVID-19 Contact Tracing"],
   },
 ];
 
@@ -847,6 +824,8 @@ export const stats = {
   firstAuthor: publications.filter((p) => (p.tags || []).includes("first-author")).length,
   reviewer: reviewerFor.length,
   reviewsCompleted: REVIEWS_COMPLETED,
+  // Google Scholar snapshot, summed from each paper's `citations`.
+  citations: publications.reduce((n, p) => n + (p.citations ?? 0), 0),
   systems: 5, // OTA · CBMS · Rakuten · Denka · TraFoo
 };
 
@@ -857,8 +836,8 @@ export const preamble: string[] = [
 ];
 
 // --- Freelance availability -------------------------------------------------
-// Rendered by the Hire section, and only on the industry templates — never on
-// the keynote decks, which are interview and seminar surfaces where a pitch
+// Read by the Contact line, the footer and the /hire page; never by the
+// presentation decks, which are interview and seminar surfaces where a pitch
 // would be off-key. `hireMeEnabled` in settings.ts hides it site-wide without
 // a deploy, and the admin can publish that toggle to every visitor.
 export type FreelanceService = {
@@ -871,7 +850,7 @@ export const freelance = {
   label: "Available for freelance work",
   headline: "Need a backend built properly?",
   blurb:
-    "I take a small number of freelance engagements alongside my day job — backend work in .NET and Java, scoped tightly and finished. The standard I build to is public: Flavian, my clean-architecture foundation for .NET 9, is on GitHub for you to read before you commit to anything.",
+    "I take a small number of freelance engagements alongside my day job: backend work in .NET and Java, scoped tightly and finished. The standard I build to is public: Flavian, my clean-architecture foundation for .NET 9, is on GitHub for you to read before you commit to anything.",
   capacity: "Ten to fifteen hours a week, two engagements at a time.",
   responseTime: "Replies within the hour · GMT+6",
   services: [
@@ -893,7 +872,7 @@ export const freelance = {
     {
       title: "Next.js wired to your API",
       detail:
-        "Typed API layer, httpOnly-cookie auth with single-flight refresh, middleware route guards — against your design system, not a new one.",
+        "Typed API layer, httpOnly-cookie auth with single-flight refresh, middleware route guards, built against your design system, not a new one.",
     },
   ] as FreelanceService[],
   links: {
@@ -901,10 +880,20 @@ export const freelance = {
     fiverr: "https://www.fiverr.com/mosfikur_rahman",
     upwork: "",
   },
+  // The public codebase the blurb points at.
+  standardUrl: "https://github.com/mdmosfikurrahman/Flavian",
+  process: [
+    { title: "Send the problem", detail: "Email what you are building and where it hurts. Replies within the hour, GMT+6." },
+    { title: "Agree a tight scope", detail: "Two engagements at a time, ten to fifteen hours a week, so each one gets finished." },
+    { title: "Read the standard first", detail: "Flavian, my clean-architecture foundation for .NET 9, is public. Read it before you commit to anything." },
+    { title: "Get finished work", detail: "Documented APIs your frontend can build from, and before and after timings on performance work." },
+  ],
   // Live gigs, in publish order. Add the next one here when it goes live.
   gigs: [
     { label: ".NET 9 microservice", url: "https://www.fiverr.com/s/2pKpNEX" },
     { label: "Spring Boot REST API", url: "https://www.fiverr.com/s/YLRLA2a" },
+    { label: "Third-party API integration", url: "https://www.fiverr.com/s/yevWm76" },
+    { label: "Slow queries and ORM performance", url: "https://www.fiverr.com/s/qbD595X" },
   ],
 };
 
@@ -918,3 +907,159 @@ export const figures = [
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
+
+// --- Case studies -----------------------------------------------------------
+// Rendered by the /work pages. These are the site's only figures: Work and the
+// case study page show them; every other page stays count-free and links here.
+export type CaseStudy = {
+  slug: string;
+  name: string;
+  title: string;
+  emphasis: string;
+  summary: string;
+  // Everywhere except Work and the case study itself: no figures.
+  landingSummary: string;
+  org: string;
+  orgUrl: string;
+  role: string;
+  from: string;
+  to: string;
+  stack: string[];
+  metrics: { v: string; k: string }[];
+  context: string[];
+  problem: string[];
+  architecture: {
+    channels: { label: string; note?: string }[];
+    core: { label: string; note?: string }[];
+    data: string;
+    suppliers: { label: string; note?: string }[];
+  };
+  built: { title: string; body: string }[];
+  leadership: string[];
+  outcome: string[];
+};
+
+export const caseStudies: CaseStudy[] = [
+  {
+    slug: "travilo",
+    name: "Travilo",
+    title: "Building Travilo",
+    emphasis: "Travilo",
+    summary:
+      "Backend architecture for a multi-client OTA SaaS platform: eight .NET 9 microservices, taken from an empty repository to three live white-label deployments.",
+    landingSummary:
+      "Backend architecture for a multi-client OTA SaaS platform: .NET 9 microservices, taken from an empty repository to live white-label deployments.",
+    org: "Akij iBOS Ltd.",
+    orgUrl: "https://ibos.io/",
+    role: "Backend architect · Engineering Team Lead",
+    from: "2024-11",
+    to: "present",
+    stack: [".NET 9", "gRPC", "SQL Server", "MongoDB", "DynamoDB", "Drools", "Docker", "Kubernetes"],
+    metrics: [
+      { v: "742", k: "B2B agency accounts" },
+      { v: "1,000+", k: "bookings a month" },
+      { v: "3", k: "live white-label deployments" },
+      { v: "8", k: ".NET 9 microservices" },
+      { v: "11", k: "supplier and GDS connectors" },
+      { v: "~4 s", k: "to the first live fare on screen" },
+      { v: "96", k: "pricing rules run by operations" },
+      { v: "10", k: "engineers on the team I lead" },
+    ],
+    context: [
+      "Travilo is a multi-client online travel platform built at Akij iBOS Ltd., a sister concern of Akij Resource Ltd. One platform serves three kinds of client: B2B travel agencies, B2C travellers, and API and consortium partners.",
+      "Each client runs as its own white-label deployment. Three are live today, serving 742 B2B agency accounts and more than 1,000 bookings a month.",
+    ],
+    problem: [
+      "Two things shaped the architecture.",
+      "First, every client sells on its own commercial terms. If pricing, markup, discount and ancillary logic lived in code, every commercial change would become a deployment, and engineering would sit in the path of the business.",
+      "Second, a search fans out to many suppliers at once. Waiting for the slowest one before showing anything would make every search as slow as the worst connector.",
+    ],
+    architecture: {
+      channels: [
+        { label: "B2B agencies" },
+        { label: "B2C travellers" },
+        { label: "API and consortium partners" },
+        { label: "Admin panel", note: "central platform management" },
+      ],
+      core: [
+        { label: "Search aggregation", note: "gRPC fan-out, streamed over SSE" },
+        { label: "Pricing and rules", note: "tenant configuration, not code" },
+        { label: "Booking and platform services", note: "eight .NET 9 microservices" },
+        { label: "Observability", note: "every incoming and inter-service call" },
+      ],
+      data: "SQL Server · MongoDB · DynamoDB",
+      suppliers: [
+        { label: "Sabre" },
+        { label: "Amadeus" },
+        { label: "Travelport" },
+        { label: "Eight more connectors", note: "eleven supplier and GDS connectors in all" },
+      ],
+    },
+    built: [
+      {
+        title: "Service architecture",
+        body: "Eight .NET 9 microservices with clear service boundaries, plus an admin panel for central platform management. Packaged with Docker, deployed on Kubernetes, and taken from an empty repository to three live deployments.",
+      },
+      {
+        title: "Flight-search aggregation",
+        body: "A gRPC fan-out to eleven supplier and GDS connectors, including Sabre, Amadeus and Travelport. Results stream to the browser over Server-Sent Events, so the first fare is on screen in about four seconds and more than 1,000 live fares arrive in under ten.",
+      },
+      {
+        title: "Pricing as configuration",
+        body: "Pricing, markup, discount and ancillary logic modelled as tenant configuration rather than code. 96 live rules now sit in the operations team's hands, and commercial changes no longer wait for a deployment.",
+      },
+      {
+        title: "Observability",
+        body: "Every incoming and inter-service call is captured behind one abstraction over Azure, AWS and Cloudflare. It is now the primary tool for production diagnosis and on-call triage.",
+      },
+    ],
+    leadership: [
+      "I lead a team of ten across backend, frontend and supplier integration. The work is daily scrum, code review, pair programming and mentoring, alongside on-call production support for the live platform.",
+    ],
+    outcome: [
+      "Three white-label deployments in production, serving 742 B2B agency accounts and more than 1,000 bookings a month.",
+      "Commercial changes ship as configuration run by operations, instead of code changes run by engineering.",
+      "Production problems are diagnosed from one place, because every call into and between services is already captured.",
+    ],
+  },
+];
+
+// --- Recommendations --------------------------------------------------------
+// Real words from real people, quoted with their permission. The Folio home
+// shows this section only when the list is non-empty, so leave it empty
+// rather than filling it with placeholders.
+export type Recommendation = {
+  quote: string;
+  name: string;
+  role: string;
+  url?: string;
+};
+
+export const recommendations: Recommendation[] = [];
+
+// --- Research themes --------------------------------------------------------
+// How the papers group, read off their own tags and keywords. The keys point
+// into `publications`.
+export type ResearchTheme = { title: string; summary: string; papers: string[] };
+
+export const researchThemes: ResearchTheme[] = [
+  {
+    title: "Applied machine learning",
+    summary: "Machine learning and quantitative analysis on health, agriculture and education data.",
+    papers: ["Johora2024CovidPrediction", "RAHMAN2021100037", "SAIFUZZAMAN2021100034", "Moon2021PlantDisease", "Yesmin2022Education"],
+  },
+  {
+    title: "Information security",
+    summary: "Deep-learning intrusion detection and chaos-based encryption.",
+    papers: ["Islam2023CyberSecurity", "Johora2023ChaoticEncryption"],
+  },
+  {
+    title: "IoT and applied systems",
+    summary: "Connected infrastructure and the platforms around it: smart sewerage, mobile and e-learning systems.",
+    papers: ["Rahman2020SmartSewer", "Rahman2021TraFoo", "SHETU2021100038"],
+  },
+];
+
+// Where the research is heading, in the words of the About page.
+export const researchNext =
+  "Next: a deliberate return to formal research, in a doctoral program where configurable systems, security and applied ML meet.";

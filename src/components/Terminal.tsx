@@ -1,12 +1,27 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
+  type ComponentType,
   type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  ArrowUpRight,
+  Check,
+  Copy,
+  Facebook,
+  Github,
+  GraduationCap,
+  IdCard,
+  Linkedin,
+  LoaderCircle,
+  Lock,
+  Mail,
+  X,
+} from "lucide-react";
 import {
   changePassword,
   ensureAuth,
@@ -15,73 +30,142 @@ import {
   markUnlocked,
   verifyCredentials,
 } from "@/lib/adminAuth";
-import { fetchVisits, summarise } from "@/lib/analytics";
-import { useTemplate, type TemplateId } from "@/lib/template";
-import { pushRemoteTemplate, fetchRemoteTemplate } from "@/lib/templateRemote";
+import { fetchVisits, summarise, type VisitSummary } from "@/lib/analytics";
+import { getBinId, hasEnvMasterKey, isBinConfigured, type VisitEntry } from "@/lib/binStore";
+import { fetchRemoteState } from "@/lib/remote";
 import {
-  getBinId,
-  hasEnvMasterKey,
-  isBinConfigured,
-} from "@/lib/binStore";
-import { getChatbotEnabled, setChatbotEnabled } from "@/lib/settings";
-import { profile } from "@/lib/content";
+  getChatbotEnabled,
+  getHireMeEnabled,
+  setChatbotEnabled,
+  useAvatarUrl,
+  useCvDownload,
+} from "@/lib/settings";
+import { DECKS, startPresentation } from "@/lib/presentation";
+import { deckForLens, getLens } from "@/lib/lens";
+import { useTheme } from "@/hooks/useTheme";
+import { caseStudies, freelance, profile } from "@/lib/content";
+import { FOLIO_NAV } from "@/site/nav";
+import { WhatsAppIcon } from "@/site/icons";
+import { useCopy } from "@/site/copy";
+import "./terminal.css";
 
 const HISTORY_STORAGE = "portfolio.terminal.history";
-const HOST = "portfolio";
+const MASK = "••••••••";
 
-type Tone = "ok" | "err" | "warn" | "info" | "dim";
-type Line =
-  | { kind: "echo"; text: string }
-  | { kind: "out"; text: string; tone?: Tone }
-  | { kind: "block"; text: string }; // pre-formatted block (tables, banners)
+type Tone = "ok" | "err" | "warn" | "muted";
+type Page = { to: string; label: string; names: string[] };
+type Row = { k: string; v: string; tone?: Tone };
+
+type Out =
+  | { kind: "text"; text: string; tone?: Tone }
+  | { kind: "answer"; label: string; value: string }
+  | { kind: "rows"; rows: Row[] }
+  | { kind: "welcome" }
+  | { kind: "help"; authed: boolean }
+  | { kind: "pages"; pages: Page[]; here: string }
+  | { kind: "contact" }
+  | { kind: "kpis"; s: VisitSummary }
+  | { kind: "dashboard"; s: VisitSummary }
+  | { kind: "visits"; visits: VisitEntry[] };
+
+type Status = "run" | "ok" | "err";
+type Entry = { id: number; cmd?: string; at: number; status: Status; out: Out[] };
 
 type Stage =
   | { kind: "idle" }
-  | { kind: "awaiting-username" }
-  | { kind: "awaiting-password"; username: string }
-  | { kind: "awaiting-cur-password" }
-  | { kind: "awaiting-new-password"; current: string }
-  | { kind: "awaiting-confirm-password"; current: string; next: string };
+  | { kind: "username"; entry: number }
+  | { kind: "password"; entry: number; username: string }
+  | { kind: "current"; entry: number }
+  | { kind: "next"; entry: number; current: string }
+  | { kind: "confirm"; entry: number; current: string; next: string };
 
-const BANNER = String.raw`
-  ┌─────────────────────────────────────────────────────────┐
-  │   ███╗   ███╗ ██████╗ ███████╗███████╗██╗██╗  ██╗      │
-  │   ████╗ ████║██╔═══██╗██╔════╝██╔════╝██║██║ ██╔╝      │
-  │   ██╔████╔██║██║   ██║███████╗█████╗  ██║█████╔╝       │
-  │   ██║╚██╔╝██║██║   ██║╚════██║██╔══╝  ██║██╔═██╗       │
-  │   ██║ ╚═╝ ██║╚██████╔╝███████║██║     ██║██║  ██╗      │
-  │   ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝      │
-  └─────────────────────────────────────────────────────────┘
-  Portfolio Studio Console · v1.0  ·  type ' help ' for commands
-`;
+type Group = "explore" | "terminal" | "studio";
+type Spec = { name: string; args?: string; desc: string; aliases?: string[]; group: Group; auth?: boolean };
 
+const COMMANDS: Spec[] = [
+  { name: "about", desc: "Who I am, in short", aliases: ["whois"], group: "explore" },
+  { name: "contact", desc: "Ways to reach me", group: "explore" },
+  { name: "ls", desc: "The pages of this site", aliases: ["pages"], group: "explore" },
+  { name: "open", args: "<page>", desc: "Go to a page", aliases: ["cd", "goto"], group: "explore" },
+  { name: "cv", desc: "Download or open my CV", aliases: ["resume"], group: "explore" },
+  { name: "present", args: "[deck]", desc: "Start a slide deck", group: "explore" },
+  { name: "help", desc: "This list", aliases: ["?"], group: "terminal" },
+  { name: "theme", args: "[light|dark]", desc: "Switch the site theme", group: "terminal" },
+  { name: "whoami", desc: "Who is signed in here", group: "terminal" },
+  { name: "clear", desc: "Clear the screen", aliases: ["cls"], group: "terminal" },
+  { name: "exit", desc: "Close the terminal", aliases: ["quit", "close"], group: "terminal" },
+  { name: "login", args: "[user]", desc: "Sign in to the studio", group: "studio" },
+  { name: "logout", desc: "Sign out on this browser", group: "studio", auth: true },
+  { name: "passwd", desc: "Change the admin password", group: "studio", auth: true },
+  { name: "stats", desc: "Visitor totals", aliases: ["summary"], group: "studio", auth: true },
+  { name: "dashboard", desc: "Visitor analytics in full", aliases: ["analytics"], group: "studio", auth: true },
+  { name: "visits", args: "[n]", desc: "The most recent visits", aliases: ["tail"], group: "studio", auth: true },
+  { name: "remote", desc: "The storage connection", aliases: ["bin"], group: "studio", auth: true },
+  { name: "chatbot", args: "[on|off]", desc: "The site assistant", group: "studio" },
+  { name: "studio", desc: "Open the Studio Console", aliases: ["console", "admin"], group: "studio" },
+];
+
+const GROUPS: { id: Group; title: string }[] = [
+  { id: "explore", title: "Explore" },
+  { id: "terminal", title: "Terminal" },
+  { id: "studio", title: "Studio" },
+];
+
+const ALIAS = new Map<string, string>(
+  COMMANDS.flatMap((c) => [c.name, ...(c.aliases ?? [])].map((w) => [w, c.name] as [string, string])),
+);
+const WORDS = [...ALIAS.keys()].filter((w) => w !== "?");
+const STARTERS = ["help", "about", "contact", "ls", "cv", "present"];
+
+type IconProps = { size?: number | string; strokeWidth?: number | string; className?: string };
+type ChannelSpec = { label: string; href: string; copy: string; what: string; Icon: ComponentType<IconProps> };
+
+const CHANNELS: ChannelSpec[] = [
+  { label: "Email", href: `mailto:${profile.email}`, copy: profile.email, what: "Email address", Icon: Mail },
+  { label: "LinkedIn", href: profile.links.linkedin, copy: profile.links.linkedin, what: "LinkedIn link", Icon: Linkedin },
+  { label: "GitHub", href: profile.links.github, copy: profile.links.github, what: "GitHub link", Icon: Github },
+  { label: "Google Scholar", href: profile.links.scholar, copy: profile.links.scholar, what: "Google Scholar link", Icon: GraduationCap },
+  { label: "ORCID", href: profile.links.orcid, copy: profile.links.orcid, what: "ORCID link", Icon: IdCard },
+  { label: "WhatsApp", href: profile.links.whatsapp, copy: profile.phone, what: "WhatsApp number", Icon: WhatsAppIcon },
+  { label: "Facebook", href: profile.links.facebook, copy: profile.links.facebook, what: "Facebook link", Icon: Facebook },
+];
+
+const say = (text: string, tone?: Tone): Out => ({ kind: "text", text, tone });
+
+// A keyboard console over the site (Alt+T): explore it, reach out, start a deck,
+// or sign in and read the studio's analytics without opening the console.
 export default function Terminal() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { templates, template, setTemplate } = useTemplate();
+  const { pathname, search } = useLocation();
+  const avatar = useAvatarUrl();
+  const cv = useCvDownload();
+  const { setTheme } = useTheme();
 
   const [open, setOpen] = useState(false);
-  const [lines, setLines] = useState<Line[]>([]);
+  const [entries, setEntries] = useState<Entry[]>(() => [
+    { id: 0, at: Date.now(), status: "ok", out: [{ kind: "welcome" }] },
+  ]);
   const [input, setInput] = useState("");
   const [stage, setStage] = useState<Stage>({ kind: "idle" });
-  const [authed, setAuthed] = useState<boolean>(() => isUnlocked());
+  const [authed, setAuthed] = useState(() => isUnlocked());
   const [history, setHistory] = useState<string[]>(() => loadHistory());
-  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const [cursor, setCursor] = useState<number | null>(null);
 
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const logRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const nextId = useRef(1);
 
-  const hideOnRoute = false; // terminal is always available, even on /admin
+  const close = useCallback(() => setOpen(false), []);
 
-  // ---- Alt+T toggle, Esc closes ----
+  // Alt+T toggles it anywhere. The key code is matched, not the character, so
+  // macOS (where Alt+T types a dagger) works too.
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.altKey && (e.key === "t" || e.key === "T")) {
+      if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === "KeyT") {
         e.preventDefault();
-        setOpen((v) => !v);
-        return;
-      }
-      if (e.key === "Escape" && open) {
+        if (!open) setAuthed(isUnlocked());
+        setOpen(!open);
+      } else if (e.key === "Escape" && open) {
         setOpen(false);
       }
     };
@@ -89,833 +173,855 @@ export default function Terminal() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // ---- focus input on open + seed banner first time ----
   useEffect(() => {
     if (!open) return;
-    const t = window.setTimeout(() => inputRef.current?.focus(), 60);
-    if (lines.length === 0) {
-      const intro: Line[] = [
-        { kind: "block", text: BANNER },
-        {
-          kind: "out",
-          text: authed
-            ? `Welcome back. Type 'help' to see what's available.`
-            : `Not signed in.  Type 'login' to authenticate, or 'help' for commands.`,
-          tone: "info",
-        },
-        { kind: "out", text: "", tone: "dim" },
-      ];
-      setLines(intro);
-    }
-    return () => window.clearTimeout(t);
-  }, [open, authed, lines.length]);
+    const back = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const t = window.setTimeout(() => inputRef.current?.focus(), 20);
+    return () => {
+      window.clearTimeout(t);
+      document.body.style.overflow = overflow;
+      back?.focus();
+    };
+  }, [open]);
 
-  // ---- autoscroll on new lines ----
+  // Follow new output, but never past the top of the latest command: a long
+  // answer (help, a dashboard) is read from its first line.
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [lines, open]);
+    const el = logRef.current;
+    const last = el?.lastElementChild as HTMLElement | null | undefined;
+    if (!el || !last) return;
+    el.scrollTop = last.offsetHeight > el.clientHeight ? last.offsetTop - el.offsetTop : el.scrollHeight;
+  }, [entries, open]);
 
-  const promptHost = useMemo(() => {
-    if (!authed) return `guest@${HOST}`;
-    return `mosfik@${HOST}`;
-  }, [authed]);
-
-  const promptSymbol = authed ? "#" : "$";
-
-  // ----------------------------------------------------------------
-  // command pipeline
-  // ----------------------------------------------------------------
-
-  const push = useCallback((line: Line) => setLines((ls) => [...ls, line]), []);
-  const pushOut = useCallback((text: string, tone?: Tone) => {
-    setLines((ls) => [...ls, { kind: "out", text, tone }]);
+  const begin = useCallback((cmd: string, out: Out[], status: Status = "ok") => {
+    const id = nextId.current++;
+    setEntries((es) => [...es, { id, cmd, at: Date.now(), status, out }]);
+    return id;
   }, []);
-  const pushEcho = useCallback(
-    (cmd: string, masked = false) => {
-      const shown = masked ? "•".repeat(Math.max(1, cmd.length)) : cmd;
-      const prefix = stage.kind.startsWith("awaiting")
-        ? "" // prompt for those is the inline label; we still echo for transcript
-        : `${promptHost}:${shortPath(location.pathname)}${promptSymbol} `;
-      push({ kind: "echo", text: `${prefix}${shown}` });
-    },
-    [push, promptHost, promptSymbol, location.pathname, stage.kind],
-  );
 
-  const runCommand = useCallback(
-    async (raw: string) => {
-      const cmd = raw.trim();
+  const append = useCallback((id: number, out: Out[], status?: Status) => {
+    setEntries((es) =>
+      es.map((e) => (e.id === id ? { ...e, out: [...e.out, ...out], status: status ?? e.status } : e)),
+    );
+  }, []);
 
-      // ---- staged interactive input ----
-      if (stage.kind === "awaiting-username") {
-        pushEcho(cmd);
-        if (!cmd) {
-          pushOut("Login cancelled.", "warn");
-          setStage({ kind: "idle" });
-          return;
-        }
-        setStage({ kind: "awaiting-password", username: cmd });
-        pushOut("password: ", "dim");
+  const remember = (line: string) => {
+    const next = [...history.filter((h) => h !== line), line].slice(-50);
+    setHistory(next);
+    saveHistory(next);
+    setCursor(null);
+  };
+
+  const answer = async (raw: string) => {
+    const s = stage;
+    if (s.kind === "idle") return;
+    const cancel = (note: string) => {
+      append(s.entry, [say(note, "muted")]);
+      setStage({ kind: "idle" });
+    };
+    switch (s.kind) {
+      case "username": {
+        const username = raw.trim();
+        if (!username) return cancel("Sign-in cancelled.");
+        append(s.entry, [{ kind: "answer", label: "username", value: username }]);
+        setStage({ kind: "password", entry: s.entry, username });
         return;
       }
-      if (stage.kind === "awaiting-password") {
-        pushEcho(cmd, true);
-        const res = await verifyCredentials(stage.username, cmd);
+      case "password": {
+        if (!raw) return cancel("Sign-in cancelled.");
+        append(s.entry, [{ kind: "answer", label: "password", value: MASK }], "run");
+        setStage({ kind: "idle" });
+        const res = await verifyCredentials(s.username, raw);
         if (res.kind === "ok") {
           markUnlocked();
           setAuthed(true);
-          pushOut(`✓  Authenticated as ${stage.username}`, "ok");
-          pushOut("Run 'dashboard', 'stats', or 'help' to continue.", "info");
+          append(s.entry, [say(`Signed in as ${s.username}.`, "ok"), say("Try `stats`, `dashboard` or `visits`.", "muted")], "ok");
         } else {
-          pushOut(`✗  ${res.reason}`, "err");
+          append(s.entry, [say(res.reason, "err")], "err");
         }
+        return;
+      }
+      case "current":
+        if (!raw) return cancel("Cancelled.");
+        append(s.entry, [{ kind: "answer", label: "current", value: MASK }]);
+        setStage({ kind: "next", entry: s.entry, current: raw });
+        return;
+      case "next":
+        if (!raw) return cancel("Cancelled.");
+        append(s.entry, [{ kind: "answer", label: "new", value: MASK }]);
+        if (raw.length < 8) {
+          append(s.entry, [say("The new password needs at least 8 characters.", "err")], "err");
+          setStage({ kind: "idle" });
+          return;
+        }
+        setStage({ kind: "confirm", entry: s.entry, current: s.current, next: raw });
+        return;
+      case "confirm": {
+        append(s.entry, [{ kind: "answer", label: "confirm", value: MASK }], "run");
         setStage({ kind: "idle" });
-        return;
-      }
-      if (stage.kind === "awaiting-cur-password") {
-        pushEcho(cmd, true);
-        if (!cmd) {
-          pushOut("Cancelled.", "warn");
-          setStage({ kind: "idle" });
+        if (raw !== s.next) {
+          append(s.entry, [say("The two new passwords do not match.", "err")], "err");
           return;
         }
-        setStage({ kind: "awaiting-new-password", current: cmd });
-        pushOut("new password: ", "dim");
+        const res = await changePassword(s.current, s.next);
+        append(s.entry, [res.kind === "ok" ? say("Password updated.", "ok") : say(res.reason, "err")], res.kind === "ok" ? "ok" : "err");
         return;
       }
-      if (stage.kind === "awaiting-new-password") {
-        pushEcho(cmd, true);
-        if (cmd.length < 8) {
-          pushOut("✗  New password must be at least 8 characters.", "err");
-          setStage({ kind: "idle" });
-          return;
-        }
-        setStage({ kind: "awaiting-confirm-password", current: stage.current, next: cmd });
-        pushOut("confirm: ", "dim");
-        return;
-      }
-      if (stage.kind === "awaiting-confirm-password") {
-        pushEcho(cmd, true);
-        if (cmd !== stage.next) {
-          pushOut("✗  Confirmation doesn't match.", "err");
-          setStage({ kind: "idle" });
-          return;
-        }
-        const res = await changePassword(stage.current, stage.next);
-        if (res.kind === "ok") {
-          pushOut("✓  Password updated.", "ok");
-        } else {
-          pushOut(`✗  ${res.reason}`, "err");
-        }
-        setStage({ kind: "idle" });
-        return;
-      }
-
-      // ---- regular command parsing ----
-      pushEcho(raw);
-      if (!cmd) return;
-
-      // history bookkeeping
-      const nextHistory = [...history.filter((h) => h !== cmd), cmd].slice(-50);
-      setHistory(nextHistory);
-      saveHistory(nextHistory);
-      setHistoryIndex(null);
-
-      const [head, ...args] = cmd.split(/\s+/);
-      const name = head.toLowerCase();
-      switch (name) {
-        case "help":
-        case "?":
-          renderHelp(pushOut, authed);
-          break;
-
-        case "clear":
-        case "cls":
-          setLines([]);
-          break;
-
-        case "exit":
-        case "quit":
-        case "close":
-          setOpen(false);
-          break;
-
-        case "whoami": {
-          const auth = await ensureAuth();
-          if (authed && auth) {
-            pushOut(`${auth.username} (admin)`, "ok");
-            pushOut(`session unlocked locally`, "dim");
-          } else {
-            pushOut("guest (unauthenticated)", "warn");
-          }
-          break;
-        }
-
-        case "login": {
-          if (authed) {
-            pushOut("Already signed in. Use 'logout' first.", "warn");
-            break;
-          }
-          if (args.length >= 1) {
-            // login <username>
-            setStage({ kind: "awaiting-password", username: args.join(" ") });
-            pushOut("password: ", "dim");
-          } else {
-            setStage({ kind: "awaiting-username" });
-            pushOut("username: ", "dim");
-          }
-          break;
-        }
-
-        case "logout": {
-          if (!authed) {
-            pushOut("Already signed out.", "warn");
-            break;
-          }
-          markLocked();
-          setAuthed(false);
-          pushOut("✓  Signed out.", "ok");
-          break;
-        }
-
-        case "passwd": {
-          if (!authed) {
-            pushOut("✗  Login first.", "err");
-            break;
-          }
-          setStage({ kind: "awaiting-cur-password" });
-          pushOut("current password: ", "dim");
-          break;
-        }
-
-        case "stats":
-        case "summary": {
-          if (!authed) {
-            pushOut("✗  Login first.", "err");
-            break;
-          }
-          pushOut("Loading…", "dim");
-          const visits = await fetchVisits();
-          const s = summarise(visits);
-          pushOut("", "dim");
-          pushOut(`total page views ........ ${s.total}`, "info");
-          pushOut(`unique sessions ......... ${s.sessions}`, "info");
-          pushOut(`unique IPs .............. ${s.uniqueIps}`, "info");
-          pushOut(
-            `top country ............. ${s.byCountry[0]?.name ?? "—"}${
-              s.byCountry[0] ? `  (${s.byCountry[0].count})` : ""
-            }`,
-            "info",
-          );
-          pushOut(
-            `top device .............. ${s.byDevice[0]?.name ?? "—"}${
-              s.byDevice[0] ? `  (${s.byDevice[0].count})` : ""
-            }`,
-            "info",
-          );
-          pushOut(
-            `top browser ............. ${s.byBrowser[0]?.name ?? "—"}${
-              s.byBrowser[0] ? `  (${s.byBrowser[0].count})` : ""
-            }`,
-            "info",
-          );
-          break;
-        }
-
-        case "visits":
-        case "tail": {
-          if (!authed) {
-            pushOut("✗  Login first.", "err");
-            break;
-          }
-          const limit = parseInt(args[0] ?? "10", 10) || 10;
-          const visits = await fetchVisits();
-          const recent = visits.slice(-limit).reverse();
-          if (recent.length === 0) {
-            pushOut("(no visits yet)", "dim");
-            break;
-          }
-          push({ kind: "block", text: renderVisitsTable(recent) });
-          break;
-        }
-
-        case "templates":
-        case "ls": {
-          renderTemplates(pushOut, templates, template);
-          break;
-        }
-
-        case "set-template":
-        case "use": {
-          if (!authed) {
-            pushOut("✗  Login first.", "err");
-            break;
-          }
-          const id = args[0];
-          if (!id) {
-            pushOut("usage: set-template <id>", "warn");
-            break;
-          }
-          const meta = templates.find((t) => t.id === id);
-          if (!meta) {
-            pushOut(`✗  unknown template: ${id}`, "err");
-            break;
-          }
-          setTemplate(id as TemplateId);
-          pushOut(`Switching to '${meta.name}' locally…`, "dim");
-          const res = await pushRemoteTemplate(id as TemplateId);
-          if (res.kind === "ok") pushOut(`✓  pushed remotely. visitors see it on next load.`, "ok");
-          else pushOut(`! local only — remote: ${res.reason}`, "warn");
-          break;
-        }
-
-        case "dashboard":
-        case "console":
-        case "analytics": {
-          if (!authed) {
-            pushOut("✗  Login first.", "err");
-            break;
-          }
-          pushOut("Loading dashboard…", "dim");
-          const visits = await fetchVisits();
-          const s = summarise(visits);
-          push({ kind: "block", text: renderDashboard(s) });
-          pushOut("", "dim");
-          pushOut("commands: 'visits [N]' · 'templates' · 'passwd' · 'stats'", "dim");
-          break;
-        }
-
-        case "open":
-        case "goto":
-        case "cd": {
-          const p = args[0] || "/";
-          if (p.startsWith("/admin")) {
-            pushOut("✗  admin pages stay in the terminal. Try 'dashboard', 'templates', 'passwd'.", "err");
-            break;
-          }
-          navigate(p.startsWith("/") ? p : `/${p}`);
-          pushOut(`→  navigating public site to ${p}`, "info");
-          setOpen(false);
-          break;
-        }
-
-        case "about":
-        case "whois": {
-          pushOut(`${profile.name} — ${profile.role}`, "ok");
-          pushOut(profile.tagline, "info");
-          pushOut(`location: ${profile.location}`, "dim");
-          pushOut(`email:    ${profile.email}`, "dim");
-          pushOut(`github:   ${profile.links.github}`, "dim");
-          pushOut(`linkedin: ${profile.links.linkedin}`, "dim");
-          break;
-        }
-
-        case "echo":
-          pushOut(args.join(" "));
-          break;
-
-        case "date":
-          pushOut(new Date().toString(), "dim");
-          break;
-
-        case "banner":
-          push({ kind: "block", text: BANNER });
-          break;
-
-        case "chatbot": {
-          const sub = (args[0] ?? "status").toLowerCase();
-          if (sub === "status") {
-            const on = getChatbotEnabled();
-            pushOut(`chatbot: ${on ? "ON" : "OFF"}`, on ? "ok" : "warn");
-            pushOut("toggle with: chatbot on  |  chatbot off", "dim");
-            break;
-          }
-          if (!authed) {
-            pushOut("✗  Login required to change settings.", "err");
-            break;
-          }
-          if (sub === "on" || sub === "enable") {
-            setChatbotEnabled(true);
-            pushOut("✓  chatbot enabled.", "ok");
-            break;
-          }
-          if (sub === "off" || sub === "disable") {
-            setChatbotEnabled(false);
-            pushOut("✓  chatbot disabled.", "ok");
-            break;
-          }
-          pushOut("usage: chatbot [status|on|off]", "warn");
-          break;
-        }
-
-        case "remote":
-        case "bin": {
-          pushOut("Loading remote info…", "dim");
-          const r = await fetchRemoteTemplate();
-          push({ kind: "block", text: renderRemoteInfo(r, getBinId(), isBinConfigured(), hasEnvMasterKey()) });
-          break;
-        }
-
-        default:
-          pushOut(`command not found: ${head}`, "err");
-          pushOut(`type 'help' to see available commands`, "dim");
-      }
-    },
-    [
-      authed,
-      history,
-      location.pathname,
-      navigate,
-      push,
-      pushEcho,
-      pushOut,
-      setTemplate,
-      stage,
-      template,
-      templates,
-    ],
-  );
-
-  // ----------------------------------------------------------------
-  // input handlers
-  // ----------------------------------------------------------------
-
-  const onKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const cmd = input;
-      setInput("");
-      void runCommand(cmd);
-      return;
-    }
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (history.length === 0) return;
-      const next = historyIndex === null ? history.length - 1 : Math.max(0, historyIndex - 1);
-      setHistoryIndex(next);
-      setInput(history[next] ?? "");
-      return;
-    }
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (historyIndex === null) return;
-      const next = historyIndex + 1;
-      if (next >= history.length) {
-        setHistoryIndex(null);
-        setInput("");
-      } else {
-        setHistoryIndex(next);
-        setInput(history[next] ?? "");
-      }
-      return;
-    }
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const completed = autoComplete(input, authed);
-      if (completed) setInput(completed);
-      return;
-    }
-    if (e.key === "l" && e.ctrlKey) {
-      e.preventDefault();
-      setLines([]);
     }
   };
 
-  if (hideOnRoute) return null;
+  const run = async (raw: string) => {
+    if (stage.kind !== "idle") return answer(raw);
+    const line = raw.trim();
+    if (!line) return;
+    remember(line);
+    const [head, ...rest] = line.split(/\s+/);
+    const arg = rest.join(" ");
+    const signIn = () => void begin(line, [say("Sign in first: run `login`.", "err")], "err");
 
-  // ----------------------------------------------------------------
-  // render
-  // ----------------------------------------------------------------
+    switch (ALIAS.get(head.toLowerCase())) {
+      case "help":
+        begin(line, [{ kind: "help", authed }]);
+        return;
+      case "about":
+        begin(line, [
+          {
+            kind: "rows",
+            rows: [
+              { k: "Name", v: profile.name },
+              { k: "Role", v: profile.roleLong },
+              { k: "Focus", v: "Backend architecture and applied machine learning" },
+              { k: "Based in", v: profile.location },
+            ],
+          },
+          say(profile.tagline),
+          say("Run `contact` to reach me, or `open work` to see the work.", "muted"),
+        ]);
+        return;
+      case "contact":
+        begin(line, [{ kind: "contact" }]);
+        return;
+      case "ls":
+        begin(line, [{ kind: "pages", pages: sitePages(), here: pathname }]);
+        return;
+      case "open": {
+        if (!arg) return void begin(line, [say("Which page? Run `ls` to see them.", "warn")], "err");
+        if (/^[~/]*admin/i.test(arg)) return void begin(line, [say("The studio opens with `studio`.", "warn")], "err");
+        const page = resolvePage(arg, sitePages());
+        if (!page) return void begin(line, [say(`No page called ${arg}. Run \`ls\` to see them.`, "err")], "err");
+        begin(line, [say(`Opening ${page.label}.`, "ok")]);
+        navigate(page.to);
+        close();
+        return;
+      }
+      case "cv": {
+        const noun = cv.label === "Resume" ? "resume" : "CV";
+        begin(line, [say(cv.download ? `Downloading the ${noun}.` : `Opening the ${noun} in a new tab.`, "ok")]);
+        openLink(cv.href, cv.download);
+        return;
+      }
+      case "present": {
+        const want = arg.toLowerCase();
+        const deck = want
+          ? DECKS.find((d) => d.id === want || d.name.toLowerCase() === want)
+          : DECKS.find((d) => d.id === deckForLens(getLens()));
+        if (!deck) {
+          const names = DECKS.map((d) => `\`present ${d.id}\``).join(", ");
+          return void begin(line, [say(`No deck called ${arg}. Try ${names}.`, "err")], "err");
+        }
+        begin(line, [say(`Starting the ${deck.name} deck.`, "ok")]);
+        close();
+        startPresentation(deck.id);
+        return;
+      }
+      case "theme": {
+        const want = arg.toLowerCase();
+        if (want && want !== "light" && want !== "dark") {
+          return void begin(line, [say("Use `theme light` or `theme dark`.", "err")], "err");
+        }
+        const next = want === "light" || want === "dark" ? want : document.documentElement.classList.contains("dark") ? "light" : "dark";
+        setTheme(next);
+        begin(line, [say(`The site is now ${next}.`, "ok")]);
+        return;
+      }
+      case "whoami": {
+        if (!authed) return void begin(line, [say("Guest. Run `login` to sign in.", "muted")]);
+        const id = begin(line, [], "run");
+        const auth = await ensureAuth();
+        if (auth) append(id, [say(`${auth.username}, signed in on this browser.`, "ok")], "ok");
+        else append(id, [say("Signed in here, but the login store did not answer.", "warn")], "err");
+        return;
+      }
+      case "clear":
+        setEntries([]);
+        return;
+      case "exit":
+        close();
+        return;
+      case "login": {
+        if (authed) return void begin(line, [say("Already signed in. Run `logout` first.", "warn")]);
+        const id = begin(line, [say("Sign in to the studio. Leave a prompt empty to cancel.", "muted")]);
+        if (arg) {
+          append(id, [{ kind: "answer", label: "username", value: arg }]);
+          setStage({ kind: "password", entry: id, username: arg });
+        } else {
+          setStage({ kind: "username", entry: id });
+        }
+        return;
+      }
+      case "logout":
+        if (!authed) return void begin(line, [say("Not signed in.", "muted")]);
+        markLocked();
+        setAuthed(false);
+        begin(line, [say("Signed out on this browser.", "ok")]);
+        return;
+      case "passwd": {
+        if (!authed) return signIn();
+        const id = begin(line, [say("Change the admin password. Leave a prompt empty to cancel.", "muted")]);
+        setStage({ kind: "current", entry: id });
+        return;
+      }
+      case "stats":
+      case "dashboard": {
+        if (!authed) return signIn();
+        const full = ALIAS.get(head.toLowerCase()) === "dashboard";
+        const id = begin(line, [], "run");
+        const s = summarise(await fetchVisits());
+        append(id, [full ? { kind: "dashboard", s } : { kind: "kpis", s }], "ok");
+        return;
+      }
+      case "visits": {
+        if (!authed) return signIn();
+        const n = Math.min(50, Math.max(1, parseInt(arg, 10) || 10));
+        const id = begin(line, [], "run");
+        const visits = (await fetchVisits()).slice(-n).reverse();
+        append(id, visits.length ? [{ kind: "visits", visits }] : [say("No visits recorded yet.", "muted")], "ok");
+        return;
+      }
+      case "remote": {
+        if (!authed) return signIn();
+        const id = begin(line, [], "run");
+        const r = await fetchRemoteState();
+        const on = isBinConfigured();
+        const bin = getBinId();
+        const rows: Row[] = [
+          { k: "Status", v: !on ? "Not configured" : r ? "Connected" : "Configured, not answering", tone: on && r ? "ok" : "warn" },
+          { k: "Provider", v: "JSONBin v3" },
+          { k: "Bin", v: bin ? `ends ${bin.slice(-6)}` : "Not set" },
+          { k: "Master key", v: hasEnvMasterKey() ? "From the build" : "Stored in this browser" },
+          { k: "CV link", v: r?.cvUrl ?? "Not published" },
+          { k: "Hire me", v: r?.hireMe === undefined ? "Not published" : r.hireMe ? "On" : "Off" },
+          { k: "Updated", v: r?.updatedAt ? new Date(r.updatedAt).toLocaleString() : "Never" },
+        ];
+        append(id, [{ kind: "rows", rows }], on && r ? "ok" : "err");
+        return;
+      }
+      case "chatbot": {
+        const want = arg.toLowerCase();
+        if (!want || want === "status") {
+          const on = getChatbotEnabled();
+          begin(line, [
+            say(`The assistant is ${on ? "on" : "off"}.`, on ? "ok" : "muted"),
+            ...(authed ? [say("Change it with `chatbot on` or `chatbot off`.", "muted")] : []),
+          ]);
+          return;
+        }
+        if (!authed) return signIn();
+        if (want !== "on" && want !== "off") return void begin(line, [say("Use `chatbot on` or `chatbot off`.", "err")], "err");
+        setChatbotEnabled(want === "on");
+        begin(line, [say(`The assistant is now ${want}.`, "ok")]);
+        return;
+      }
+      case "studio":
+        begin(line, [say("Opening the Studio Console.", "ok")]);
+        close();
+        navigate(`${pathname}${search}#admin`);
+        return;
+      default: {
+        const near = closest(head.toLowerCase());
+        begin(
+          line,
+          [say(`Unknown command: ${head}`, "err"), say(near ? `Did you mean \`${near}\`?` : "Run `help` to see what is available.", "muted")],
+          "err",
+        );
+      }
+    }
+  };
 
-  const maskedStage =
-    stage.kind === "awaiting-password" ||
-    stage.kind === "awaiting-cur-password" ||
-    stage.kind === "awaiting-new-password" ||
-    stage.kind === "awaiting-confirm-password";
+  const exec = (cmd: string) => {
+    if (stage.kind !== "idle") return inputRef.current?.focus();
+    void run(cmd);
+    inputRef.current?.focus();
+  };
+
+  const fill = (cmd: string) => {
+    setInput(cmd);
+    inputRef.current?.focus();
+  };
+
+  const staged = stage.kind !== "idle";
+  const secret = staged && stage.kind !== "username";
+  const completion = staged ? "" : complete(input, sitePages());
+  const ghost = completion.slice(input.length);
+
+  const onInputKey = (e: ReactKeyboardEvent<HTMLInputElement>) => {
+    const el = e.currentTarget;
+    if (e.key === "Tab") {
+      e.preventDefault();
+      if (completion) setInput(completion);
+      return;
+    }
+    if (e.key === "ArrowRight" && ghost && el.selectionStart === input.length) {
+      e.preventDefault();
+      setInput(completion);
+      return;
+    }
+    if ((e.key === "ArrowUp" || e.key === "ArrowDown") && !staged) {
+      e.preventDefault();
+      if (!history.length) return;
+      if (e.key === "ArrowUp") {
+        const i = cursor === null ? history.length - 1 : Math.max(0, cursor - 1);
+        setCursor(i);
+        setInput(history[i]);
+      } else if (cursor !== null) {
+        const i = cursor + 1;
+        setCursor(i < history.length ? i : null);
+        setInput(i < history.length ? history[i] : "");
+      }
+      return;
+    }
+    if (e.ctrlKey && !e.altKey && (e.key === "l" || e.key === "L")) {
+      e.preventDefault();
+      setEntries([]);
+      return;
+    }
+    if (e.ctrlKey && !e.altKey && (e.key === "c" || e.key === "C") && el.selectionStart === el.selectionEnd) {
+      e.preventDefault();
+      if (stage.kind !== "idle") {
+        append(stage.entry, [say("Cancelled.", "muted")]);
+        setStage({ kind: "idle" });
+      }
+      setInput("");
+    }
+  };
+
+  // Escape and the arrows stay inside: the console and the deck listen for them too.
+  const onRootKey = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      close();
+    } else if (e.key.startsWith("Arrow")) {
+      e.stopPropagation();
+    }
+  };
+
+  const focusPrompt = (e: ReactMouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest("a, button, input, label")) return;
+    if (window.getSelection()?.toString()) return;
+    inputRef.current?.focus();
+  };
+
+  if (!open) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-label="Terminal"
-      aria-hidden={!open}
-      className={[
-        "fixed inset-0 z-[100] flex items-stretch md:items-center justify-center print:hidden",
-        open ? "pointer-events-auto" : "pointer-events-none",
-      ].join(" ")}
-    >
-      {/* backdrop */}
-      <div
-        className="absolute inset-0 transition-opacity duration-200"
-        style={{
-          background: "rgba(4, 8, 14, 0.72)",
-          backdropFilter: "blur(3px)",
-          opacity: open ? 1 : 0,
-        }}
-        onClick={() => setOpen(false)}
-      />
-
-      {/* terminal window */}
-      <div
-        className={[
-          "term-window relative w-full md:w-[820px] md:max-w-[92vw] md:h-[540px] h-[100dvh]",
-          "md:rounded-[10px] overflow-hidden flex flex-col",
-          "transition-all duration-200 ease-out",
-          open ? "scale-100 opacity-100" : "scale-[0.985] opacity-0 translate-y-3",
-        ].join(" ")}
-        style={{
-          background: "#0b1118",
-          border: "1px solid #1d2632",
-          boxShadow:
-            "0 30px 80px -16px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.02) inset, 0 1px 0 rgba(255,255,255,0.04) inset",
-          fontFamily: "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace",
-        }}
-        onClick={() => inputRef.current?.focus()}
-      >
-        {/* Title bar */}
-        <div
-          className="flex items-center gap-3 px-3.5 py-2.5 shrink-0 relative"
-          style={{
-            background: "#0e151e",
-            borderBottom: "1px solid #1d2632",
-          }}
-        >
-          {/* traffic lights */}
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              aria-label="close"
-              onClick={() => setOpen(false)}
-              className="w-[11px] h-[11px] rounded-full transition-opacity hover:opacity-80"
-              style={{ background: "#ed6a5e", border: "1px solid #c9483d" }}
-            />
-            <span
-              className="w-[11px] h-[11px] rounded-full"
-              style={{ background: "#f5bf4f", border: "1px solid #cf9d2f" }}
-              aria-hidden
-            />
-            <span
-              className="w-[11px] h-[11px] rounded-full"
-              style={{ background: "#62c554", border: "1px solid #4ba039" }}
-              aria-hidden
-            />
+    <div className="tm-root" role="dialog" aria-modal="true" aria-label="Terminal" onKeyDown={onRootKey}>
+      <div className="tm-backdrop" onClick={close} aria-hidden />
+      <div className="tm-window" onMouseUp={focusPrompt}>
+        <header className="tm-bar">
+          <div className="tm-id">
+            <img src={avatar} alt="" />
+            <span className="tm-title">Terminal</span>
+            <span className="tm-sub">Explore the site, or sign in to the studio</span>
           </div>
+          <span className="tm-session" data-authed={authed || undefined}>
+            <i aria-hidden />
+            {authed ? "Signed in" : "Guest"}
+          </span>
+          <span className="tm-keys" aria-hidden>
+            <kbd>Alt</kbd>
+            <kbd>T</kbd>
+          </span>
+          <button type="button" className="tm-close" onClick={close} aria-label="Close terminal" title="Close (Esc)">
+            <X size={17} strokeWidth={1.9} />
+          </button>
+        </header>
 
-          {/* divider */}
-          <span aria-hidden className="hidden md:block h-4 w-px" style={{ background: "#1d2632" }} />
-
-          {/* window title — path breadcrumb */}
-          <div className="flex-1 flex items-center justify-center gap-2 text-[11.5px] tabular-nums">
-            <span style={{ color: "#5eead4" }} aria-hidden>●</span>
-            <span style={{ color: "#dbe4f0", fontWeight: 600 }}>{promptHost}</span>
-            <span style={{ color: "#3a4658" }}>:</span>
-            <span style={{ color: "#94a4ba" }}>{shortPath(location.pathname)}</span>
-          </div>
-
-          {/* status pill on the right */}
-          <div className="hidden md:inline-flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.08em] px-2 py-1 rounded"
-               style={{
-                 color: "#7c8da6",
-                 border: "1px solid #1d2632",
-                 background: "#0a0f17",
-               }}>
-            <kbd className="font-mono normal-case tracking-normal text-[10px]"
-                 style={{ color: "#a5b3c8" }}>Alt</kbd>
-            <span style={{ color: "#3a4658" }}>+</span>
-            <kbd className="font-mono normal-case tracking-normal text-[10px]"
-                 style={{ color: "#a5b3c8" }}>T</kbd>
-          </div>
-        </div>
-
-        {/* Output area */}
-        <div
-          ref={scrollerRef}
-          className="flex-1 overflow-y-auto px-5 py-4 text-[12.5px] leading-[1.6] whitespace-pre-wrap"
-          style={{ color: "#dbe4f0", scrollbarWidth: "thin" }}
-        >
-          {lines.map((l, i) => (
-            <LineView key={i} line={l} />
+        <div ref={logRef} className="tm-log" aria-live="polite">
+          {entries.map((entry) => (
+            <section key={entry.id} className="tm-entry" data-status={entry.status}>
+              {entry.cmd !== undefined && (
+                <div className="tm-cmd">
+                  <span className="tm-glyph" aria-hidden>❯</span>
+                  <span className="tm-cmd-text">{entry.cmd}</span>
+                  {entry.status === "run" ? (
+                    <LoaderCircle size={14} strokeWidth={2.2} className="tm-spin" aria-label="Running" />
+                  ) : (
+                    <time className="tm-time">{fmtClock(entry.at)}</time>
+                  )}
+                </div>
+              )}
+              {entry.out.length > 0 && (
+                <div className={entry.cmd === undefined ? "tm-out tm-out--flush" : "tm-out"}>
+                  {entry.out.map((o, i) => (
+                    <OutView key={i} o={o} avatar={avatar} exec={exec} fill={fill} />
+                  ))}
+                </div>
+              )}
+            </section>
           ))}
         </div>
 
-        {/* Prompt */}
         <form
+          className="tm-prompt"
           onSubmit={(e) => {
             e.preventDefault();
-            const cmd = input;
+            const v = input;
             setInput("");
-            void runCommand(cmd);
+            void run(v);
           }}
-          className="flex items-center gap-2 px-5 py-2.5 shrink-0"
-          style={{ borderTop: "1px solid #1d2632", background: "#0a0f17" }}
         >
-          {stage.kind === "idle" ? (
-            <span className="text-[12.5px] tabular-nums whitespace-nowrap inline-flex items-baseline gap-0">
-              <span style={{ color: "#7dd3fc" }}>{promptHost}</span>
-              <span style={{ color: "#3a4658" }}>:</span>
-              <span style={{ color: "#94a4ba" }}>{shortPath(location.pathname)}</span>
-              <span style={{ color: "#5eead4", marginLeft: 6 }}>❯</span>
-            </span>
-          ) : (
-            <span className="text-[12.5px] inline-flex items-center gap-1.5" style={{ color: "#94a4ba" }}>
-              <span style={{ color: "#f5bf4f" }}>▸</span>
-              {labelForStage(stage)}
-              <span style={{ color: "#3a4658" }}>:</span>
-            </span>
+          <label htmlFor="tm-input" className="tm-ps">
+            {staged ? (
+              <span className="tm-ps-stage">{stageLabel(stage)}</span>
+            ) : (
+              <span className="tm-ps-path">{shortPath(pathname)}</span>
+            )}
+            <span className="tm-glyph" aria-hidden>❯</span>
+          </label>
+          <div className="tm-field">
+            {ghost && (
+              <span className="tm-ghost" aria-hidden>
+                <span>{input}</span>
+                {ghost}
+              </span>
+            )}
+            <input
+              id="tm-input"
+              ref={inputRef}
+              type={secret ? "password" : "text"}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                setCursor(null);
+              }}
+              onKeyDown={onInputKey}
+              className="tm-input"
+              placeholder={staged ? "" : "Type a command"}
+              aria-label={staged ? stageLabel(stage) : "Command"}
+              enterKeyHint="go"
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoComplete="off"
+            />
+          </div>
+          {ghost && (
+            <button type="button" className="tm-accept" onClick={() => fill(completion)} aria-label={`Complete to ${completion}`}>
+              Tab
+            </button>
           )}
-          <input
-            ref={inputRef}
-            type={maskedStage ? "password" : "text"}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
-            spellCheck={false}
-            autoCapitalize="off"
-            autoCorrect="off"
-            autoComplete="off"
-            className="term-input flex-1 bg-transparent outline-none text-[12.5px] tabular-nums"
-            style={{ color: "#dbe4f0", caretColor: "#5eead4" }}
-            placeholder=""
-          />
-          {/* thin vertical caret instead of block */}
-          <span
-            aria-hidden
-            className="inline-block w-px h-[14px] shrink-0"
-            style={{
-              background: "#5eead4",
-              animation: "term-caret 1s ease-in-out infinite",
-            }}
-          />
         </form>
 
-        {/* Status footer */}
-        <StatusFooter authed={authed} />
+        <footer className="tm-foot" aria-hidden>
+          <span><kbd>Tab</kbd> complete</span>
+          <span><kbd>↑</kbd><kbd>↓</kbd> history</span>
+          <span><kbd>Ctrl</kbd><kbd>L</kbd> clear</span>
+          <span><kbd>Ctrl</kbd><kbd>C</kbd> cancel</span>
+          <span><kbd>Esc</kbd> close</span>
+        </footer>
       </div>
     </div>
   );
 }
 
-function StatusFooter({ authed }: { authed: boolean }) {
-  const [now, setNow] = useState(() => new Date());
-  const [chatbot, setChatbot] = useState<boolean>(() => getChatbotEnabled());
-  useEffect(() => {
-    const t = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(t);
-  }, []);
-  useEffect(() => {
-    const t = window.setInterval(() => setChatbot(getChatbotEnabled()), 1500);
-    return () => window.clearInterval(t);
-  }, []);
+// =============================================================================
+// output
+// =============================================================================
 
+type Act = { exec: (cmd: string) => void; fill: (cmd: string) => void };
+
+function OutView({ o, avatar, exec, fill }: { o: Out; avatar: string } & Act) {
+  switch (o.kind) {
+    case "text":
+      return (
+        <p className="tm-text" data-tone={o.tone}>
+          <Rich text={o.text} exec={exec} />
+        </p>
+      );
+    case "answer":
+      return (
+        <dl className="tm-answer">
+          <dt>{o.label}</dt>
+          <dd>{o.value}</dd>
+        </dl>
+      );
+    case "rows":
+      return (
+        <dl className="tm-rows">
+          {o.rows.map((r) => (
+            <div key={r.k} className="contents">
+              <dt>{r.k}</dt>
+              <dd data-tone={r.tone}>{r.v}</dd>
+            </div>
+          ))}
+        </dl>
+      );
+    case "welcome":
+      return (
+        <div className="tm-welcome">
+          <div className="tm-hello">
+            <img src={avatar} alt="" />
+            <div className="min-w-0">
+              <p className="tm-hello-name">{profile.name}</p>
+              <p className="tm-hello-role">Backend architect and applied-ML researcher</p>
+            </div>
+          </div>
+          <p className="tm-text" data-tone="muted">
+            Type a command, or start with one of these. Tab completes and ↑ recalls.
+          </p>
+          <div className="tm-chips">
+            {STARTERS.map((c) => (
+              <button key={c} type="button" className="tm-chip" onClick={() => exec(c)}>
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    case "help":
+      return (
+        <div className="tm-help">
+          {GROUPS.map((g) => (
+            <div key={g.id}>
+              <p className="tm-group-title">
+                {g.title}
+                {g.id === "studio" && !o.authed && (
+                  <span>
+                    <Lock size={10} strokeWidth={2.2} aria-hidden /> sign in first
+                  </span>
+                )}
+              </p>
+              {COMMANDS.filter((c) => c.group === g.id).map((c) => {
+                const locked = c.auth && !o.authed;
+                return (
+                  <button
+                    key={c.name}
+                    type="button"
+                    className="tm-row-btn"
+                    data-locked={locked || undefined}
+                    onClick={() => (c.args?.startsWith("<") ? fill(`${c.name} `) : exec(c.name))}
+                  >
+                    <span className="tm-help-cmd">
+                      {c.name}
+                      {c.args && <i> {c.args}</i>}
+                    </span>
+                    <span className="tm-help-desc">{c.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      );
+    case "pages":
+      return (
+        <div>
+          {o.pages.map((p) => (
+            <button key={p.to} type="button" className="tm-row-btn" onClick={() => exec(`open ${p.names[0]}`)}>
+              <span className="tm-page-path">{shortPath(p.to)}</span>
+              <span className="tm-page-name">
+                {p.label}
+                {p.to === o.here && <b>you are here</b>}
+              </span>
+            </button>
+          ))}
+        </div>
+      );
+    case "contact":
+      return (
+        <ul className="tm-channels">
+          {CHANNELS.map((c) => (
+            <ChannelRow key={c.label} c={c} />
+          ))}
+        </ul>
+      );
+    case "kpis":
+      return <Kpis s={o.s} />;
+    case "dashboard":
+      return <Dashboard s={o.s} />;
+    case "visits":
+      return <Visits visits={o.visits} />;
+  }
+}
+
+// Text with `command` spans that run when clicked.
+function Rich({ text, exec }: { text: string; exec: (cmd: string) => void }) {
+  const parts = text.split(/`([^`]+)`/);
   return (
-    <div
-      className="flex items-center gap-3 px-4 py-1.5 text-[10.5px] uppercase tracking-[0.07em] shrink-0 font-medium"
-      style={{
-        background: "#070b11",
-        borderTop: "1px solid #131b27",
-        color: "#94a4ba",
-      }}
-    >
-      <StatusItem dot="#34d399" label="online" />
-      <Divider />
-      <StatusItem
-        dot={authed ? "#7dd3fc" : "#f5bf4f"}
-        label={authed ? "admin" : "guest"}
-      />
-      <Divider />
-      <StatusItem
-        dot={chatbot ? "#34d399" : "#5b6678"}
-        label={`bot ${chatbot ? "on" : "off"}`}
-      />
-      <span
-        className="ml-auto tabular-nums font-mono normal-case tracking-normal"
-        style={{ color: "#7c8da6" }}
+    <>
+      {parts.map((p, i) =>
+        i % 2 ? (
+          <button key={i} type="button" className="tm-link" onClick={() => exec(p)}>
+            {p}
+          </button>
+        ) : (
+          p
+        ),
+      )}
+    </>
+  );
+}
+
+function ChannelRow({ c }: { c: ChannelSpec }) {
+  const { copied, copy } = useCopy(c.copy, c.what);
+  const external = c.href.startsWith("http");
+  return (
+    <li className="tm-channel">
+      <c.Icon size={15} strokeWidth={1.8} />
+      <span className="tm-channel-name">{c.label}</span>
+      <a
+        href={c.href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noreferrer" : undefined}
+        className="tm-act"
+        aria-label={`Open ${c.label}`}
       >
-        {fmtTime(now)}
-      </span>
+        Open <ArrowUpRight size={12} strokeWidth={2} aria-hidden />
+      </a>
+      <button
+        type="button"
+        onClick={copy}
+        className="tm-act"
+        data-copied={copied || undefined}
+        aria-label={`Copy ${c.what.toLowerCase()}`}
+      >
+        {copied ? <Check size={12} strokeWidth={2.4} aria-hidden /> : <Copy size={12} strokeWidth={2} aria-hidden />}
+        {copied ? "Copied" : "Copy"}
+      </button>
+    </li>
+  );
+}
+
+function Kpis({ s }: { s: VisitSummary }) {
+  const items = [
+    { k: "Page views", v: fmtCount(s.total) },
+    { k: "Sessions", v: fmtCount(s.sessions) },
+    { k: "Unique IPs", v: fmtCount(s.uniqueIps) },
+    { k: "Top country", v: s.byCountry[0]?.name ?? "None yet" },
+    { k: "Top device", v: s.byDevice[0]?.name ?? "None yet" },
+    { k: "Top browser", v: s.byBrowser[0]?.name ?? "None yet" },
+  ];
+  return (
+    <dl className="tm-kpis">
+      {items.map((i) => (
+        <div key={i.k} className="tm-kpi">
+          <dt>{i.k}</dt>
+          <dd title={i.v}>{i.v}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function Dashboard({ s }: { s: VisitSummary }) {
+  const max = Math.max(1, ...s.byDay.map((d) => d.count));
+  const week = s.byDay.reduce((n, d) => n + d.count, 0);
+  return (
+    <div className="tm-dash">
+      <Kpis s={s} />
+      <section className="tm-panel">
+        <p className="tm-panel-title">
+          Last 14 days <span>{fmtCount(week)} views</span>
+        </p>
+        <div className="tm-chart" role="img" aria-label={`Page views per day, peak ${max}`}>
+          {s.byDay.map((d, i) => (
+            <span
+              key={d.day}
+              title={`${d.day}: ${d.count}`}
+              data-today={i === s.byDay.length - 1 || undefined}
+              style={{ height: `${d.count ? Math.max(6, (d.count / max) * 100) : 2}%` }}
+            />
+          ))}
+        </div>
+        <div className="tm-days" aria-hidden>
+          {s.byDay.map((d) => (
+            <span key={d.day}>{d.day.slice(8)}</span>
+          ))}
+        </div>
+      </section>
+      <div className="tm-breakdowns">
+        <Breakdown title="Countries" rows={s.byCountry} />
+        <Breakdown title="Devices" rows={s.byDevice} />
+        <Breakdown title="Browsers" rows={s.byBrowser} />
+        <Breakdown title="Systems" rows={s.byOS} />
+        <Breakdown title="Pages" rows={s.byPath} />
+      </div>
     </div>
   );
 }
 
-function Divider() {
+function Breakdown({ title, rows }: { title: string; rows: { name: string; count: number }[] }) {
+  const top = rows.slice(0, 5);
+  const max = Math.max(1, ...top.map((r) => r.count));
   return (
-    <span aria-hidden className="inline-block w-px h-2.5" style={{ background: "#1d2632" }} />
+    <section className="tm-panel">
+      <p className="tm-panel-title">{title}</p>
+      {top.length === 0 ? (
+        <p className="tm-text" data-tone="muted">No data yet.</p>
+      ) : (
+        <ol className="tm-bars">
+          {top.map((r) => (
+            <li key={r.name}>
+              <span className="tm-bars-name" title={r.name}>{r.name || "Unknown"}</span>
+              <span className="tm-bars-track">
+                <b style={{ width: `${(r.count / max) * 100}%` }} />
+              </span>
+              <span className="tm-bars-n">{r.count}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }
 
-function StatusItem({ dot, label }: { dot: string; label: string }) {
+function Visits({ visits }: { visits: VisitEntry[] }) {
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <span
-        className="inline-block w-1.5 h-1.5 rounded-full"
-        style={{ background: dot }}
-        aria-hidden
-      />
-      {label}
-    </span>
+    <div className="tm-table-wrap">
+      <table className="tm-table">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Where</th>
+            <th>Device</th>
+            <th>Browser</th>
+            <th>Path</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {visits.map((v, i) => (
+            <tr key={`${v.ts}-${i}`}>
+              <td>{fmtWhen(v.ts)}</td>
+              <td>{[v.city, v.countryCode].filter(Boolean).join(", ") || "Unknown"}</td>
+              <td>{v.device}</td>
+              <td>{v.browser}</td>
+              <td>{v.path}</td>
+              <td>{v.ip ?? "n/a"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
-function fmtTime(d: Date): string {
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
 // =============================================================================
-// pieces
+// helpers
 // =============================================================================
 
-function LineView({ line }: { line: Line }) {
-  if (line.kind === "echo") {
-    return <div style={{ color: "#94a4ba" }}>{line.text}</div>;
-  }
-  if (line.kind === "block") {
-    return (
-      <pre className="my-1.5" style={{ color: "#a5e9f5", fontFamily: "inherit" }}>
-        {line.text}
-      </pre>
-    );
-  }
-  const color =
-    line.tone === "ok"   ? "#34d399" :
-    line.tone === "err"  ? "#fb7185" :
-    line.tone === "warn" ? "#f5bf4f" :
-    line.tone === "info" ? "#7dd3fc" :
-    line.tone === "dim"  ? "#5b6678" :
-                           "#dbe4f0";
-  return <div style={{ color }}>{line.text}</div>;
-}
-
-function renderHelp(out: (s: string, tone?: Tone) => void, authed: boolean) {
-  const lines: [string, string, boolean?][] = [
-    ["help, ?",                 "list available commands"],
-    ["whoami",                  "current session identity"],
-    ["about, whois",            "the portfolio owner — public info"],
-    ["templates, ls",           "list available portfolio templates"],
-    ["chatbot [on|off|status]", "toggle the public-site chatbot"],
-    ["open <path>",             "navigate the public site to <path>"],
-    ["clear, cls",              "clear the terminal"],
-    ["exit, quit, close",       "close the terminal"],
-    ["—", "—"],
-    ["login [username]",        "authenticate as admin"],
-    ["logout",                  "sign out", true],
-    ["passwd",                  "change admin password", true],
-    ["dashboard, analytics",    "render the dashboard inline", true],
-    ["stats, summary",          "one-line analytics summary", true],
-    ["visits [N]",              "show recent visits (default 10)", true],
-    ["remote, bin",             "JSONBin connection info", true],
-    ["set-template <id>, use",  "switch the live portfolio template", true],
-  ];
-  for (const [name, desc, adminOnly] of lines) {
-    if (name === "—") {
-      out("─ admin commands ─────────────────────────────────────────", "dim");
-      continue;
-    }
-    if (adminOnly && !authed) {
-      out(`  ${name.padEnd(28)}${desc}  · (login required)`, "dim");
-    } else {
-      out(`  ${name.padEnd(28)}${desc}`, "info");
+function sitePages(): Page[] {
+  const pages: Page[] = [{ to: "/", label: "Home", names: ["home"] }];
+  for (const n of FOLIO_NAV) {
+    pages.push({ to: n.to, label: n.label, names: [...new Set([n.label.toLowerCase(), n.to.slice(1)])] });
+    if (n.to === "/work") {
+      for (const c of caseStudies) pages.push({ to: `/work/${c.slug}`, label: `${c.name} case study`, names: [c.slug] });
     }
   }
+  if (getHireMeEnabled() && freelance.available) pages.push({ to: "/hire", label: "Hire me", names: ["hire"] });
+  return pages;
 }
 
-function renderTemplates(
-  out: (s: string, tone?: Tone) => void,
-  templates: ReturnType<typeof useTemplate>["templates"],
-  active: TemplateId,
-) {
-  out("available templates:", "dim");
-  for (const t of templates) {
-    const marker = t.id === active ? "●" : " ";
-    out(`  ${marker}  ${t.id.padEnd(16)}  ${t.name}`, t.id === active ? "ok" : "info");
+function resolvePage(arg: string, pages: Page[]): Page | undefined {
+  const bare = arg.trim().toLowerCase().replace(/^~?\/?/, "").replace(/\/+$/, "");
+  if (!bare) return pages[0];
+  return pages.find((p) => p.to === `/${bare}` || p.names.includes(bare));
+}
+
+// The rest of the command or argument being typed, from the first match.
+function complete(input: string, pages: Page[]): string {
+  const m = /^(\S+)(\s+)(\S*)$/.exec(input);
+  if (!m) {
+    const q = input.toLowerCase();
+    if (!q || /\s/.test(q)) return "";
+    const hit = WORDS.find((w) => w.startsWith(q) && w !== q);
+    return hit ? input + hit.slice(q.length) : "";
   }
-  out("", "dim");
-  out("switch with: set-template <id>", "dim");
+  const q = m[3].toLowerCase();
+  if (!q) return "";
+  const name = ALIAS.get(m[1].toLowerCase());
+  const options =
+    name === "open" ? pages.flatMap((p) => p.names)
+    : name === "present" ? DECKS.map((d) => d.id)
+    : name === "theme" ? ["light", "dark"]
+    : name === "chatbot" ? ["status", "on", "off"]
+    : [];
+  const hit = options.find((o) => o.startsWith(q) && o !== q);
+  return hit ? input + hit.slice(q.length) : "";
 }
 
-function renderDashboard(s: ReturnType<typeof summarise>): string {
-  // KPI line
-  const kpiTable = [
-    ["Page views",  fmtCount(s.total)],
-    ["Sessions",    fmtCount(s.sessions)],
-    ["Unique IPs",  fmtCount(s.uniqueIps)],
-    ["Top country", s.byCountry[0]?.name ?? "—"],
-    ["Top device",  s.byDevice[0]?.name ?? "—"],
-    ["Top browser", s.byBrowser[0]?.name ?? "—"],
-  ];
-  const kpiLines = kpiTable
-    .map(([label, value]) => `  ${label.padEnd(14)}  ${String(value).padStart(8)}`)
-    .join("\n");
-
-  // 14-day sparkline (8 levels)
-  const blocks = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
-  const max = Math.max(1, ...s.byDay.map((d) => d.count));
-  const spark = s.byDay
-    .map((d) => (d.count === 0 ? "·" : blocks[Math.max(0, Math.min(7, Math.round((d.count / max) * 7)))]))
-    .join(" ");
-  const labels = s.byDay.map((d) => d.day.slice(8)).join(" ");
-
-  // breakdown bars
-  const renderBreak = (rows: { name: string; count: number; code?: string }[]) => {
-    if (rows.length === 0) return "  (no data)";
-    const max = Math.max(1, ...rows.map((r) => r.count));
-    return rows
-      .slice(0, 6)
-      .map((r) => {
-        const bar = "█".repeat(Math.max(1, Math.round((r.count / max) * 18)));
-        return `  ${(r.name ?? "—").padEnd(16)} ${bar.padEnd(18)} ${String(r.count).padStart(4)}`;
-      })
-      .join("\n");
-  };
-
-  return [
-    "═══════════════════════════════════════════════════════════",
-    "  DASHBOARD                                       ● LIVE",
-    "═══════════════════════════════════════════════════════════",
-    "",
-    kpiLines,
-    "",
-    "  Last 14 days",
-    `    ${spark}`,
-    `    ${labels}`,
-    "",
-    "  By country",
-    renderBreak(s.byCountry),
-    "",
-    "  By device",
-    renderBreak(s.byDevice),
-    "",
-    "  By browser",
-    renderBreak(s.byBrowser),
-    "",
-    "  By OS",
-    renderBreak(s.byOS),
-    "",
-    "  Top entry paths",
-    renderBreak(s.byPath),
-    "",
-    "═══════════════════════════════════════════════════════════",
-  ].join("\n");
+function closest(word: string): string | null {
+  if (word.length < 2) return null;
+  const limit = word.length < 4 ? 1 : 2;
+  let best: string | null = null;
+  let score = limit + 1;
+  for (const w of WORDS) {
+    const d = distance(word, w);
+    if (d < score) {
+      score = d;
+      best = ALIAS.get(w) ?? w;
+    }
+  }
+  return best;
 }
 
-function renderRemoteInfo(
-  remote: { template?: string; updatedAt?: string } | null,
-  binId: string,
-  configured: boolean,
-  envKey: boolean,
-): string {
-  const lines = [
-    "── REMOTE STORAGE ─────────────────────────────────────────",
-    "",
-    `  status ........ ${configured ? "● connected" : "○ disabled"}`,
-    `  provider ...... JSONBin v3`,
-    `  bin id ........ ${binId || "(not set)"}`,
-    `  master key .... ${envKey ? "env-loaded" : "browser localStorage"}`,
-    "",
-    `  remote template . ${remote?.template ?? "—"}`,
-    `  last update ..... ${remote?.updatedAt ? new Date(remote.updatedAt).toLocaleString() : "—"}`,
-    "",
-    "───────────────────────────────────────────────────────────",
-  ];
-  return lines.join("\n");
+function distance(a: string, b: string): number {
+  const row = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const up = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diag = up;
+    }
+  }
+  return row[b.length];
+}
+
+function openLink(href: string, download: boolean) {
+  const a = document.createElement("a");
+  a.href = href;
+  a.target = "_blank";
+  a.rel = "noreferrer";
+  if (download) a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function stageLabel(s: Stage): string {
+  switch (s.kind) {
+    case "username":
+      return "username";
+    case "password":
+      return "password";
+    case "current":
+      return "current password";
+    case "next":
+      return "new password";
+    case "confirm":
+      return "confirm password";
+    default:
+      return "";
+  }
+}
+
+function shortPath(p: string): string {
+  return p === "/" ? "~" : `~${p}`;
 }
 
 function fmtCount(n: number): string {
@@ -924,98 +1030,19 @@ function fmtCount(n: number): string {
   return String(n);
 }
 
-function renderVisitsTable(visits: Array<{
-  ts: string;
-  ip?: string;
-  city?: string;
-  country?: string;
-  countryCode?: string;
-  device: string;
-  browser: string;
-  os: string;
-  path: string;
-}>): string {
-  const rows = visits.map((v) => ({
-    when: fmtShort(v.ts),
-    ip: v.ip ?? "—",
-    loc: [v.city, v.countryCode].filter(Boolean).join(", ") || "—",
-    device: v.device,
-    browser: v.browser,
-    path: v.path,
-  }));
-  const widths = {
-    when:    Math.max(4,  ...rows.map((r) => r.when.length)),
-    ip:      Math.max(2,  ...rows.map((r) => r.ip.length)),
-    loc:     Math.max(8,  ...rows.map((r) => r.loc.length)),
-    device:  Math.max(6,  ...rows.map((r) => r.device.length)),
-    browser: Math.max(7,  ...rows.map((r) => r.browser.length)),
-    path:    Math.max(4,  ...rows.map((r) => r.path.length)),
-  };
-  const sep = ` │ `;
-  const head =
-    "when".padEnd(widths.when) + sep +
-    "ip".padEnd(widths.ip) + sep +
-    "loc".padEnd(widths.loc) + sep +
-    "device".padEnd(widths.device) + sep +
-    "browser".padEnd(widths.browser) + sep +
-    "path".padEnd(widths.path);
-  const divider = head.replace(/[^│]/g, "─");
-  const body = rows.map(
-    (r) =>
-      r.when.padEnd(widths.when) + sep +
-      r.ip.padEnd(widths.ip) + sep +
-      r.loc.padEnd(widths.loc) + sep +
-      r.device.padEnd(widths.device) + sep +
-      r.browser.padEnd(widths.browser) + sep +
-      r.path.padEnd(widths.path),
-  );
-  return [head, divider, ...body].join("\n");
+function fmtClock(at: number): string {
+  const d = new Date(at);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function autoComplete(input: string, authed: boolean): string | null {
-  const v = input.trim();
-  if (!v || v.includes(" ")) return null;
-  const all = [
-    "help", "whoami", "about", "whois", "templates", "ls", "open", "clear", "cls",
-    "exit", "quit", "close", "echo", "date", "banner", "chatbot",
-    ...(authed
-      ? ["logout", "passwd", "stats", "summary", "visits", "tail", "set-template", "use", "dashboard", "analytics", "console", "remote", "bin"]
-      : ["login"]),
-  ];
-  const matches = all.filter((c) => c.startsWith(v));
-  if (matches.length === 1) return matches[0];
-  return null;
-}
-
-function shortPath(p: string): string {
-  if (p === "/") return "~";
-  if (p.startsWith("/admin")) return `~/admin${p.slice(6)}`;
-  return `~${p}`;
-}
-
-function labelForStage(s: Stage): string {
-  switch (s.kind) {
-    case "awaiting-username":          return "username";
-    case "awaiting-password":          return "password";
-    case "awaiting-cur-password":      return "current password";
-    case "awaiting-new-password":      return "new password";
-    case "awaiting-confirm-password":  return "confirm";
-    default:                            return "";
-  }
-}
-
-function fmtShort(iso: string): string {
+function fmtWhen(iso: string): string {
   const t = new Date(iso);
   if (Number.isNaN(t.getTime())) return iso.slice(11, 16);
   const now = new Date();
   const sameDay =
-    now.getFullYear() === t.getFullYear() &&
-    now.getMonth() === t.getMonth() &&
-    now.getDate() === t.getDate();
-  if (sameDay) {
-    return `${pad(t.getHours())}:${pad(t.getMinutes())}`;
-  }
-  return `${pad(t.getMonth() + 1)}-${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())}`;
+    now.getFullYear() === t.getFullYear() && now.getMonth() === t.getMonth() && now.getDate() === t.getDate();
+  const time = `${pad(t.getHours())}:${pad(t.getMinutes())}`;
+  return sameDay ? time : `${pad(t.getMonth() + 1)}-${pad(t.getDate())} ${time}`;
 }
 
 function pad(n: number): string {
@@ -1023,10 +1050,10 @@ function pad(n: number): string {
 }
 
 function loadHistory(): string[] {
-  if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(HISTORY_STORAGE);
-    return raw ? (JSON.parse(raw) as string[]) : [];
+    const list = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(list) ? list.filter((h): h is string => typeof h === "string") : [];
   } catch {
     return [];
   }
@@ -1036,6 +1063,6 @@ function saveHistory(h: string[]) {
   try {
     window.localStorage.setItem(HISTORY_STORAGE, JSON.stringify(h));
   } catch {
-    /* quota */
+    /* storage blocked: history lasts for this visit only */
   }
 }

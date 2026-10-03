@@ -1,4 +1,4 @@
-// Chatbot "brain" — rule heuristics over the content.ts knowledge base.
+// Chatbot "brain": rule heuristics over the content.ts knowledge base.
 // No real AI; responses are deterministic but feel conversational because
 // they combine intent scoring, synonym expansion, and short follow-ups.
 
@@ -36,7 +36,7 @@ type Intent = {
   id: string;
   // words/phrases that imply this intent. lowercased.
   patterns: (string | RegExp)[];
-  // hard-required phrases — if present, this intent gets a big boost.
+  // hard-required phrases: if present, this intent gets a big boost.
   strong?: (string | RegExp)[];
   // negate if these appear; suppresses false positives.
   not?: (string | RegExp)[];
@@ -92,15 +92,15 @@ function pickOne<T>(arr: T[]): T {
 
 const I = "I"; // tiny indirection if I ever want to swap voice
 
-// Public-facing short name used inside chatbot copy — separate from
+// Public-facing short name used inside chatbot copy, separate from
 // profile.shortName so the rest of the site is unaffected.
 export const DISPLAY_NAME = "Mosfik";
 
 const GREETINGS = [
-  `Hey — ${DISPLAY_NAME} here. What do you want to know? My work, my publications, how to reach me — pick anything.`,
+  `Hey, ${DISPLAY_NAME} here. What do you want to know? My work, my publications, how to reach me: pick anything.`,
   `Hi! I'm ${DISPLAY_NAME}'s portfolio assistant. Ask me about his backend work, papers, or how to get in touch.`,
-  `Assalamu alaikum 👋 — ask me anything about ${DISPLAY_NAME}'s career, projects, or research.`,
-  `Hello — happy to help. Try work, projects, publications, awards, education, or contact.`,
+  `Assalamu alaikum 👋 Ask me anything about ${DISPLAY_NAME}'s career, projects, or research.`,
+  `Hello, happy to help. Try work, projects, publications, awards, education, or contact.`,
 ];
 
 // Question suggestions surfaced on first open as a discoverable grid.
@@ -120,15 +120,15 @@ export const SUGGESTED_QUESTIONS = [
 ];
 
 const FAREWELLS = [
-  "Take care — drop me an email if anything comes up.",
+  "Take care. Drop me an email if anything comes up.",
   "Catch you later. The CV link's always on the site.",
-  "Cheers — feel free to come back with more questions.",
+  "Cheers. Feel free to come back with more questions.",
 ];
 
 const THANKS = [
   "Anytime.",
   "Glad to help.",
-  "You're welcome — anything else you want to dig into?",
+  "You're welcome. Anything else you want to dig into?",
 ];
 
 const FALLBACK_TIPS = [
@@ -145,7 +145,7 @@ const current = roles[0]; // most recent
 
 function shortBio(): string {
   return (
-    `${profile.name} — ${profile.role}. ${profile.tagline} ` +
+    `${profile.name}, ${profile.role}. ${profile.tagline} ` +
     `${stats.years}+ years across ${stats.companies} companies, with ${stats.publications} peer-reviewed papers (${stats.firstAuthor} as first author).`
   );
 }
@@ -178,7 +178,7 @@ function roleByCompanyKeyword(q: string) {
 }
 
 function listProjects(): string {
-  const lines = projects.map((p) => `• ${p.name} — ${p.at} (${p.year})`);
+  const lines = projects.map((p) => `• ${p.name}: ${p.at} (${p.year})`);
   return `Selected work:\n${lines.join("\n")}`;
 }
 
@@ -220,7 +220,7 @@ function publicationsSummary(): string {
   const firstAuthor = publications.filter((p) => (p.tags || []).includes("first-author"));
   const award = publications.find((p) => p.award);
   return (
-    `${stats.publications} peer-reviewed papers — ${stats.firstAuthor} as first author. ` +
+    `${stats.publications} peer-reviewed papers, ${stats.firstAuthor} as first author. ` +
     (award ? `${award.award} for "${award.title.split(":")[0]}" (${award.year}). ` : "") +
     `First-author highlights: ${firstAuthor.map((p) => p.title.split(":")[0]).join("; ")}.`
   );
@@ -229,17 +229,17 @@ function publicationsSummary(): string {
 function skillsBlurb(q: string): string {
   // if a specific tech is asked, return targeted line
   const targeted: { hit: string[]; line: string }[] = [
-    { hit: ["java"], line: "Strongest in Java (8–21) on Spring Boot — most of my production work runs on it." },
+    { hit: ["java"], line: "Strongest in Java (8–21) on Spring Boot. Most of my production work runs on it." },
     { hit: ["spring"], line: "Spring Boot is my daily driver, with Spring Security on top for auth flows." },
-    { hit: [".net", "dotnet", "c#", "csharp"], line: "I write C# on ASP.NET Core too — currently shipping production services on it at iBOS." },
-    { hit: ["graphql"], line: "Built GraphQL BFFs at BJIT for Rakuten — schema stitching, resolver batching, the works." },
+    { hit: [".net", "dotnet", "c#", "csharp"], line: "I write C# on ASP.NET Core too, currently shipping production services on it at iBOS." },
+    { hit: ["graphql"], line: "Built GraphQL BFFs at BJIT for Rakuten: schema stitching, resolver batching, the works." },
     { hit: ["docker", "kubernetes", "k8s"], line: "Hands-on with Docker packaging and Kubernetes deployment for the OTA platform." },
-    { hit: ["oracle", "postgres", "sql server", "mysql"], line: "Comfortable across Oracle, PostgreSQL, SQL Server, and MySQL — heavy on query tuning and access-path work." },
+    { hit: ["oracle", "postgres", "sql server", "mysql"], line: "Comfortable across Oracle, PostgreSQL, SQL Server, and MySQL, heavy on query tuning and access-path work." },
     { hit: ["mongodb", "dynamodb", "nosql"], line: "Also work with MongoDB and DynamoDB on the OTA platform, alongside the relational stack." },
     { hit: ["on-call", "oncall", "incident"], line: "I carry on-call production support at iBOS, including weekend/emergency response." },
     { hit: ["mentor", "mentoring", "junior"], line: "I personally train and mentor the junior engineers on my team at iBOS." },
     { hit: ["python"], line: "Python mostly for applied ML and the research papers." },
-    { hit: ["typescript", "javascript", "react"], line: "TypeScript / React when I touch the front end — this portfolio is built on it." },
+    { hit: ["typescript", "javascript", "react"], line: "TypeScript / React when I touch the front end. This portfolio is built on it." },
     { hit: ["drools"], line: "Use Drools for the rule-driven pricing engine on the OTA platform." },
     { hit: ["grpc"], line: "gRPC for inter-service comms where REST is the wrong shape." },
   ];
@@ -253,28 +253,28 @@ function skillsBlurb(q: string): string {
 function educationBlurb(q: string): string {
   if (/erasmus|poland|poznan|adam mickiewicz|exchange/i.test(q)) {
     const e = education.find((x) => x.school.includes("Adam Mickiewicz"))!;
-    return `Erasmus+ exchange at ${e.school}, ${e.place} — ${e.degree}. ${e.note ?? ""} (${fmtMonth(e.from)} – ${fmtMonth(e.to)})`;
+    return `Erasmus+ exchange at ${e.school}, ${e.place}: ${e.degree}. ${e.note ?? ""} (${fmtMonth(e.from)} – ${fmtMonth(e.to)})`;
   }
   if (/thesis|dissertation/i.test(q)) {
     return `Completed a BSc thesis at Daffodil International University (2018–2021, CGPA 3.83 / 4.00). The research line carried into peer-reviewed publications, including the IEEE Best Paper for the smart-sewerage IoT system.`;
   }
   const lines = education.slice(0, 4).map(
-    (e) => `• ${e.degree} — ${e.school}${e.place ? ", " + e.place : ""}${e.note ? " (" + e.note + ")" : ""}`,
+    (e) => `• ${e.degree}, ${e.school}${e.place ? ", " + e.place : ""}${e.note ? " (" + e.note + ")" : ""}`,
   );
   return `Education:\n${lines.join("\n")}`;
 }
 
 function englishBlurb(): string {
-  return `IELTS Academic on file. The full TRF is part of his application packet — happy to share on request via email.`;
+  return `IELTS Academic on file. The full TRF is part of his application packet. Happy to share on request via email.`;
 }
 
 function credentialBlurb(): string {
-  return `Credentials evaluated by ECE (Educational Credential Evaluators) for US equivalency — Bachelor's transcript translated to a US scale. Useful for international applications / immigration / graduate review.`;
+  return `Credentials evaluated by ECE (Educational Credential Evaluators) for US equivalency: Bachelor's transcript translated to a US scale. Useful for international applications / immigration / graduate review.`;
 }
 
 function futurePlansBlurb(): string {
   return (
-    `Currently preparing for Fall 2027 graduate applications — research-track, likely systems / applied ML. ` +
+    `Currently preparing for Fall 2027 graduate applications: research-track, likely systems / applied ML. ` +
     `Supporting documents (IELTS Academic, ECE credential evaluation, sealed transcripts) are in flight. ` +
     `In the meantime ${I}'m shipping production systems at iBOS.`
   );
@@ -299,7 +299,7 @@ function awardsBlurb(): string {
   const dist = distinctions
     .slice()
     .sort((a, b) => b.year - a.year)
-    .map((d) => `• ${d.year} — ${d.headline} · ${d.issuer}${d.detail ? " — " + d.detail : ""}`);
+    .map((d) => `• ${d.year}: ${d.headline} · ${d.issuer}${d.detail ? ". " + d.detail : ""}`);
   return (
     (award ? `${award.award} for "${award.title.split(":")[0]}" (${award.year}). ` : "") +
     `Recognitions:\n${dist.join("\n")}`
@@ -322,13 +322,13 @@ function cvBlurb(): string {
 function availabilityBlurb(): string {
   return (
     `${I}'m currently Engineer II at ${current.company}, shipping production systems. ` +
-    `Open to interesting backend / architecture conversations — best route is email: ${profile.email}.`
+    `Open to interesting backend / architecture conversations. Best route is email: ${profile.email}.`
   );
 }
 
 function metaBlurb(): string {
   return (
-    `Honest answer: I'm not a real AI — I'm rule heuristics on top of the data ${DISPLAY_NAME} ships in his portfolio repo. ` +
+    `Honest answer: I'm not a real AI. I'm rule heuristics on top of the data ${DISPLAY_NAME} ships in his portfolio repo. ` +
     `Tries to feel real, but everything I say is sourced from his actual CV.`
   );
 }
@@ -338,7 +338,7 @@ function metaBlurb(): string {
 // ---------------------------------------------------------------------------
 
 const intents: Intent[] = [
-  // META — must be before greeting so "are you ai" doesn't catch on "you"
+  // META: must be before greeting so "are you ai" doesn't catch on "you"
   {
     id: "meta",
     patterns: [/are you (a |an )?(real )?(ai|bot|human|person)/i, "chatbot", "how do you work", "are you real", "llm", "gpt", "claude"],
@@ -419,7 +419,7 @@ const intents: Intent[] = [
       const author = (p.authors[0] || "").includes("Rahman, Md. Mosfikur") ? "first author" : `co-author with ${p.authors[0]}`;
       return {
         text:
-          `"${p.title}" (${p.year}) — ${author}. ` +
+          `"${p.title}" (${p.year}), ${author}. ` +
           `Published in ${p.venue}${p.pages ? ", pp. " + p.pages : ""}. ` +
           (p.award ? `${p.award}. ` : "") +
           (p.citations ? `${p.citations} citations on Google Scholar. ` : "") +
@@ -448,7 +448,7 @@ const intents: Intent[] = [
     handle: (q) => {
       const r = roleByCompanyKeyword(q);
       if (!r) {
-        // mentions of Rakuten/Denka — route via projects
+        // mentions of Rakuten/Denka: route via projects
         const pr = projectByKeyword(q);
         if (pr) return projectAnswer(pr);
         return { text: currentRoleBlurb() };
@@ -605,7 +605,7 @@ const intents: Intent[] = [
     patterns: ["joke", "fun fact", "hobby", "hobbies", "interest", "interests", "personality", "favourite", "favorite"],
     handle: () => ({
       text:
-        `Not much of a joke-teller — but here's a real one: ${DISPLAY_NAME} shipped an eight-service OTA backend before turning 28. ` +
+        `Not much of a joke-teller, but here's a real one: ${DISPLAY_NAME} shipped a multi-client OTA backend from an empty repository before turning 28. ` +
         `Outside work: applied ML, systems papers, the occasional invited talk, and quietly polishing personal side-projects.`,
       chips: ["His research", "Distinctions", "Side projects"],
     }),
@@ -617,7 +617,7 @@ const intents: Intent[] = [
     patterns: ["why backend", "why back-end", "why backend engineer", "backend over frontend", "back-end", "love backend", "passion"],
     handle: () => ({
       text:
-        `Quiet half of software is where the long-term value sits — services, schemas, workflows, the bits that hold a product together once traffic shows up. ` +
+        `Quiet half of software is where the long-term value sits: services, schemas, workflows, the bits that hold a product together once traffic shows up. ` +
         `Frontend is a craft I respect (this portfolio is React), but ${I} find the most interesting problems live behind the API: rule engines, supplier integrations, data shapes that don't break at scale.`,
       chips: ["Tech stack", "OTA platform", "Architecture work"],
     }),
@@ -629,7 +629,7 @@ const intents: Intent[] = [
     patterns: ["why dhaka", "why bangladesh", "stay in bangladesh", "leave bangladesh", "move abroad", "relocate", "abroad"],
     handle: () => ({
       text:
-        `Dhaka is home — strong engineering community, real problems to solve, and a stable base while ${I}'m preparing the Fall 2027 graduate applications. ` +
+        `Dhaka is home: strong engineering community, real problems to solve, and a stable base while ${I}'m preparing the Fall 2027 graduate applications. ` +
         `Open to relocating for the right opportunity (graduate program first, role-driven later). Best email is below.`,
       chips: ["Future plans", "Contact", "Availability"],
     }),
@@ -643,7 +643,7 @@ const intents: Intent[] = [
       text:
         `Day job is backend architecture: service boundaries, configuration-first design, rule-driven business logic. ` +
         `The OTA estate at iBOS leans microservice, with the pricing/booking core decomposed by domain and supplier integrations isolated behind adapters. ` +
-        `Other roles in the past have been modular monolith — pick the shape the product needs.`,
+        `Other roles in the past have been modular monolith. Pick the shape the product needs.`,
       chips: ["OTA platform", "Drools rule engine", "Current role"],
     }),
   },
@@ -654,7 +654,7 @@ const intents: Intent[] = [
     patterns: ["drools", "rule engine", "rules engine", "business rules", "camunda", "workflow engine"],
     handle: () => ({
       text:
-        `Drools is the rule engine behind the OTA platform's pricing layer — business changes are configuration, not code deploys. ` +
+        `Drools is the rule engine behind the OTA platform's pricing layer, so business changes are configuration, not code deploys. ` +
         `Camunda lives in the toolbox for longer-running workflow orchestration when state needs to outlive a single request.`,
       chips: ["OTA platform", "Architecture", "Java"],
     }),
@@ -666,7 +666,7 @@ const intents: Intent[] = [
     patterns: ["github", "open source", "open-source", "oss", "repos", "repositories", "contributions", "code samples"],
     handle: () => ({
       text:
-        `GitHub: ${profile.links.github}\nPortfolio source is public there too — built on Vite + React + Tailwind. ` +
+        `GitHub: ${profile.links.github}\nPortfolio source is public there too, built on Vite + React + Tailwind. ` +
         `Most production work is closed-source by nature (enterprise / national-scale systems), so the public footprint skews toward personal projects and learning notes.`,
       chips: ["LinkedIn", "Tech stack", "Contact"],
     }),
@@ -678,7 +678,7 @@ const intents: Intent[] = [
     patterns: ["talk", "talks", "speaker", "speaking", "invited talk", "keynote", "conference talk", "workshop", "panel"],
     handle: () => ({
       text:
-        `Invited speaker at IEEE WIECON-ECE 2024 (10th edition) — technical session on applied research workflows. ` +
+        `Invited speaker at IEEE WIECON-ECE 2024 (10th edition): technical session on applied research workflows. ` +
         `Earlier: guest speaker on undergraduate research at DIU's CPC, and instructor for a Python workshop at the same club.`,
       chips: ["Distinctions", "Publications", "Awards"],
     }),
@@ -690,7 +690,7 @@ const intents: Intent[] = [
     patterns: ["remote", "hybrid", "in office", "in-office", "wfh", "work from home", "work setup"],
     handle: () => ({
       text:
-        `Currently hybrid at iBOS (Dhaka office). Comfortable across remote, hybrid, and in-office — the work is what matters. ` +
+        `Currently hybrid at iBOS (Dhaka office). Comfortable across remote, hybrid, and in-office. The work is what matters. ` +
         `For overseas roles, would need visa support; for graduate study, that's the Fall 2027 application track.`,
       chips: ["Availability", "Future plans", "Contact"],
     }),
@@ -702,7 +702,7 @@ const intents: Intent[] = [
     patterns: ["notice period", "notice", "when can you start", "start date", "join date", "transition"],
     handle: () => ({
       text:
-        `Standard notice applies for the current role. Honest conversation about timelines is easiest over email — ${profile.email}.`,
+        `Standard notice applies for the current role. Honest conversation about timelines is easiest over email: ${profile.email}.`,
       chips: ["Contact", "Availability"],
     }),
   },
@@ -713,7 +713,7 @@ const intents: Intent[] = [
     patterns: ["salary", "compensation", "comp", "package", "pay", "rate", "expected salary", "ctc"],
     handle: () => ({
       text:
-        `Happy to discuss compensation directly — not over a public chatbot. Drop ${profile.email} a line with the role context and ${I}'ll respond.`,
+        `Happy to discuss compensation directly, not over a public chatbot. Drop ${profile.email} a line with the role context and ${I}'ll respond.`,
       chips: ["Contact", "Availability"],
     }),
   },
@@ -735,7 +735,7 @@ const intents: Intent[] = [
     patterns: ["how long", "years of experience", "how many years", "experience years", "how old is his career"],
     handle: () => ({
       text:
-        `${stats.years}+ years of professional software engineering since April 2022 — across ${stats.companies} companies, ` +
+        `${stats.years}+ years of professional software engineering since April 2022, across ${stats.companies} companies, ` +
         `with another 1+ year of research experience during undergrad that fed into the publications.`,
       chips: ["Experience", "Publications", "Current role"],
     }),
@@ -748,7 +748,7 @@ const intents: Intent[] = [
     handle: () => ({
       text:
         `Applied machine learning + systems: intrusion detection, COVID-era public health, e-learning frameworks, plant-disease vision, and IoT-based smart-city infrastructure. ` +
-        `Two first-author papers, eight more as co-author. The systems flavour shows up in the IEEE Best Paper for IoT smart sewerage.`,
+        `${stats.firstAuthor} first-author papers, ${stats.publications - stats.firstAuthor} more as co-author. The systems flavour shows up in the IEEE Best Paper for IoT smart sewerage.`,
       chips: ["Publications", "IEEE Best Paper", "Future plans"],
     }),
   },
@@ -770,7 +770,7 @@ const intents: Intent[] = [
     id: "restart",
     patterns: ["restart", "start over", "reset", "clear", "new chat", "begin again"],
     handle: () => ({
-      text: `Sure — clear the chat using the refresh icon up top, or just ask a fresh question.`,
+      text: `Sure. Clear the chat using the refresh icon up top, or just ask a fresh question.`,
       chips: ["Who is Mosfik?", "Publications", "Contact"],
     }),
   },
@@ -790,7 +790,7 @@ const intents: Intent[] = [
 function projectAnswer(p: typeof projects[number]): BotReply {
   return {
     text:
-      `${p.name} — ${p.at} (${p.year}). Role: ${p.role}.\n\n` +
+      `${p.name}, ${p.at} (${p.year}). Role: ${p.role}.\n\n` +
       `${p.blurb}\n\nHighlights:\n• ${p.highlights.join("\n• ")}\n\nStack: ${p.stack.join(", ")}.`,
     chips: ["Other projects", "Current role", "Skills"],
     topicKey: p.name,
@@ -798,7 +798,7 @@ function projectAnswer(p: typeof projects[number]): BotReply {
 }
 
 // ---------------------------------------------------------------------------
-// follow-up handling — re-emit the last topic with extra detail
+// follow-up handling: re-emit the last topic with extra detail
 // ---------------------------------------------------------------------------
 
 function followUp(ctx: ChatContext): BotReply {
@@ -819,7 +819,7 @@ function followUp(ctx: ChatContext): BotReply {
     case "experience":
       return {
         text:
-          `${roles.map((r) => `${r.company} — ${r.bullets[0]}`).join("\n\n")}`,
+          `${roles.map((r) => `${r.company}: ${r.bullets[0]}`).join("\n\n")}`,
       };
     case "current_role":
       return {
@@ -830,13 +830,13 @@ function followUp(ctx: ChatContext): BotReply {
       return {
         text:
           `In practice: ${stats.years}+ years on the JVM, last 1.5+ also on .NET. ` +
-          `Heavy on system design — service boundaries, rule engines (Drools), configuration-first design.`,
+          `Heavy on system design: service boundaries, rule engines (Drools), configuration-first design.`,
       };
     case "education":
       return {
         text:
           `Full education timeline:\n${education
-            .map((e) => `• ${e.degree} — ${e.school} (${fmtMonth(e.from)} – ${fmtMonth(e.to)})`)
+            .map((e) => `• ${e.degree}, ${e.school} (${fmtMonth(e.from)} – ${fmtMonth(e.to)})`)
             .join("\n")}`,
       };
     case "awards":
@@ -855,7 +855,7 @@ function followUp(ctx: ChatContext): BotReply {
       return {
         text:
           `At iBOS the discipline is: pick the smallest service boundary that still owns its data, isolate suppliers behind adapters, push business changes to Drools, keep deployment boring with Docker. ` +
-          `The "configuration over code" rule is enforced via the rule engine — most product changes ship without a code deploy.`,
+          `The "configuration over code" rule is enforced via the rule engine, so most product changes ship without a code deploy.`,
       };
     case "research_areas":
       return {
@@ -933,8 +933,8 @@ export function answer(rawInput: string, ctx: ChatContext): { reply: BotReply; n
 // initial state + opener used by the UI on first open
 export function openingMessage(): BotReply {
   return {
-    text: `Hey — I'm ${DISPLAY_NAME}'s portfolio assistant. Ask me anything about his work, research, or how to reach him.`,
-    // No chips here — the UI shows the full SUGGESTED_QUESTIONS grid on the
+    text: `Hey, I'm ${DISPLAY_NAME}'s portfolio assistant. Ask me anything about his work, research, or how to reach him.`,
+    // No chips here: the UI shows the full SUGGESTED_QUESTIONS grid on the
     // welcome screen instead, so the opener stays uncluttered.
   };
 }

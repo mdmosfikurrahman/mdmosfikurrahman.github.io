@@ -1,11 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { applyTemplateClass, readTemplate } from "@/lib/template";
-
-// Apply chosen template class to <html> before React mounts, so the very
-// first paint is themed correctly (no flash of default tokens).
-applyTemplateClass(readTemplate());
 
 // React mount is gated on the user clicking the entry button in index.html.
 // The inline <script> there sets `window.__entryClicked = true` and dispatches
@@ -25,7 +20,7 @@ const mountApp = () => {
 };
 
 const handOff = () => {
-  // Unknown route: entry gate is hidden via .skip-entry — mount immediately, no fade.
+  // Unknown route: entry gate is hidden via .skip-entry: mount immediately, no fade.
   if (document.documentElement.classList.contains("skip-entry")) {
     mountApp();
     return;

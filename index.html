@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="theme-color" content="#f4efe6" media="(prefers-color-scheme: light)"/>
-    <meta name="theme-color" content="#121316" media="(prefers-color-scheme: dark)"/>
+    <meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)"/>
+    <meta name="theme-color" content="#0f1212" media="(prefers-color-scheme: dark)"/>
 
     <title>Md. Mosfikur Rahman</title>
-    <meta name="description" content="The portfolio of Md. Mosfikur Rahman — engineer, researcher, architect. Backend systems, applied machine learning, and ten peer-reviewed publications." />
+    <meta name="description" content="Md. Mosfikur Rahman: backend architect and applied-ML researcher in Dhaka. Production systems, ten peer-reviewed papers and an IEEE Best Paper Award." />
     <meta name="author" content="Md. Mosfikur Rahman" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="mask-icon" href="/favicon.svg" color="#b8552a" />
+    <link rel="mask-icon" href="/favicon.svg" color="#116949" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <!-- Preload portrait during the entry animation so Hero paints without a flash. -->
@@ -20,25 +20,24 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=JetBrains+Mono:wght@400..600&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap"/>
 
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://mdmosfikurrahman.github.io/"/>
     <meta property="og:title" content="Md. Mosfikur Rahman"/>
-    <meta property="og:description" content="Engineer, researcher, architect. Backend systems, applied machine learning, and ten peer-reviewed publications."/>
+    <meta property="og:description" content="Backend architect and applied-ML researcher. Production systems, ten peer-reviewed papers and an IEEE Best Paper Award."/>
     <meta property="og:image" content="/assets/og-image.jpg"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:url" content="https://mdmosfikurrahman.github.io/"/>
     <meta name="twitter:title" content="Md. Mosfikur Rahman"/>
-    <meta name="twitter:description" content="Engineer, researcher, architect. Backend systems, applied machine learning, and ten peer-reviewed publications."/>
+    <meta name="twitter:description" content="Backend architect and applied-ML researcher. Production systems, ten peer-reviewed papers and an IEEE Best Paper Award."/>
     <meta name="twitter:image" content="/assets/og-image.jpg"/>
 
     <meta name="google-site-verification" content="5smukTT1zEJgw0PUtKOQDFYAp9jSjpTFs99A_uqNIpc" />
 
     <script>
-      // Apply both `theme` (dark) and `portfolio.template` to <html> before
-      // the entry gate paints, so the welcome screen matches the active
-      // template (Broadsheet vs Surveillance) and theme on first frame.
+      // Apply the theme to <html> before the entry screen paints.
       (function () {
         try {
           var stored = localStorage.getItem('theme');
@@ -47,27 +46,17 @@
             : window.matchMedia('(prefers-color-scheme: dark)').matches;
           if (dark) document.documentElement.classList.add('dark');
         } catch (_) {}
-        try {
-          var tpl = localStorage.getItem('portfolio.template');
-          var ALLOWED = ['folio','broadsheet','surveillance','minimal','animus','inception','heist','chess','tenet','keynote','keynote-tech','keynote-talk'];
-          if (ALLOWED.indexOf(tpl) === -1) tpl = 'folio';
-          document.documentElement.classList.add('template-' + tpl);
-          // keynote-* share one visual system — keep the base class on too.
-          if (tpl === 'keynote-tech' || tpl === 'keynote-talk') {
-            document.documentElement.classList.add('template-keynote');
-          }
-        } catch (_) {
-          document.documentElement.classList.add('template-folio');
-        }
       })();
     </script>
 
     <!-- Unknown route → skip the entry/welcome gate and mount React directly. -->
     <script>
       (function () {
-        var KNOWN = ['/', '/experience', '/publications', '/about', '/play', '/cv', '/resume', '/publication-list', '/yearbook'];
+        var KNOWN = ['/', '/work', '/experience', '/publications', '/research', '/about', '/hire', '/cv', '/resume', '/publication-list', '/yearbook'];
         var path = window.location.pathname.replace(/\/+$/, '') || '/';
-        if (KNOWN.indexOf(path) === -1) {
+        // A /#present link goes straight into the deck, no welcome gate.
+        var presenting = /^#present/.test(window.location.hash);
+        if (KNOWN.indexOf(path) === -1 || presenting) {
           window.__entryClicked = true;
           document.documentElement.classList.add('skip-entry');
         }
@@ -104,7 +93,8 @@
           }
         });
 
-        document.addEventListener('copy', function (e) { e.preventDefault(); });
+        // The site's own copy buttons raise window.__siteCopy for their single call.
+        document.addEventListener('copy', function (e) { if (window.__siteCopy) return; e.preventDefault(); });
         document.addEventListener('cut', function (e) { e.preventDefault(); });
         document.addEventListener('dragstart', function (e) { e.preventDefault(); });
         document.addEventListener('selectstart', function (e) {
@@ -113,10 +103,10 @@
           e.preventDefault();
         });
 
-        // DevTools size-delta detector — polls every 500ms, blurs body when open.
+        // DevTools size-delta detector: polls every 500ms, blurs body when open.
         // Skipped on touch devices: mobile keyboards shrink innerHeight by ~300px,
         // which would otherwise fire a false positive every time an input is focused.
-        // On desktop we only compare width — devtools docked side panels grow wDelta;
+        // On desktop we only compare width: devtools docked side panels grow wDelta;
         // height deltas alone fire false positives for browser chrome/zoom changes.
         var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
         function detectDevtools() {
@@ -141,8 +131,9 @@
 <body>
 <div id="root">
     <style>
-        /* Inline entry screen — painted before JS/CSS loads. React mounts only
-           after the user clicks the enter button (or its fallback handler). */
+        /* Entry screen, painted before the bundle loads. React mounts only
+           after the visitor presses Enter (see main.tsx). Colours mirror the
+           site tokens in src/index.css. */
         html, body {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -150,1033 +141,202 @@
             user-select: none;
             -webkit-touch-callout: none;
         }
-        img, svg, video {
-            -webkit-user-drag: none;
-            user-drag: none;
-        }
-        body.guards-blur > *:not(.site-entry) {
-            filter: blur(14px) saturate(0.4);
-            transition: filter 160ms ease-out;
-            pointer-events: none;
-        }
+        img, svg, video { -webkit-user-drag: none; user-drag: none; }
+        body.guards-blur > *:not(.site-entry),
         body.guards-blur .site-entry {
             filter: blur(14px) saturate(0.4);
             transition: filter 160ms ease-out;
         }
-        @media print {
-            html, body { display: none !important; visibility: hidden !important; }
-        }
+        body.guards-blur > *:not(.site-entry) { pointer-events: none; }
+        @media print { html, body { display: none !important; visibility: hidden !important; } }
 
         .site-entry {
-            position: fixed;
-            inset: 0;
-            display: grid;
-            place-items: center;
-            padding: 24px;
-            z-index: 9999;
-            isolation: isolate;
+            --se-paper: #faf9f7; --se-ink: #151918; --se-soft: #3c4442; --se-muted: #626a69;
+            --se-line: #dae0dd; --se-accent: #116949; --se-btn: #116949; --se-btn-ink: #ffffff;
+            --se-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            --se-serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+            --se-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+            position: fixed; inset: 0; z-index: 9999; isolation: isolate; overflow: hidden;
+            display: grid; grid-template-rows: auto 1fr auto;
+            background: var(--se-paper); color: var(--se-ink); font-family: var(--se-sans);
+            -webkit-font-smoothing: antialiased;
         }
-        /* ----- Broadsheet entry palette ----- */
-        html.template-broadsheet .site-entry {
-            background: #f4efe6;
-            color: #16181d;
-            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+        html.dark .site-entry {
+            --se-paper: #0f1212; --se-ink: #f1f1ee; --se-soft: #c9cac5; --se-muted: #949e9b;
+            --se-line: #292e2d; --se-accent: #54c99a; --se-btn: #54c99a; --se-btn-ink: #0f1212;
         }
-        html.template-broadsheet.dark .site-entry { background: #121316; color: #e6e0d0; }
+        .site-entry::before {
+            content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+            background:
+                radial-gradient(42% 60% at 86% 10%, color-mix(in srgb, var(--se-accent) 14%, transparent), transparent 70%),
+                radial-gradient(30% 45% at 6% 92%, rgba(200, 140, 20, 0.07), transparent 70%);
+        }
+        .se-bg {
+            position: absolute; inset: 0; z-index: -1; pointer-events: none;
+            background-image: radial-gradient(color-mix(in srgb, var(--se-ink) 9%, transparent) 1px, transparent 1.3px);
+            background-size: 24px 24px;
+            -webkit-mask-image: radial-gradient(ellipse 70% 75% at 80% 10%, #000 0%, transparent 70%);
+                    mask-image: radial-gradient(ellipse 70% 75% at 80% 10%, #000 0%, transparent 70%);
+        }
+        .se-top, .se-foot {
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            padding: 20px clamp(20px, 5vw, 56px);
+        }
+        .se-brand { display: inline-flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; }
+        .se-brand img {
+            width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: center 22%;
+            box-shadow: 0 0 0 2px var(--se-paper), 0 0 0 3.5px var(--se-accent); background: var(--se-line);
+        }
+        .se-icon {
+            width: 36px; height: 36px; display: grid; place-items: center; border-radius: 9px; cursor: pointer;
+            color: var(--se-muted); background: transparent; border: 1px solid var(--se-line);
+        }
+        .se-icon:hover { color: var(--se-ink); }
+        .se-icon .se-sun { display: none; }
+        html.dark .se-icon .se-sun { display: block; }
+        html.dark .se-icon .se-moon { display: none; }
+        .se-main {
+            align-self: center; width: 100%; max-width: 1080px; margin: 0 auto;
+            padding: 0 clamp(20px, 5vw, 56px) 4vh;
+        }
+        .se-eyebrow { margin: 0; font-size: 13.5px; font-weight: 600; color: var(--se-accent); }
+        .se-name {
+            margin: 18px 0 0; font-size: clamp(2.6rem, 8vw, 5.6rem); line-height: 0.98;
+            letter-spacing: -0.05em; font-weight: 700;
+        }
+        .se-tagline {
+            margin: 22px 0 0; max-width: 34ch; font-family: var(--se-serif);
+            font-size: clamp(1.25rem, 2.4vw, 1.65rem); line-height: 1.4; color: var(--se-soft);
+        }
+        .se-tagline em { font-style: italic; color: var(--se-accent); }
+        .se-facts {
+            list-style: none; margin: 40px 0 0; padding: 22px 0 0; border-top: 1px solid var(--se-line);
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 0; max-width: 820px;
+        }
+        @media (min-width: 720px) { .se-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .se-facts li { padding-right: 16px; }
+        .se-facts b { display: block; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+        .se-facts span { display: block; margin-top: 4px; font-size: 13px; color: var(--se-muted); }
+        .se-actions { margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .se-btn {
+            display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 11px;
+            font: 600 15px/1 var(--se-sans); letter-spacing: -0.005em; cursor: pointer;
+            color: var(--se-ink); background: transparent; border: 1px solid var(--se-line);
+            transition: transform .2s ease, background .2s ease, border-color .2s ease;
+        }
+        .se-btn:hover { border-color: color-mix(in srgb, var(--se-ink) 35%, transparent); }
+        .se-btn--primary { color: var(--se-btn-ink); background: var(--se-btn); border-color: var(--se-btn); }
+        .se-btn--primary:hover { transform: translateY(-1px); }
+        .se-btn:focus-visible, .se-icon:focus-visible { outline: 2px solid var(--se-accent); outline-offset: 3px; }
+        .se-btn svg { width: 11px; height: 11px; }
+        .se-hint { font-size: 13px; color: var(--se-muted); }
+        .se-hint kbd {
+            font: 500 11.5px/1 var(--se-mono); padding: 3px 6px; border-radius: 5px;
+            border: 1px solid var(--se-line); color: var(--se-soft);
+        }
+        .se-foot { border-top: 1px solid var(--se-line); margin: 0 clamp(20px, 5vw, 56px); padding-inline: 0; font-size: 12.5px; color: var(--se-muted); }
+        .se-foot span:last-child { font-family: var(--se-mono); font-size: 12px; }
 
-        /* ----- Surveillance entry palette ----- */
-        /* Light = Samaritan (cool clinical white, deep navy + red accent) */
-        html.template-surveillance .site-entry {
-            background: #eef0f3;
-            color: #0c1320;
-            font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
-            background-image:
-              repeating-linear-gradient(0deg,
-                rgba(12,19,32,0.045) 0 1px,
-                transparent 1px 3px);
-        }
-        /* Dark = The Machine (amber phosphor on near-black) */
-        html.template-surveillance.dark .site-entry {
-            background: #0a0907;
-            color: #f3c769;
-            background-image:
-              repeating-linear-gradient(0deg,
-                rgba(243,199,105,0.07) 0 1px,
-                transparent 1px 3px);
-        }
-
-        /* ----- Folio entry palette (clean professional default) ----- */
-        html.template-folio .site-entry {
-            background: #ffffff;
-            color: #14181f;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-        html.template-folio.dark .site-entry {
-            background: #0d1117;
-            color: #f3f5f8;
-        }
-
-        /* ----- Minimal entry palette (jsonbin-style calm) ----- */
-        html.template-minimal .site-entry {
-            background: #fafaf9;
-            color: #0c0d10;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-        html.template-minimal.dark .site-entry {
-            background: #0a0a0a;
-            color: #fafafa;
-        }
-
-        /* ----- Keynote entry palette (presentation deck — matches the
-                 in-deck cover: Inter, indigo-violet accent, soft halo) ----- */
-        html.template-keynote .site-entry {
-            background: #fbfbfe;
-            color: #14121f;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-image:
-                radial-gradient(58% 46% at 50% 0%, rgba(107,76,224,0.14), transparent 70%);
-        }
-        html.template-keynote.dark .site-entry {
-            background: #0b0b13;
-            color: #f5f5fa;
-            background-image:
-                radial-gradient(58% 46% at 50% 0%, rgba(182,164,255,0.16), transparent 70%);
-        }
-        html.template-keynote .site-entry__name {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            font-weight: 750;
-            letter-spacing: -0.045em;
-            font-size: clamp(34px, 6.6vw, 64px);
-        }
-        html.template-keynote .site-entry__rule {
-            height: 3px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #6b4ce0, #4733b8);
-        }
-        html.template-keynote.dark .site-entry__rule {
-            background: linear-gradient(90deg, #b6a4ff, #9c82ff);
-        }
-        html.template-keynote .site-entry__tagline {
-            font-size: clamp(14px, 1.6vw, 18px);
-            color: #4a4660;
-            max-width: 52ch;
-            line-height: 1.55;
-        }
-        html.template-keynote.dark .site-entry__tagline { color: #b9b7c8; }
-        html.template-keynote .site-entry__dots { color: #8b88a0; }
-        html.template-keynote.dark .site-entry__dots { color: #7d7a93; }
-        /* Solid accent enter button — same language as the deck's primary CTA */
-        html.template-keynote .site-entry__enter {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: none;
-            border: none;
-            border-radius: 999px;
-            padding: 13px 28px;
-            background: #6b4ce0;
-            color: #ffffff;
-            box-shadow: 0 14px 34px -16px rgba(107,76,224,0.7);
-        }
-        html.template-keynote .site-entry__enter:hover {
-            background: #5a3ed0;
-            transform: translateY(-2px);
-        }
-        html.template-keynote .site-entry__enter:focus-visible {
-            outline: 2px solid #6b4ce0;
-            outline-offset: 3px;
-        }
-        html.template-keynote.dark .site-entry__enter {
-            background: #b6a4ff;
-            color: #0b0b13;
-            box-shadow: 0 14px 34px -16px rgba(182,164,255,0.55);
-        }
-        html.template-keynote.dark .site-entry__enter:hover { background: #c4b6ff; }
-        html.template-keynote.dark .site-entry__enter:focus-visible { outline-color: #b6a4ff; }
-        /* Keynote uses no surveillance/broadsheet decoration. */
-        html.template-keynote .se-reticle,
-        html.template-keynote .se-corner,
-        html.template-keynote .sew { display: none; }
-
-        /* Keynote tagline: professional copy (default hidden for keynote). */
-        .se-tag-keynote { display: none; }
-        html.template-keynote .se-tag-default { display: none; }
-        html.template-keynote .se-tag-keynote { display: inline; }
-
-        /* Keynote name: animated bleeding gradient (matches the deck cover). */
-        @keyframes se-bleed {
-            0%, 100% { background-position: 0% 50%; }
-            50%      { background-position: 100% 50%; }
-        }
-        html.template-keynote .site-entry__name {
-            font-weight: 800;
-            background: linear-gradient(100deg, #6b4ce0 0%, #4733b8 50%, #6b4ce0 100%);
-            background-size: 220% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: se-name 1100ms cubic-bezier(.2,.7,.2,1) 320ms forwards,
-                       se-bleed 6s ease-in-out 1500ms infinite;
-        }
-        html.template-keynote.dark .site-entry__name {
-            background: linear-gradient(100deg, #b6a4ff 0%, #9c82ff 50%, #b6a4ff 100%);
-            background-size: 220% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        @media (prefers-reduced-motion: reduce) {
-            html.template-keynote .site-entry__name {
-                animation: se-name 1100ms cubic-bezier(.2,.7,.2,1) 320ms forwards;
-            }
-        }
-
-        /* Watermark layer — shared shell, template-specific backdrop. */
-        .site-entry__watermark {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-            color: inherit;
-        }
-        /* Broadsheet: engineering grid + glyph watermark. */
-        html.template-broadsheet .site-entry__watermark::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            opacity: 0.7;
-            background-image:
-                linear-gradient(currentColor 1px, transparent 1px),
-                linear-gradient(90deg, currentColor 1px, transparent 1px),
-                linear-gradient(currentColor 1px, transparent 1px),
-                linear-gradient(90deg, currentColor 1px, transparent 1px);
-            background-size: 16px 16px, 16px 16px, 64px 64px, 64px 64px;
-            filter: opacity(0.035);
-        }
-        /* Surveillance: pixel surveillance grid. */
-        html.template-surveillance .site-entry__watermark::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(currentColor 1px, transparent 1px),
-                linear-gradient(90deg, currentColor 1px, transparent 1px);
-            background-size: 32px 32px, 32px 32px;
-            filter: opacity(0.08);
-        }
-        /* Broadsheet glyphs visible; hidden for surveillance. */
-        .sew {
-            position: absolute;
-            color: inherit;
-            opacity: 0.06;
-        }
-        .sew--sine     { top: 70px;   right: 16px; width: 180px; }
-        .sew--chain    { top: 50%;    left: 12px; width: 220px; transform: translateY(-50%); }
-        .sew--integral { bottom: 48px; right: 24px; width: 160px; }
-        .sew--neural   { bottom: 140px; left: 20px; width: 120px; }
-        @media (max-width: 768px) {
-            .sew { display: none; }
-        }
-        html.template-surveillance .sew { display: none; }
-        html.template-broadsheet .se-reticle,
-        html.template-broadsheet .se-corner { display: none; }
-
-        /* Surveillance reticles, pinned at corners. */
-        .se-reticle {
-            position: absolute;
-            width: 56px;
-            height: 56px;
-            opacity: 0.20;
-            color: inherit;
-        }
-        .se-reticle--tl { top: 28px;    left: 28px; }
-        .se-reticle--br { bottom: 28px; right: 28px; }
-        @media (max-width: 768px) {
-            .se-reticle { width: 40px; height: 40px; opacity: 0.16; }
-            .se-reticle--tl { top: 16px; left: 16px; }
-            .se-reticle--br { bottom: 16px; right: 16px; }
-        }
-
-        /* Surveillance corner brackets around stage. */
-        .se-corner {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-color: currentColor;
-            border-style: solid;
-            border-width: 0;
-        }
-        html.template-surveillance.dark .se-corner { color: #ff6b3a; }
-        html.template-surveillance:not(.dark) .se-corner { color: #d63c3c; }
-        .se-corner--tl { top: -16px; left: -16px;  border-top-width: 2px; border-left-width: 2px; }
-        .se-corner--tr { top: -16px; right: -16px; border-top-width: 2px; border-right-width: 2px; }
-        .se-corner--bl { bottom: -16px; left: -16px;  border-bottom-width: 2px; border-left-width: 2px; }
-        .se-corner--br { bottom: -16px; right: -16px; border-bottom-width: 2px; border-right-width: 2px; }
-
-        .site-entry__stage {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 22px;
-        }
-
-        /* Theme toggle in corner of entry gate. */
-        .site-entry__theme {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 2;
-            width: 36px;
-            height: 36px;
-            background: transparent;
-            border: 1px solid currentColor;
-            color: inherit;
-            cursor: pointer;
-            opacity: 0.55;
-            display: grid;
-            place-items: center;
-            padding: 0;
-            transition: opacity 160ms ease, background 160ms ease, color 160ms ease;
-        }
-        .site-entry__theme:hover { opacity: 1; }
-        .site-entry__theme:focus-visible {
-            outline: 2px solid #b8552a;
-            outline-offset: 3px;
-            opacity: 1;
-        }
-        .site-entry__theme svg { width: 16px; height: 16px; display: block; }
-        .site-entry__theme .icon-sun { display: none; }
-        .site-entry__theme .icon-moon { display: block; }
-        html.dark .site-entry__theme .icon-sun { display: block; }
-        html.dark .site-entry__theme .icon-moon { display: none; }
-
-        .site-entry__folio {
-            font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-            font-size: 10px;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            opacity: 0;
-            animation: se-fade 600ms ease-out 120ms forwards;
-        }
-        /* Folio color per template */
-        html.template-broadsheet .site-entry__folio { color: #b8552a; }
-        html.template-broadsheet.dark .site-entry__folio { color: #d1784a; }
-        html.template-surveillance:not(.dark) .site-entry__folio { color: #d63c3c; }
-        html.template-surveillance.dark .site-entry__folio { color: #ff6b3a; }
-
-        .site-entry__name {
-            font-size: clamp(30px, 6vw, 54px);
-            font-weight: 400;
-            letter-spacing: -0.025em;
-            line-height: 1;
-            text-align: center;
-            margin: 0;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: se-name 1100ms cubic-bezier(.2,.7,.2,1) 320ms forwards;
-        }
-        /* Surveillance: mono name, uppercase, tighter tracking, phosphor glow */
-        html.template-surveillance .site-entry__name {
-            font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: -0.01em;
-        }
-        html.template-surveillance.dark .site-entry__name {
-            text-shadow: 0 0 12px rgba(243, 199, 105, 0.35),
-                         0 0 24px rgba(243, 199, 105, 0.18);
-        }
-
-        .site-entry__rule {
-            width: 0;
-            height: 1.5px;
-            border-radius: 1px;
-            animation: se-rule 1800ms cubic-bezier(.25,1,.5,1) 720ms forwards;
-        }
-        html.template-broadsheet .site-entry__rule { background: #b8552a; }
-        html.template-broadsheet.dark .site-entry__rule { background: #d1784a; }
-        html.template-surveillance:not(.dark) .site-entry__rule { background: #d63c3c; }
-        html.template-surveillance.dark .site-entry__rule { background: #ff6b3a; }
-
-        .site-entry__tagline {
-            font-size: clamp(13px, 1.6vw, 16px);
-            text-align: center;
-            max-width: 44ch;
-            line-height: 1.5;
-            opacity: 0;
-            animation: se-fade 700ms ease-out 1800ms forwards;
-        }
-        /* Broadsheet tagline: serif italic, soft grey */
-        html.template-broadsheet .site-entry__tagline {
-            font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-            font-style: italic;
-            color: #5a5a5a;
-        }
-        html.template-broadsheet.dark .site-entry__tagline { color: #a0a0a0; }
-        /* Surveillance tagline: mono, uppercase, muted */
-        html.template-surveillance .site-entry__tagline {
-            font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: clamp(11px, 1.3vw, 13px);
-            line-height: 1.6;
-        }
-        html.template-surveillance:not(.dark) .site-entry__tagline { color: #4a5366; }
-        html.template-surveillance.dark .site-entry__tagline { color: #b08652; }
-
-        .site-entry__dots {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-            font-size: 11px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            opacity: 0;
-            animation: se-fade 500ms ease-out 2500ms forwards;
-        }
-        html.template-broadsheet .site-entry__dots { color: #7a7a7a; }
-        html.template-broadsheet.dark .site-entry__dots { color: #9a9a9a; }
-        html.template-surveillance:not(.dark) .site-entry__dots { color: #5a6478; }
-        html.template-surveillance.dark .site-entry__dots { color: #b08652; }
-
-        .site-entry__dot {
-            display: inline-block;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: currentColor;
-            animation: se-blink 1200ms ease-in-out infinite;
-        }
-        .site-entry__dot:nth-of-type(2) { animation-delay: 160ms; }
-        .site-entry__dot:nth-of-type(3) { animation-delay: 320ms; }
-        .site-entry__label { margin-left: 4px; }
-
-        .site-entry__enter {
-            margin-top: 14px;
-            padding: 12px 26px;
-            background: transparent;
-            font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-            font-size: 11px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            cursor: pointer;
-            opacity: 0;
-            transform: translateY(8px);
-            pointer-events: none;
-            transition: background 180ms ease, color 180ms ease, transform 180ms ease, border-color 180ms ease;
-            animation: se-enter 700ms cubic-bezier(.2,.7,.2,1) 3200ms forwards;
-            border: 1px solid currentColor;
-        }
-        /* Broadsheet enter button: inverts on hover */
-        html.template-broadsheet .site-entry__enter { color: #16181d; border-color: #16181d; }
-        html.template-broadsheet .site-entry__enter:hover { background: #16181d; color: #f4efe6; }
-        html.template-broadsheet .site-entry__enter:focus-visible {
-            outline: 2px solid #b8552a; outline-offset: 3px;
-        }
-        html.template-broadsheet.dark .site-entry__enter { color: #e6e0d0; border-color: #e6e0d0; }
-        html.template-broadsheet.dark .site-entry__enter:hover { background: #e6e0d0; color: #121316; }
-
-        /* Surveillance enter button: accent-bordered, fills on hover */
-        html.template-surveillance:not(.dark) .site-entry__enter {
-            color: #d63c3c;
-            border-color: #d63c3c;
-        }
-        html.template-surveillance:not(.dark) .site-entry__enter:hover {
-            background: #d63c3c;
-            color: #f4f5f8;
-        }
-        html.template-surveillance:not(.dark) .site-entry__enter:focus-visible {
-            outline: 2px solid #d63c3c; outline-offset: 3px;
-        }
-        html.template-surveillance.dark .site-entry__enter {
-            color: #ff6b3a;
-            border-color: #ff6b3a;
-        }
-        html.template-surveillance.dark .site-entry__enter:hover {
-            background: #ff6b3a;
-            color: #0a0907;
-            box-shadow: 0 0 24px rgba(255, 107, 58, 0.35);
-        }
-        html.template-surveillance.dark .site-entry__enter:focus-visible {
-            outline: 2px solid #ff6b3a; outline-offset: 3px;
-        }
-        .site-entry__enter .se-arrow {
-            display: inline-block;
-            margin-left: 10px;
-            transition: transform 200ms cubic-bezier(.2,.7,.2,1);
-        }
-        .site-entry__enter:hover .se-arrow { transform: translateX(4px); }
-
-        /* Toggle copy variants based on the active template class.
-           Only the active template's variant span is visible. */
-        .se-enter-folio, .se-enter-broadsheet, .se-enter-surveillance,
-        .se-enter-minimal, .se-enter-animus, .se-enter-inception,
-        .se-enter-heist, .se-enter-chess, .se-enter-tenet, .se-enter-keynote,
-        .se-label-folio, .se-label-broadsheet, .se-label-surveillance,
-        .se-label-minimal, .se-label-animus, .se-label-inception,
-        .se-label-heist, .se-label-chess, .se-label-tenet, .se-label-keynote { display: none; }
-
-        html.template-folio        .se-enter-folio,
-        html.template-folio        .se-label-folio,
-        html.template-broadsheet   .se-enter-broadsheet,
-        html.template-broadsheet   .se-label-broadsheet,
-        html.template-surveillance .se-enter-surveillance,
-        html.template-surveillance .se-label-surveillance,
-        html.template-minimal      .se-enter-minimal,
-        html.template-minimal      .se-label-minimal,
-        html.template-animus       .se-enter-animus,
-        html.template-animus       .se-label-animus,
-        html.template-inception    .se-enter-inception,
-        html.template-inception    .se-label-inception,
-        html.template-heist        .se-enter-heist,
-        html.template-heist        .se-label-heist,
-        html.template-chess        .se-enter-chess,
-        html.template-chess        .se-label-chess,
-        html.template-tenet        .se-enter-tenet,
-        html.template-tenet        .se-label-tenet,
-        html.template-keynote      .se-enter-keynote,
-        html.template-keynote      .se-label-keynote { display: inline; }
-
-        /* ----- Hide broadsheet-only and surveillance-only decoration for the
-                "clean" templates (folio, minimal, animus, inception, heist,
-                chess, tenet) ----- */
-        html.template-folio      .site-entry__watermark::before,
-        html.template-folio      .sew,
-        html.template-folio      .se-reticle,
-        html.template-folio      .se-corner,
-        html.template-minimal    .site-entry__watermark::before,
-        html.template-minimal    .sew,
-        html.template-minimal    .se-reticle,
-        html.template-minimal    .se-corner,
-        html.template-animus     .site-entry__watermark::before,
-        html.template-animus     .sew,
-        html.template-animus     .se-corner,
-        html.template-inception  .site-entry__watermark::before,
-        html.template-inception  .sew,
-        html.template-inception  .se-reticle,
-        html.template-inception  .se-corner,
-        html.template-heist      .site-entry__watermark::before,
-        html.template-heist      .sew,
-        html.template-heist      .se-reticle,
-        html.template-heist      .se-corner,
-        html.template-chess      .site-entry__watermark::before,
-        html.template-chess      .sew,
-        html.template-chess      .se-reticle,
-        html.template-chess      .se-corner,
-        html.template-tenet      .site-entry__watermark::before,
-        html.template-tenet      .sew,
-        html.template-tenet      .se-reticle,
-        html.template-tenet      .se-corner { display: none; }
-
-        /* ----- Folio entry: clean Inter, indigo accent, rounded button ----- */
-        html.template-folio .site-entry__folio {
-            color: #2543b0;
-            font-family: 'Inter', system-ui, sans-serif;
-            font-size: 12px;
-            letter-spacing: 0;
-            text-transform: none;
-            font-weight: 500;
-        }
-        html.template-folio.dark .site-entry__folio { color: #93a8ff; }
-        html.template-folio .site-entry__name {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-weight: 600;
-            letter-spacing: -0.025em;
-        }
-        html.template-folio .site-entry__rule { background: #2543b0; opacity: 0.6; }
-        html.template-folio.dark .site-entry__rule { background: #93a8ff; }
-        html.template-folio .site-entry__tagline {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-style: normal;
-            color: #4b5563;
-        }
-        html.template-folio.dark .site-entry__tagline { color: #b3b9c5; }
-        html.template-folio .site-entry__dots {
-            font-family: 'Inter', system-ui, sans-serif;
-            letter-spacing: 0;
-            text-transform: none;
-            font-size: 13px;
-            color: #6b7280;
-        }
-        html.template-folio.dark .site-entry__dots { color: #9aa0ac; }
-        html.template-folio .site-entry__enter {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0;
-            text-transform: none;
-            padding: 11px 22px;
-            border-radius: 8px;
-            color: #ffffff;
-            background: #2543b0;
-            border-color: #2543b0;
-        }
-        html.template-folio .site-entry__enter:hover {
-            background: #1a3596;
-            border-color: #1a3596;
-        }
-        html.template-folio.dark .site-entry__enter {
-            background: #93a8ff;
-            border-color: #93a8ff;
-            color: #0d1117;
-        }
-        html.template-folio.dark .site-entry__enter:hover {
-            background: #b5c1ff;
-            border-color: #b5c1ff;
-        }
-        html.template-folio .site-entry__theme {
-            border-radius: 8px;
-            border-color: rgba(0,0,0,0.1);
-        }
-        html.template-folio.dark .site-entry__theme {
-            border-color: rgba(255,255,255,0.15);
-        }
-
-        /* ----- Animus entry: Cinzel headline, cyan accent ----- */
-        html.template-animus .site-entry__folio {
-            font-family: 'Cinzel', serif;
-            font-size: 11px;
-            letter-spacing: 0.32em;
-            color: #0e7490;
-        }
-        html.template-animus.dark .site-entry__folio { color: #67e8f9; }
-        html.template-animus .site-entry__name {
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-        html.template-animus .site-entry__rule { background: #0e7490; }
-        html.template-animus.dark .site-entry__rule { background: #22d3ee; }
-        html.template-animus .site-entry__tagline {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-style: normal;
-            color: #475569;
-        }
-        html.template-animus.dark .site-entry__tagline { color: #94a3b8; }
-        html.template-animus .site-entry__enter {
-            font-family: 'Cinzel', serif;
-            letter-spacing: 0.18em;
-            color: #0e7490;
-            border-color: #0e7490;
-        }
-        html.template-animus .site-entry__enter:hover {
-            background: #0e7490;
-            color: #f1f5f9;
-        }
-        html.template-animus.dark .site-entry__enter {
-            color: #67e8f9;
-            border-color: #67e8f9;
-        }
-        html.template-animus.dark .site-entry__enter:hover {
-            background: #22d3ee;
-            color: #0a0907;
-        }
-
-        /* ----- Inception entry: mono+blue, no decoration ----- */
-        html.template-inception .site-entry__folio {
-            color: #2563eb;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.18em;
-        }
-        html.template-inception.dark .site-entry__folio { color: #93c5fd; }
-        html.template-inception .site-entry__name {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-weight: 600;
-            letter-spacing: -0.025em;
-        }
-        html.template-inception .site-entry__rule { background: #2563eb; }
-        html.template-inception.dark .site-entry__rule { background: #93c5fd; }
-        html.template-inception .site-entry__tagline {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-style: normal;
-            color: #475569;
-        }
-        html.template-inception.dark .site-entry__tagline { color: #94a3b8; }
-        html.template-inception .site-entry__enter {
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.12em;
-            color: #14181f;
-            border-color: #14181f;
-        }
-        html.template-inception .site-entry__enter:hover { background: #14181f; color: #f3f4f6; }
-        html.template-inception.dark .site-entry__enter { color: #f3f5f8; border-color: #f3f5f8; }
-        html.template-inception.dark .site-entry__enter:hover { background: #f3f5f8; color: #0d1117; }
-
-        /* ----- Heist entry: bold sans + red, dramatic ----- */
-        html.template-heist .site-entry { background: #f7f3eb; color: #0a0a0a; font-family: 'Inter', system-ui, sans-serif; }
-        html.template-heist.dark .site-entry { background: #0a0a0a; color: #f7f3eb; }
-        html.template-heist .site-entry__folio {
-            color: #c01a1a;
-            font-family: 'Inter', system-ui, sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.26em;
-            text-transform: uppercase;
-        }
-        html.template-heist.dark .site-entry__folio { color: #ef4444; }
-        html.template-heist .site-entry__name {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-weight: 800;
-            letter-spacing: -0.035em;
-            text-transform: uppercase;
-        }
-        html.template-heist .site-entry__rule { background: #c01a1a; }
-        html.template-heist.dark .site-entry__rule { background: #ef4444; }
-        html.template-heist .site-entry__tagline {
-            font-family: 'Caveat', cursive;
-            font-style: normal;
-            font-size: clamp(18px, 2.4vw, 22px);
-            font-weight: 600;
-            color: #c01a1a;
-        }
-        html.template-heist.dark .site-entry__tagline { color: #ef4444; }
-        html.template-heist .site-entry__enter {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            background: #c01a1a;
-            color: #f7f3eb;
-            border-color: #c01a1a;
-        }
-        html.template-heist .site-entry__enter:hover { background: #8a1212; border-color: #8a1212; }
-        html.template-heist.dark .site-entry__enter {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: #0a0a0a;
-        }
-        html.template-heist.dark .site-entry__enter:hover { background: #f87171; border-color: #f87171; }
-
-        /* ----- Chess entry: serif elegance ----- */
-        html.template-chess .site-entry { font-family: 'Crimson Pro', Georgia, serif; }
-        html.template-chess .site-entry__folio {
-            font-family: 'JetBrains Mono', monospace;
-            color: #a47e1a;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: none;
-        }
-        html.template-chess.dark .site-entry__folio { color: #e6b94f; }
-        html.template-chess .site-entry__name {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-weight: 600;
-            letter-spacing: -0.015em;
-        }
-        html.template-chess .site-entry__rule { background: #a47e1a; }
-        html.template-chess.dark .site-entry__rule { background: #e6b94f; }
-        html.template-chess .site-entry__tagline {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-style: italic;
-            color: #555;
-        }
-        html.template-chess.dark .site-entry__tagline { color: #c9c0a7; }
-        html.template-chess .site-entry__dots {
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.06em;
-            text-transform: none;
-        }
-        html.template-chess .site-entry__enter {
-            font-family: 'Crimson Pro', Georgia, serif;
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            text-transform: none;
-            font-size: 15px;
-            color: #0a0a0a;
-            border-color: #0a0a0a;
-        }
-        html.template-chess .site-entry__enter:hover { background: #0a0a0a; color: #f4efdf; }
-        html.template-chess.dark .site-entry__enter { color: #efe5c6; border-color: #efe5c6; }
-        html.template-chess.dark .site-entry__enter:hover { background: #efe5c6; color: #0a0a0a; }
-
-        /* ----- Tenet entry: dual accents, mirrored small print ----- */
-        html.template-tenet .site-entry__folio {
-            font-family: 'JetBrains Mono', monospace;
-            color: #1d6cb0;
-            font-size: 11px;
-            letter-spacing: 0.16em;
-        }
-        html.template-tenet.dark .site-entry__folio { color: #67e8f9; }
-        html.template-tenet .site-entry__name {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-weight: 600;
-            letter-spacing: -0.03em;
-        }
-        html.template-tenet .site-entry__rule { background: #1d6cb0; }
-        html.template-tenet.dark .site-entry__rule { background: #67e8f9; }
-        html.template-tenet .site-entry__tagline {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-style: normal;
-            color: #475569;
-        }
-        html.template-tenet.dark .site-entry__tagline { color: #94a3b8; }
-        html.template-tenet .site-entry__enter {
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.16em;
-            color: #1d6cb0;
-            border-color: #1d6cb0;
-        }
-        html.template-tenet .site-entry__enter:hover { background: #1d6cb0; color: #f1f5f9; }
-        html.template-tenet.dark .site-entry__enter { color: #67e8f9; border-color: #67e8f9; }
-        html.template-tenet.dark .site-entry__enter:hover { background: #22d3ee; color: #0a0907; }
-
-        /* ----- Minimal entry: typography overrides ----- */
-        html.template-minimal .site-entry__watermark::before,
-        html.template-minimal .sew,
-        html.template-minimal .se-reticle,
-        html.template-minimal .se-corner { display: none; }
-
-        html.template-minimal .site-entry__folio { color: #0e7490; font-size: 12px; letter-spacing: 0; text-transform: none; font-family: inherit; font-weight: 500; }
-        html.template-minimal.dark .site-entry__folio { color: #06b6d4; }
-
-        html.template-minimal .site-entry__name {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-weight: 600;
-            letter-spacing: -0.03em;
-        }
-
-        html.template-minimal .site-entry__rule {
-            background: #0e7490;
-            opacity: 0.6;
-        }
-        html.template-minimal.dark .site-entry__rule { background: #06b6d4; }
-
-        html.template-minimal .site-entry__tagline {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-style: normal;
-            color: #525860;
-            font-size: clamp(14px, 1.6vw, 16px);
-        }
-        html.template-minimal.dark .site-entry__tagline { color: #a1a1aa; }
-
-        html.template-minimal .site-entry__dots {
-            font-family: 'Inter', system-ui, sans-serif;
-            letter-spacing: 0;
-            text-transform: none;
-            font-size: 13px;
-            color: #71717a;
-        }
-        html.template-minimal.dark .site-entry__dots { color: #a1a1aa; }
-
-        html.template-minimal .site-entry__enter {
-            font-family: 'Inter', system-ui, sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0;
-            text-transform: none;
-            padding: 11px 20px;
-            border-radius: 8px;
-            color: #ffffff;
-            background: #0e7490;
-            border-color: #0e7490;
-        }
-        html.template-minimal .site-entry__enter:hover {
-            background: #155e75;
-            border-color: #155e75;
-            color: #ffffff;
-        }
-        html.template-minimal .site-entry__enter:focus-visible {
-            outline: 2px solid #06b6d4;
-            outline-offset: 3px;
-        }
-        html.template-minimal.dark .site-entry__enter {
-            background: #06b6d4;
-            border-color: #06b6d4;
-            color: #0a0a0a;
-        }
-        html.template-minimal.dark .site-entry__enter:hover {
-            background: #22d3ee;
-            border-color: #22d3ee;
-        }
-
-        html.template-minimal .site-entry__theme {
-            border-radius: 8px;
-            border-color: rgba(0,0,0,0.1);
-        }
-        html.template-minimal.dark .site-entry__theme {
-            border-color: rgba(255,255,255,0.15);
-        }
-
-        @keyframes se-fade {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-        @keyframes se-name {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes se-rule {
-            from { width: 0; }
-            to   { width: min(340px, 60vw); }
-        }
-        @keyframes se-blink {
-            0%, 60%, 100% { opacity: 0.28; transform: scale(1); }
-            25%           { opacity: 1;    transform: scale(1.2); }
-        }
-        @keyframes se-enter {
-            0%   { opacity: 0; transform: translateY(8px); pointer-events: none; }
-            100% { opacity: 1; transform: translateY(0);   pointer-events: auto; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .site-entry__folio,
-            .site-entry__name,
-            .site-entry__rule,
-            .site-entry__tagline,
-            .site-entry__dots,
-            .site-entry__dot,
-            .site-entry__enter {
-                animation: none;
-                opacity: 1;
-                transform: none;
-                pointer-events: auto;
-            }
-            .site-entry__rule { width: min(340px, 60vw); }
-            .site-entry__dot  { opacity: 0.6; }
-        }
+        .se-in { opacity: 0; transform: translateY(10px); animation: se-in 640ms cubic-bezier(.2,.7,.2,1) forwards; }
+        .se-d1 { animation-delay: 60ms; } .se-d2 { animation-delay: 140ms; } .se-d3 { animation-delay: 230ms; }
+        .se-d4 { animation-delay: 320ms; } .se-d5 { animation-delay: 410ms; }
+        @keyframes se-in { to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .se-in { animation: none; opacity: 1; transform: none; } }
+        @media (max-height: 620px) { .se-facts { display: none; } .se-actions { margin-top: 28px; } }
     </style>
+
     <div class="site-entry" role="dialog" aria-label="Welcome to the portfolio of Md. Mosfikur Rahman">
-        <!-- Surveillance-only corner reticles. Hidden under broadsheet via CSS. -->
-        <svg class="se-reticle se-reticle--tl" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
-            <circle cx="30" cy="30" r="22" />
-            <circle cx="30" cy="30" r="2" fill="currentColor" />
-            <line x1="30" y1="2"  x2="30" y2="14" />
-            <line x1="30" y1="46" x2="30" y2="58" />
-            <line x1="2"  y1="30" x2="14" y2="30" />
-            <line x1="46" y1="30" x2="58" y2="30" />
-        </svg>
-        <svg class="se-reticle se-reticle--br" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
-            <circle cx="30" cy="30" r="22" />
-            <circle cx="30" cy="30" r="2" fill="currentColor" />
-            <line x1="30" y1="2"  x2="30" y2="14" />
-            <line x1="30" y1="46" x2="30" y2="58" />
-            <line x1="2"  y1="30" x2="14" y2="30" />
-            <line x1="46" y1="30" x2="58" y2="30" />
-        </svg>
+        <div class="se-bg" aria-hidden="true"></div>
 
-        <div class="site-entry__watermark" aria-hidden="true">
-            <svg class="sew sew--sine" viewBox="0 0 180 110" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="10" x2="18" y2="100" />
-                <path d="M14 14 L18 10 L22 14" />
-                <line x1="12" y1="96" x2="175" y2="96" />
-                <path d="M171 92 L175 96 L171 100" />
-                <line x1="52" y1="94" x2="52" y2="98" />
-                <line x1="86" y1="94" x2="86" y2="98" />
-                <line x1="120" y1="94" x2="120" y2="98" />
-                <line x1="154" y1="94" x2="154" y2="98" />
-                <line x1="16" y1="40" x2="20" y2="40" />
-                <path d="M 18 68 C 35 28, 50 28, 70 68 C 90 108, 100 108, 120 68 C 140 28, 155 28, 172 68" stroke-width="1.3" />
-                <text x="130" y="26" font-size="9" font-family="JetBrains Mono, monospace" fill="currentColor" stroke="none" letter-spacing="0.06em">f(x)</text>
-            </svg>
-            <svg class="sew sew--chain" viewBox="0 0 220 70" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="22" width="50" height="24" rx="2.5" />
-                <rect x="82" y="22" width="56" height="24" rx="2.5" />
-                <rect x="164" y="22" width="50" height="24" rx="2.5" />
-                <line x1="56" y1="34" x2="78" y2="34" />
-                <path d="M74 31 L78 34 L74 37 Z" fill="currentColor" stroke="none" />
-                <line x1="138" y1="34" x2="160" y2="34" />
-                <path d="M156 31 L160 34 L156 37 Z" fill="currentColor" stroke="none" />
-                <text x="16" y="38" font-size="9" font-family="JetBrains Mono, monospace" fill="currentColor" stroke="none" letter-spacing="0.08em">api</text>
-                <text x="89" y="38" font-size="9" font-family="JetBrains Mono, monospace" fill="currentColor" stroke="none" letter-spacing="0.08em">rules</text>
-                <text x="176" y="38" font-size="9" font-family="JetBrains Mono, monospace" fill="currentColor" stroke="none" letter-spacing="0.08em">db</text>
-            </svg>
-            <svg class="sew sew--integral" viewBox="0 0 170 90" fill="currentColor" stroke="none">
-                <text x="4" y="76" font-size="96" font-family="Fraunces, serif" font-style="italic" font-weight="200">∫</text>
-                <text x="34" y="22" font-size="14" font-family="Fraunces, serif" font-style="italic">b</text>
-                <text x="34" y="80" font-size="14" font-family="Fraunces, serif" font-style="italic">a</text>
-                <text x="60" y="56" font-size="22" font-family="Fraunces, serif" font-style="italic">f(x)</text>
-                <text x="110" y="56" font-size="20" font-family="Fraunces, serif" font-style="italic">dx</text>
-            </svg>
-            <svg class="sew sew--neural" viewBox="0 0 120 100" fill="none" stroke="currentColor" stroke-width="0.9">
-                <line x1="12" y1="18" x2="60" y2="36" />
-                <line x1="12" y1="18" x2="60" y2="70" />
-                <line x1="12" y1="50" x2="60" y2="36" />
-                <line x1="12" y1="50" x2="60" y2="70" />
-                <line x1="12" y1="82" x2="60" y2="36" />
-                <line x1="12" y1="82" x2="60" y2="70" />
-                <line x1="60" y1="36" x2="108" y2="52" />
-                <line x1="60" y1="70" x2="108" y2="52" />
-                <circle cx="12" cy="18" r="4" fill="currentColor" fill-opacity="0.55" stroke="none" />
-                <circle cx="12" cy="50" r="4" fill="currentColor" fill-opacity="0.55" stroke="none" />
-                <circle cx="12" cy="82" r="4" fill="currentColor" fill-opacity="0.55" stroke="none" />
-                <circle cx="60" cy="36" r="4" fill="currentColor" fill-opacity="0.55" stroke="none" />
-                <circle cx="60" cy="70" r="4" fill="currentColor" fill-opacity="0.55" stroke="none" />
-                <circle cx="108" cy="52" r="4" fill="currentColor" fill-opacity="0.55" stroke="none" />
-            </svg>
-        </div>
-
-        <button id="siteEntryTheme" type="button" class="site-entry__theme" aria-label="Toggle light / dark theme" title="Toggle theme">
-            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-            </svg>
-        </button>
-
-        <div class="site-entry__stage">
-            <!-- Surveillance-only corner brackets around the stage. -->
-            <span class="se-corner se-corner--tl" aria-hidden="true"></span>
-            <span class="se-corner se-corner--tr" aria-hidden="true"></span>
-            <span class="se-corner se-corner--bl" aria-hidden="true"></span>
-            <span class="se-corner se-corner--br" aria-hidden="true"></span>
-
-            <h1 class="site-entry__name">Md. Mosfikur Rahman</h1>
-            <div class="site-entry__rule" aria-hidden="true"></div>
-            <p class="site-entry__tagline">
-                <span class="se-tag-default">Engineer by craft, researcher by rigor, architect by design.</span>
-                <span class="se-tag-keynote">Backend architect &amp; applied-ML researcher — production systems at real scale, backed by peer-reviewed research.</span>
-            </p>
-            <div class="site-entry__dots" aria-hidden="true">
-                <span class="site-entry__dot"></span>
-                <span class="site-entry__dot"></span>
-                <span class="site-entry__dot"></span>
-                <span class="site-entry__label se-label-broadsheet">Press ready</span>
-                <span class="se-label-surveillance">Awaiting access</span>
-                <span class="se-label-minimal">Ready</span>
-                <span class="se-label-folio">Ready</span>
-                <span class="se-label-animus">Synchronising</span>
-                <span class="se-label-inception">Blueprint loaded</span>
-                <span class="se-label-heist">In motion</span>
-                <span class="se-label-chess">Clock started</span>
-                <span class="se-label-tenet">Inverted &amp; forward</span>
-                <span class="se-label-keynote">Deck ready</span>
+        <header class="se-top se-in">
+            <div class="se-brand">
+                <img id="siteEntryAvatar" src="/profile-avatar.png" alt="" width="32" height="32">
+                <span>Md. Mosfikur Rahman</span>
             </div>
-            <button id="siteEntryEnter" type="button" class="site-entry__enter">
-                <span class="se-enter-broadsheet">Turn the page</span>
-                <span class="se-enter-surveillance">Grant access</span>
-                <span class="se-enter-minimal">Enter site</span>
-                <span class="se-enter-folio">Enter</span>
-                <span class="se-enter-animus">Begin Memory</span>
-                <span class="se-enter-inception">Open the blueprint</span>
-                <span class="se-enter-heist">Run the plan</span>
-                <span class="se-enter-chess">1.e4</span>
-                <span class="se-enter-tenet">Forward / Reverse</span>
-                <span class="se-enter-keynote">Open the deck</span>
-                <span class="se-arrow" aria-hidden="true">→</span>
+            <button id="siteEntryTheme" type="button" class="se-icon" aria-label="Toggle light or dark theme" title="Toggle theme">
+                <svg class="se-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg class="se-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
             </button>
-        </div>
+        </header>
+
+        <main class="se-main">
+            <p id="siteEntryEyebrow" class="se-eyebrow se-in se-d1">Backend architect · Applied-ML researcher</p>
+            <h1 class="se-name se-in se-d2">Md. Mosfikur Rahman</h1>
+            <p class="se-tagline se-in se-d3">Designing the <em>quiet half</em> of software (services, schemas, and workflows) and studying the machine learning that keeps them standing.</p>
+            <!-- The figures mirror `figures` in src/lib/content.ts; years are computed below. -->
+            <ul class="se-facts se-in se-d4">
+                <li><b id="siteEntryYears">4+ yr</b><span>in industry · Java, .NET</span></li>
+                <li><b>10</b><span>peer-reviewed papers</span></li>
+                <li><b>78</b><span>manuscripts reviewed</span></li>
+                <li><b>5</b><span>systems shipped</span></li>
+            </ul>
+            <div class="se-actions se-in se-d5">
+                <button id="siteEntryEnter" type="button" class="se-btn se-btn--primary">Enter <span aria-hidden="true">→</span></button>
+                <button id="siteEntryPresent" type="button" class="se-btn">
+                    <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5v9l8-4.5z" fill="currentColor"/></svg>
+                    Start presentation
+                </button>
+                <span class="se-hint">or press <kbd>Enter</kbd></span>
+            </div>
+        </main>
+
+        <footer class="se-foot se-in se-d5">
+            <span>© <span id="siteEntryYear">2026</span> Md. Mosfikur Rahman</span>
+            <span>Dhaka, Bangladesh · GMT+6</span>
+        </footer>
     </div>
+
     <script>
       (function () {
         var btn = document.getElementById('siteEntryEnter');
+
+        var yr = document.getElementById('siteEntryYear');
+        if (yr) yr.textContent = String(new Date().getFullYear());
+
+        // Career began April 2022; same rule as `stats.years` in content.ts.
+        var yrs = document.getElementById('siteEntryYears');
+        if (yrs) {
+          var n = Math.max(1, Math.floor((Date.now() - new Date(2022, 3, 1).getTime()) / (365.25 * 24 * 3600 * 1000)));
+          yrs.textContent = n + '+ yr';
+        }
+
+        // The admin-published portrait, when this browser already has it.
+        try {
+          var av = document.getElementById('siteEntryAvatar');
+          var st = JSON.parse(localStorage.getItem('portfolio.settings.v1') || '{}');
+          if (av && st && typeof st.avatarUrl === 'string' && st.avatarUrl) av.src = st.avatarUrl;
+        } catch (_) {}
+
+        // A ?for=research or ?for=industry link (or a remembered choice) sets
+        // which side leads, and which presentation deck the button opens.
+        var lens = 'balanced';
+        try {
+          var v = (new URLSearchParams(location.search).get('for') || localStorage.getItem('portfolio.lens') || '').toLowerCase();
+          if (v === 'research' || v === 'academia' || v === 'academic' || v === 'phd') lens = 'academia';
+          else if (v === 'industry' || v === 'engineering' || v === 'work') lens = 'industry';
+        } catch (_) {}
+        var eyebrow = document.getElementById('siteEntryEyebrow');
+        if (eyebrow) {
+          if (lens === 'academia') eyebrow.textContent = 'Applied-ML researcher · Backend architect';
+          else if (lens === 'industry') eyebrow.textContent = 'Backend architect · Engineering team lead';
+        }
+        var deck = lens === 'academia' ? 'research' : lens === 'industry' ? 'engineering' : 'seminar';
+
         if (btn) {
           btn.addEventListener('click', function () {
             window.__entryClicked = true;
-            // The entry gate already served as the welcome animation.
-            // Mark the surveillance boot as already-played so it doesn't
-            // stack on top if the remote later flips the template.
-            try { sessionStorage.setItem('poi.booted', '1'); } catch (_) {}
             window.dispatchEvent(new Event('entry-enter'));
           });
-          // Focus the button once it becomes interactive so Enter key activates it.
-          window.setTimeout(function () { try { btn.focus({ preventScroll: true }); } catch (_) {} }, 3400);
+          window.setTimeout(function () { try { btn.focus({ preventScroll: true }); } catch (_) {} }, 900);
+        }
+
+        var pres = document.getElementById('siteEntryPresent');
+        if (pres && btn) {
+          pres.addEventListener('click', function () {
+            try { history.replaceState(null, '', location.pathname + location.search + '#present/' + deck); }
+            catch (_) { location.hash = '#present/' + deck; }
+            btn.click();
+          });
         }
 
         var themeBtn = document.getElementById('siteEntryTheme');

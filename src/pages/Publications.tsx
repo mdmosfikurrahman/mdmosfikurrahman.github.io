@@ -1,216 +1,127 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Award, ChevronDown, ExternalLink } from "lucide-react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
-import {
-  publications,
-  doiUrl,
-  formatAuthors,
-  reviewerFor,
-  type Publication,
-} from "@/lib/content";
+import { Award, ChevronDown, ExternalLink, FileText, Search } from "lucide-react";
+import { publications, doiUrl, formatAuthors, reviewerFor, stats, type Publication } from "@/lib/content";
+import { FoPage, FoSection, FoHead, Stats } from "@/site/parts";
 
 type Filter = "all" | "journal" | "conference" | "chapter" | "first";
 
-const filterLabels: Record<Filter, string> = {
+const LABELS: Record<Filter, string> = {
   all: "All",
   journal: "Journals",
   conference: "Conferences",
   chapter: "Chapters",
-  first: "First-author",
+  first: "First author",
 };
+
+const isFirst = (p: Publication) => (p.tags || []).includes("first-author");
 
 export default function Publications() {
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
   const [openKey, setOpenKey] = useState<string | null>(null);
 
-  const list = useMemo(() => {
-    return publications.filter((p) => {
-      if (filter === "first" && !(p.tags || []).includes("first-author")) return false;
-      if (["journal", "conference", "chapter"].includes(filter) && p.type !== filter) return false;
-      if (query.trim()) {
-        const q = query.toLowerCase();
-        const hay = [
-          p.title,
-          p.venue,
-          (p.tags || []).join(" "),
-          (p.keywords || []).join(" "),
-          p.authors.join(" "),
-          p.abstract || "",
-        ]
-          .join(" ")
-          .toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [filter, query]);
+  const list = useMemo(
+    () =>
+      publications.filter((p) => {
+        if (filter === "first" && !isFirst(p)) return false;
+        if (["journal", "conference", "chapter"].includes(filter) && p.type !== filter) return false;
+        const q = query.trim().toLowerCase();
+        if (q) {
+          const hay = [p.title, p.venue, (p.tags || []).join(" "), (p.keywords || []).join(" "), p.authors.join(" "), p.abstract || ""]
+            .join(" ")
+            .toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      }),
+    [filter, query],
+  );
 
-  const counts = {
-    total: publications.length,
+  const counts: Record<Filter, number> = {
+    all: publications.length,
     journal: publications.filter((p) => p.type === "journal").length,
     conference: publications.filter((p) => p.type === "conference").length,
     chapter: publications.filter((p) => p.type === "chapter").length,
-    first: publications.filter((p) => (p.tags || []).includes("first-author")).length,
-    awards: publications.filter((p) => p.award).length,
+    first: publications.filter(isFirst).length,
   };
+  const awards = publications.filter((p) => p.award).length;
 
   return (
-    <>
-      <SiteHeader />
-      <main>
-        <header className="border-b rule-soft">
-          <div className="shell py-14 md:py-20">
-            <p className="sig">Bibliography</p>
-            <h1 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-[-0.03em] mt-2 text-balance">
-              Publications.
-            </h1>
-            <p className="mt-5 max-w-prose font-serif-body text-[1.075rem] leading-[1.6] text-ink-soft">
-              {counts.total} peer-reviewed works across journals, IEEE / Springer conference
-              proceedings, and edited volumes. {counts.first} as first author, {counts.awards}{" "}
-              IEEE Best Paper Award. Each entry opens into a research dossier: abstract,
-              problem, methodology, findings, and impact, drawn from the published manuscript.
-            </p>
-
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-3">
-              {[
-                { k: "Journals", v: counts.journal },
-                { k: "Conferences", v: counts.conference },
-                { k: "Chapters", v: counts.chapter },
-                { k: "First-author", v: counts.first },
-                { k: "Best paper", v: counts.awards },
-              ].map((s) => (
-                <div key={s.k} className="flex items-baseline gap-3">
-                  <span className="font-display text-3xl leading-none">{s.v}</span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                    {s.k}
-                  </span>
-                </div>
-              ))}
-            </div>
+    <FoPage
+      eyebrow="Research"
+      title={<>Published <em>research</em></>}
+      lede={`${counts.all} peer-reviewed works across journals, IEEE and Springer proceedings, and edited volumes. Each entry opens into a research dossier: the problem, the method, what was found and why it matters.`}
+      extra={
+        <Stats
+          items={[
+            { v: counts.all, k: "Peer-reviewed papers", n: `${awards === 1 ? "one" : awards} IEEE Best Paper Award` },
+            { v: stats.citations, k: "Citations", n: "Google Scholar" },
+            { v: counts.first, k: "As first author" },
+            { v: stats.reviewsCompleted, k: "Manuscripts reviewed", n: `for ${stats.reviewer} journals and conferences` },
+          ]}
+        />
+      }
+    >
+      <div className="fo-subnav">
+        <div className="fo-wrap fo-subnav-inner">
+          <div className="fo-tabs" role="group" aria-label="Filter publications">
+            {(Object.keys(LABELS) as Filter[]).map((f) => (
+              <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)} className="fo-tab">
+                {LABELS[f]} <small>{counts[f]}</small>
+              </button>
+            ))}
           </div>
-        </header>
+          <label className="fo-search">
+            <span className="sr-only">Search publications</span>
+            <Search size={15} strokeWidth={1.9} className="absolute left-3 top-1/2 -translate-y-1/2 fo-muted" aria-hidden />
+            <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search title, venue, keyword" className="fo-input" />
+          </label>
+        </div>
+      </div>
 
-        {/* Filters */}
-        <section className="border-b rule-soft bg-paper-deep/40 sticky top-14 z-30 backdrop-blur-md">
-          <div className="shell py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-1.5 -mx-0.5">
-              {(Object.keys(filterLabels) as Filter[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={[
-                    "px-2.5 sm:px-3 py-1.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.16em] border rule transition-colors whitespace-nowrap",
-                    filter === f
-                      ? "bg-ink text-paper border-ink"
-                      : "text-muted-foreground hover:text-ink hover:border-ink/60",
-                  ].join(" ")}
-                >
-                  {filterLabels[f]}
-                </button>
-              ))}
-            </div>
-            <label className="relative flex items-center w-full md:w-64">
-              <span className="sr-only">Search publications</span>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search title, venue, keyword…"
-                className="w-full bg-transparent border-b rule py-1.5 pr-2 text-[13px] focus:outline-none focus:border-accent placeholder:text-whisper"
-              />
-              <span className="absolute right-0 font-mono text-[10px] text-muted-foreground">
-                {list.length}
-              </span>
-            </label>
-          </div>
-        </section>
+      <FoSection id="papers" tight>
+        {list.length === 0 ? (
+          <p className="fo-body fo-muted">No publications match that search.</p>
+        ) : (
+          <ol className="grid gap-4">
+            {list.map((p) => (
+              <Entry key={p.key} paper={p} open={openKey === p.key} onToggle={() => setOpenKey(openKey === p.key ? null : p.key)} />
+            ))}
+          </ol>
+        )}
+      </FoSection>
 
-        {/* List */}
-        <section>
-          <div className="shell py-10 md:py-14">
-            {list.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No matches for that query.</p>
-            ) : (
-              <ol className="divide-y rule-soft border-y rule-soft">
-                {list.map((p, i) => (
-                  <PublicationEntry
-                    key={p.key}
-                    paper={p}
-                    index={i}
-                    open={openKey === p.key}
-                    onToggle={() => setOpenKey(openKey === p.key ? null : p.key)}
-                  />
-                ))}
-              </ol>
-            )}
-          </div>
-        </section>
-
-        {/* Reviewer service */}
-        <section className="border-t rule-soft bg-paper-deep/40">
-          <div className="shell py-14">
-            <div className="mg">
-              <div>
-                <p className="mg-label">Editorial service</p>
-              </div>
-              <div className="min-w-0">
-                <h2 className="font-display text-2xl tracking-tight">Reviewer for</h2>
-                <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1.5 text-[15px] text-ink-soft max-w-prose">
-                  {reviewerFor.map((r) => (
-                    <li key={r} className="flex gap-3">
-                      <span className="font-mono text-[11px] text-muted-foreground pt-[5px]">·</span>
-                      <span>{r}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-      <SiteFooter />
-    </>
+      <FoSection id="reviewer" alt>
+        <FoHead eyebrow="Editorial service" title="Peer reviewer for" lede={`${stats.reviewsCompleted} manuscripts reviewed so far.`} />
+        <ul className="fo-rows">
+          {reviewerFor.map((r) => (
+            <li key={r} className="fo-row">
+              <p className="fo-body fo-ink">{r}</p>
+            </li>
+          ))}
+        </ul>
+      </FoSection>
+    </FoPage>
   );
 }
 
-function PublicationEntry({
-  paper,
-  index,
-  open,
-  onToggle,
-}: {
-  paper: Publication;
-  index: number;
-  open: boolean;
-  onToggle: () => void;
-}) {
+function Entry({ paper, open, onToggle }: { paper: Publication; open: boolean; onToggle: () => void }) {
   const authors = formatAuthors(paper.authors);
-  const hasDossier =
-    !!paper.abstract ||
-    !!paper.problem ||
-    !!paper.solution ||
-    !!paper.methodology ||
-    !!paper.keyFindings ||
-    !!paper.impact;
+  const href = doiUrl(paper.doi);
+  const hasDossier = !!(paper.abstract || paper.problem || paper.solution || paper.methodology || paper.keyFindings || paper.impact);
 
   return (
-    <li
-      className={[
-        "py-7 grid grid-cols-[auto,1fr] md:grid-cols-[auto,1fr,auto] gap-x-4 md:gap-x-8 items-baseline transition-colors",
-        open ? "bg-paper-deep/30" : "",
-      ].join(" ")}
-    >
-      <span className="font-mono text-[11px] text-muted-foreground pt-[3px] whitespace-nowrap">
-        [{String(index + 1).padStart(2, "0")}]
-      </span>
+    <li className="fo-card fo-pub">
+      <div className="fo-pub-year">
+        {paper.year}
+        <small>{paper.type}</small>
+      </div>
 
       <div className="min-w-0">
-        <h2 className="font-serif-body text-[1.075rem] md:text-[1.15rem] leading-snug text-ink text-pretty">
-          {paper.doi ? (
-            <a className="a" href={doiUrl(paper.doi)} target="_blank" rel="noreferrer">
+        <h2 className="fo-h3 text-pretty">
+          {href ? (
+            <a href={href} target="_blank" rel="noreferrer" className="hover:text-[hsl(var(--accent))] transition-colors">
               {paper.title}
             </a>
           ) : (
@@ -218,58 +129,46 @@ function PublicationEntry({
           )}
         </h2>
 
-        <p className="mt-1.5 text-[13px] text-ink-soft leading-snug">
-          {authors.map((a, ai) => (
-            <span key={ai}>
-              <span className={a.bold ? "font-semibold text-ink" : ""}>{a.name}</span>
-              {ai < authors.length - 1 ? ", " : "."}
+        <p className="fo-small mt-2">
+          {authors.map((a, i) => (
+            <span key={i}>
+              <span className={a.bold ? "fo-ink font-semibold" : undefined}>{a.name}</span>
+              {i < authors.length - 1 ? ", " : "."}
             </span>
           ))}{" "}
-          <span className="italic text-muted-foreground">{paper.venue}</span>
-          {paper.volume ? `, ${paper.volume}` : ""}
-          {paper.pages ? `, pp. ${paper.pages}` : ""}.
+          <span className="italic fo-muted">
+            {paper.venue}
+            {paper.volume ? `, ${paper.volume}` : ""}
+            {paper.pages ? `, pp. ${paper.pages}` : ""}.
+          </span>
         </p>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-            {paper.type} · {paper.year}
-            {paper.doi && (
-              <>
-                {" · "}
-                <a
-                  href={doiUrl(paper.doi)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-accent"
-                >
-                  doi:{paper.doi}
-                </a>
-              </>
-            )}
-          </p>
-
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           {paper.award && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 border rule-soft bg-[hsl(var(--accent-wash))] text-[10px] font-mono uppercase tracking-[0.16em] text-[hsl(var(--accent-deep))]">
-              <Award className="w-3 h-3" aria-hidden />
-              {paper.award}
+            <span className="fo-badge fo-badge--award">
+              <Award size={12} strokeWidth={2} aria-hidden /> {paper.award}
             </span>
           )}
-
+          {isFirst(paper) && <span className="fo-badge fo-badge--neutral">First author</span>}
+          {paper.doi && href && (
+            <a href={href} target="_blank" rel="noreferrer" className="fo-meta hover:text-[hsl(var(--accent))] transition-colors">
+              doi:{paper.doi}
+            </a>
+          )}
+          {typeof paper.citations === "number" && paper.citations > 0 && (
+            <span className="fo-meta">
+              {paper.citations} citation{paper.citations === 1 ? "" : "s"}
+            </span>
+          )}
+          {paper.pdf && (
+            <a href={paper.pdf} target="_blank" rel="noreferrer" className="fo-badge fo-badge--neutral hover:text-[hsl(var(--accent))]">
+              <FileText size={12} strokeWidth={1.9} aria-hidden /> PDF
+            </a>
+          )}
           {hasDossier && (
-            <button
-              type="button"
-              onClick={onToggle}
-              aria-expanded={open}
-              className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-accent transition-colors"
-            >
-              <span>{open ? "Close dossier" : "Read dossier"}</span>
-              <ChevronDown
-                className={[
-                  "w-3.5 h-3.5 transition-transform duration-300",
-                  open ? "rotate-180" : "",
-                ].join(" ")}
-                aria-hidden
-              />
+            <button type="button" onClick={onToggle} aria-expanded={open} className="fo-tab ml-auto !h-8 !border-[hsl(var(--rule))]">
+              {open ? "Close dossier" : "Read dossier"}
+              <ChevronDown size={14} strokeWidth={2} className={["transition-transform duration-300", open ? "rotate-180" : ""].join(" ")} aria-hidden />
             </button>
           )}
         </div>
@@ -281,7 +180,7 @@ function PublicationEntry({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.32, ease: [0.2, 0.7, 0.2, 1] }}
+              transition={{ duration: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
               className="overflow-hidden"
             >
               <Dossier paper={paper} />
@@ -289,114 +188,57 @@ function PublicationEntry({
           )}
         </AnimatePresence>
       </div>
-
-      <span className="hidden md:inline font-mono text-[11px] text-muted-foreground whitespace-nowrap pt-[3px]">
-        {paper.year}
-      </span>
     </li>
   );
 }
 
-function Dossier({ paper }: { paper: Publication }) {
+function Block({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="mt-6 pt-6 border-t rule-soft space-y-6">
-      {paper.abstract && (
-        <Block label="Abstract" lead>
-          {paper.abstract}
-        </Block>
-      )}
-
-      {(paper.problem || paper.challenges) && (
-        <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
-          {paper.problem && <Block label="Problem">{paper.problem}</Block>}
-          {paper.challenges && <Block label="Challenges">{paper.challenges}</Block>}
-        </div>
-      )}
-
-      {paper.solution && (
-        <div
-          className="pl-4 border-l-2"
-          style={{ borderColor: "hsl(var(--accent))" }}
-        >
-          <p
-            className="font-mono text-[10px] uppercase tracking-[0.2em] mb-2"
-            style={{ color: "hsl(var(--accent-deep))" }}
-          >
-            Proposed solution
-          </p>
-          <p className="font-serif-body text-[15.5px] leading-[1.65] text-ink text-pretty">
-            {paper.solution}
-          </p>
-        </div>
-      )}
-
-      {(paper.methodology || paper.keyFindings) && (
-        <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
-          {paper.methodology && <Block label="Methodology">{paper.methodology}</Block>}
-          {paper.keyFindings && <Block label="Key findings">{paper.keyFindings}</Block>}
-        </div>
-      )}
-
-      {paper.impact && <Block label="Impact">{paper.impact}</Block>}
-
-      {paper.keywords && paper.keywords.length > 0 && (
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
-            Keywords
-          </p>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-ink-soft">
-            {paper.keywords.map((kw) => (
-              <li
-                key={kw}
-                className="before:content-['·'] before:mr-3 before:text-muted-foreground first:before:hidden"
-              >
-                {kw}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {paper.doi && (
-        <div className="pt-2">
-          <a
-            href={doiUrl(paper.doi)}
-            target="_blank"
-            rel="noreferrer"
-            className="a-arrow font-mono text-[11px] uppercase tracking-[0.18em]"
-          >
-            <ExternalLink className="w-3.5 h-3.5" aria-hidden />
-            <span>View publication</span>
-            <span className="arw">→</span>
-          </a>
-        </div>
-      )}
+    <div>
+      <h4 className="fo-overline">{label}</h4>
+      <p>{children}</p>
     </div>
   );
 }
 
-function Block({
-  label,
-  lead,
-  children,
-}: {
-  label: string;
-  lead?: boolean;
-  children: ReactNode;
-}) {
+function Dossier({ paper }: { paper: Publication }) {
+  const href = doiUrl(paper.doi);
   return (
-    <div>
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
-        {label}
-      </p>
-      <p
-        className={[
-          "font-serif-body text-pretty leading-[1.65] text-ink-soft",
-          lead ? "text-[15.5px]" : "text-[14.5px]",
-        ].join(" ")}
-      >
-        {children}
-      </p>
+    <div className="fo-dossier">
+      {paper.abstract && <Block label="Abstract">{paper.abstract}</Block>}
+      {(paper.problem || paper.challenges) && (
+        <div className="grid gap-5 md:grid-cols-2">
+          {paper.problem && <Block label="Problem">{paper.problem}</Block>}
+          {paper.challenges && <Block label="Challenges">{paper.challenges}</Block>}
+        </div>
+      )}
+      {paper.solution && (
+        <div className="fo-callout">
+          <Block label="Proposed solution">{paper.solution}</Block>
+        </div>
+      )}
+      {(paper.methodology || paper.keyFindings) && (
+        <div className="grid gap-5 md:grid-cols-2">
+          {paper.methodology && <Block label="Methodology">{paper.methodology}</Block>}
+          {paper.keyFindings && <Block label="Key findings">{paper.keyFindings}</Block>}
+        </div>
+      )}
+      {paper.impact && <Block label="Impact">{paper.impact}</Block>}
+      {paper.keywords && paper.keywords.length > 0 && (
+        <div>
+          <h4 className="fo-overline">Keywords</h4>
+          <ul className="fo-tags mt-2">
+            {paper.keywords.map((k) => (
+              <li key={k} className="fo-tag !bg-[hsl(var(--paper))]">{k}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {href && (
+        <a href={href} target="_blank" rel="noreferrer" className="fo-btn fo-btn--secondary fo-btn--sm w-fit">
+          <ExternalLink size={14} strokeWidth={1.9} aria-hidden /> View the publication
+        </a>
+      )}
     </div>
   );
 }

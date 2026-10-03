@@ -20,9 +20,9 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
-				serif: ['Fraunces', 'Times New Roman', 'serif'],
+				serif: ['Newsreader', 'Georgia', 'serif'],
 				mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-				display: ['Fraunces', 'Times New Roman', 'serif'],
+				display: ['Inter', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				paper: 'hsl(var(--paper))',

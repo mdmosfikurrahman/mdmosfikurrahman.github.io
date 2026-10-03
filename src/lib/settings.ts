@@ -15,7 +15,7 @@ export type HireLink = {
 
 export type Settings = {
   chatbotEnabled: boolean;
-  // Shows the freelance "Hire" section on the industry templates. Off hides it
+  // Shows the freelance "Hire" section and page. Off hides it
   // everywhere at once, which is the point: availability changes far more often
   // than the site does, and this needs no deploy.
   hireMeEnabled: boolean;
@@ -25,7 +25,7 @@ export type Settings = {
   hireLinks: HireLink[];
   // Empty string means "use the built-in default" (profile.cvUrl). A non-empty
   // value overrides the CV/résumé link everywhere on the site. The admin can
-  // publish this to all visitors via the JSONBin remote (see templateRemote).
+  // publish this to all visitors via the JSONBin remote (see remote.ts).
   cvUrl: string;
   // Empty string means "use the built-in default" (profile.avatarUrl). A
   // non-empty value is a data: URI (resized/compressed client-side) or a
@@ -88,7 +88,7 @@ export const setChatbotEnabled = (v: boolean) => updateSettings({ chatbotEnabled
 export const getHireMeEnabled = (): boolean => read().hireMeEnabled;
 export const setHireMeEnabled = (v: boolean) => updateSettings({ hireMeEnabled: v });
 
-// Live, render-time reader — mirrors useCvUrl(), so a published or locally
+// Live, render-time reader: mirrors useCvUrl(), so a published or locally
 // flipped toggle shows/hides the section without a refresh.
 export function useHireMeEnabled(): boolean {
   const [on, setOn] = useState<boolean>(() => getHireMeEnabled());
@@ -120,7 +120,7 @@ export function setHireLinks(list: HireLink[]) {
   updateSettings({ hireLinks: sanitiseHireLinks(list) });
 }
 
-// The stored override on its own — the admin editor needs to know whether it
+// The stored override on its own: the admin editor needs to know whether it
 // is showing saved rows or the built-in defaults.
 export function getStoredHireLinks(): HireLink[] {
   return sanitiseHireLinks(read().hireLinks);
@@ -147,7 +147,7 @@ export function setCvUrl(v: string) {
 }
 
 // Live, render-time reader. Components use this so a published / locally-set
-// CV link updates the whole site without a refresh — mirrors useTemplate().
+// CV link updates the whole site without a refresh.
 export function useCvUrl(): string {
   const [url, setUrl] = useState<string>(() => getCvUrl());
   useEffect(() => subscribeSettings(() => setUrl(getCvUrl())), []);
@@ -162,6 +162,38 @@ export function cvLabelFor(url: string): string {
 
 export function useCvLabel(): string {
   return cvLabelFor(useCvUrl());
+}
+
+// The admin stores a share link. Hosts that can serve the file directly get
+// their direct-download form; a plain document file downloads as it is; a web
+// page can only be opened.
+export function cvDownloadFor(url: string): { href: string; download: boolean } {
+  try {
+    const u = new URL(url, window.location.origin);
+    if (u.hostname === "drive.google.com") {
+      const id = u.pathname.match(/\/file\/d\/([^/]+)/)?.[1] ?? u.searchParams.get("id");
+      if (id) return { href: `https://drive.google.com/uc?export=download&id=${id}`, download: true };
+    }
+    if (u.hostname === "docs.google.com") {
+      const doc = u.pathname.match(/\/document\/d\/([^/]+)/)?.[1];
+      if (doc) return { href: `https://docs.google.com/document/d/${doc}/export?format=pdf`, download: true };
+    }
+    if (/(^|\.)dropbox\.com$/.test(u.hostname)) {
+      u.searchParams.set("dl", "1");
+      return { href: u.toString(), download: true };
+    }
+    if (/\.(pdf|docx?|odt|rtf)$/i.test(u.pathname)) return { href: u.toString(), download: true };
+  } catch {
+    /* not a URL: fall through */
+  }
+  return { href: url, download: false };
+}
+
+export function useCvDownload(): { href: string; download: boolean; label: string; title: string } {
+  const url = useCvUrl();
+  const file = cvDownloadFor(url);
+  const label = cvLabelFor(url);
+  return { ...file, label, title: `${file.download ? "Download" : "Open"} ${label === "Resume" ? "resume" : "CV"}` };
 }
 
 // --- Avatar image ----------------------------------------------------------
@@ -187,7 +219,7 @@ function kickAvatarRemoteFetch() {
         setAvatarUrl(bin.avatarDataUrl);
       }
     })
-    .catch(() => { /* swallow — local state stays authoritative */ });
+    .catch(() => { /* swallow: local state stays authoritative */ });
 }
 
 export function useAvatarUrl(): string {

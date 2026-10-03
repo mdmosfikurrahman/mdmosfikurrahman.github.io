@@ -12,27 +12,29 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PageBook } from "@/components/PageBook";
-import SiteWatermark from "@/components/SiteWatermark";
-import ScanlineOverlay from "@/components/ScanlineOverlay";
-import BootSequence from "@/components/BootSequence";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
 import Chatbot from "@/components/Chatbot";
+import BackToTop from "@/components/BackToTop";
 import Terminal from "@/components/Terminal";
 import SiteGuards from "@/components/SiteGuards";
+import PresentationDeck from "@/components/PresentationDeck";
+import PresentLauncher from "@/components/PresentLauncher";
 import AdminModal, { type AdminSection } from "@/components/admin/AdminModal";
-import { useTemplate } from "@/lib/template";
 import { recordPageView } from "@/lib/analytics";
-import Index from "./pages/Index";
+import { syncRemoteSettings } from "@/lib/remote";
+import { lensFromParam, setLens } from "@/lib/lens";
+import { useCvUrl } from "@/lib/settings";
+import Home from "./pages/Home";
+import Work from "./pages/Work";
+import CaseStudy from "./pages/CaseStudy";
 import Experience from "./pages/Experience";
 import Publications from "./pages/Publications";
 import About from "./pages/About";
-import Special from "./pages/Special";
-import Guestbook from "./pages/Guestbook";
-import QandA from "./pages/QandA";
+import Hire from "./pages/Hire";
 import NotFound from "./pages/NotFound";
-import { useCvUrl } from "@/lib/settings";
 
 const queryClient = new QueryClient();
+
+const ADMIN_SECTIONS: AdminSection[] = ["dashboard", "settings"];
 
 function ScrollToTopOnNav() {
   const { pathname, hash } = useLocation();
@@ -50,17 +52,6 @@ function ExternalRedirect({ to }: { to: string }) {
   return null;
 }
 
-function TemplateChrome() {
-  const { template } = useTemplate();
-  if (template !== "surveillance") return null;
-  return (
-    <>
-      <ScanlineOverlay />
-      <BootSequence />
-    </>
-  );
-}
-
 function AnalyticsBeacon() {
   const { pathname, search } = useLocation();
   useEffect(() => {
@@ -69,7 +60,18 @@ function AnalyticsBeacon() {
   return null;
 }
 
-// /admin/* deep-links now redirect to / and open the modal at the right tab.
+// A shared link can carry ?for=research or ?for=industry; it sets the lens the
+// home page and the header read.
+function LensFromUrl() {
+  const { search } = useLocation();
+  useEffect(() => {
+    const next = lensFromParam(new URLSearchParams(search).get("for"));
+    if (next) setLens(next);
+  }, [search]);
+  return null;
+}
+
+// /admin/* deep-links redirect to / and open the modal at the right tab.
 function AdminRedirect({ section }: { section: AdminSection }) {
   const navigate = useNavigate();
   useEffect(() => {
@@ -79,47 +81,54 @@ function AdminRedirect({ section }: { section: AdminSection }) {
   return null;
 }
 
-// Top-level App with admin modal hoisted to global scope.
 function AppInner() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminSection, setAdminSection] = useState<AdminSection>("dashboard");
 
-  // Open admin modal: by deep-link request, by Shift+T+T chord, or by hash.
   const openAdmin = useCallback((section?: AdminSection) => {
     if (section) setAdminSection(section);
     setAdminOpen(true);
   }, []);
 
-  // Honour any deferred open-on-load request (from /admin/* redirect).
+  // The CV link, the freelance switch and its links, as published by the admin.
+  useEffect(() => {
+    void syncRemoteSettings();
+  }, []);
+
+  // A deferred open-on-load request from an /admin/* redirect.
   useEffect(() => {
     const deferred = sessionStorage.getItem("portfolio.admin.openOnLoad");
     if (deferred) {
       sessionStorage.removeItem("portfolio.admin.openOnLoad");
-      const valid: AdminSection[] = ["dashboard", "templates", "guestbook", "qanda", "settings"];
-      const s = (valid as string[]).includes(deferred) ? (deferred as AdminSection) : "dashboard";
+      const s = (ADMIN_SECTIONS as string[]).includes(deferred) ? (deferred as AdminSection) : "dashboard";
       openAdmin(s);
     }
   }, [openAdmin]);
 
-  // Honour location.hash like #admin or #admin/settings
-  const location = useLocation();
+  // location.hash like #admin or #admin/settings
   useEffect(() => {
     if (!location.hash.startsWith("#admin")) return;
-    const part = location.hash.slice(6).replace(/^\//, ""); // 'settings' / 'templates' / ''
-    const valid: AdminSection[] = ["dashboard", "templates", "guestbook", "qanda", "settings"];
-    const s = (valid as string[]).includes(part) ? (part as AdminSection) : "dashboard";
+    const part = location.hash.slice(6).replace(/^\//, "");
+    const s = (ADMIN_SECTIONS as string[]).includes(part) ? (part as AdminSection) : "dashboard";
     openAdmin(s);
     navigate(location.pathname + location.search, { replace: true });
   }, [location.hash, location.pathname, location.search, navigate, openAdmin]);
 
-  // Shift+T+T chord — opens modal, no navigation.
+  // Starting a presentation from the Studio console hands the screen to the deck.
+  useEffect(() => {
+    const close = () => setAdminOpen(false);
+    window.addEventListener("portfolio:present-start", close);
+    return () => window.removeEventListener("portfolio:present-start", close);
+  }, []);
+
+  // Shift+T+T chord opens the admin modal, no navigation.
   useEffect(() => {
     let lastT = 0;
     const handler = (e: KeyboardEvent) => {
       if (!e.shiftKey) return;
       if (e.key !== "T" && e.key !== "t") return;
-      // Don't fire while typing in inputs / textareas / contenteditable.
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
       const now = Date.now();
@@ -139,20 +148,17 @@ function AppInner() {
     <>
       <SiteGuards />
       <ScrollToTopOnNav />
-      <SiteWatermark />
-      <TemplateChrome />
       <AnalyticsBeacon />
+      <LensFromUrl />
       <div className="relative z-10">
         <AnimatedRoutes />
       </div>
-      <ScrollToTopButton />
+      <PresentLauncher />
+      <PresentationDeck />
+      <BackToTop />
       <Chatbot />
       <Terminal />
-      <AdminModal
-        open={adminOpen}
-        initialSection={adminSection}
-        onClose={() => setAdminOpen(false)}
-      />
+      <AdminModal open={adminOpen} initialSection={adminSection} onClose={() => setAdminOpen(false)} />
     </>
   );
 }
@@ -163,20 +169,17 @@ function AnimatedRoutes() {
   return (
     <PageBook>
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/work" element={<Work />} />
+        <Route path="/work/:slug" element={<CaseStudy />} />
         <Route path="/experience" element={<Experience />} />
         <Route path="/publications" element={<Publications />} />
+        <Route path="/research" element={<Navigate to="/publications" replace />} />
         <Route path="/about" element={<About />} />
-        <Route path="/play" element={<Special />} />
-        <Route path="/guestbook" element={<Guestbook />} />
-        <Route path="/ask" element={<QandA />} />
+        <Route path="/hire" element={<Hire />} />
 
-        {/* Admin deep-links now route through the modal. */}
         <Route path="/admin" element={<AdminRedirect section="dashboard" />} />
         <Route path="/admin/dashboard" element={<AdminRedirect section="dashboard" />} />
-        <Route path="/admin/templates" element={<AdminRedirect section="templates" />} />
-        <Route path="/admin/guestbook" element={<AdminRedirect section="guestbook" />} />
-        <Route path="/admin/qanda" element={<AdminRedirect section="qanda" />} />
         <Route path="/admin/settings" element={<AdminRedirect section="settings" />} />
 
         <Route path="/cv" element={<ExternalRedirect to={cvUrl} />} />
