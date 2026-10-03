@@ -6,8 +6,10 @@
     <meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)"/>
     <meta name="theme-color" content="#0f1212" media="(prefers-color-scheme: dark)"/>
 
-    <title>Md. Mosfikur Rahman</title>
-    <meta name="description" content="Md. Mosfikur Rahman: backend architect and applied-ML researcher in Dhaka. Production systems, ten peer-reviewed papers and an IEEE Best Paper Award." />
+    <title>Md. Mosfikur Rahman (Mosfik) | Backend Engineer and Researcher, Dhaka</title>
+    <meta name="description" content="Md. Mosfikur Rahman (Mosfik) is a backend engineer and team lead in Dhaka, and an applied machine learning researcher with ten peer-reviewed papers." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://mdmosfikurrahman.github.io/" />
     <meta name="author" content="Md. Mosfikur Rahman" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -23,18 +25,61 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=JetBrains+Mono:wght@400..600&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap"/>
 
     <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="Md. Mosfikur Rahman"/>
+    <meta property="og:locale" content="en_US"/>
     <meta property="og:url" content="https://mdmosfikurrahman.github.io/"/>
-    <meta property="og:title" content="Md. Mosfikur Rahman"/>
-    <meta property="og:description" content="Backend architect and applied-ML researcher. Production systems, ten peer-reviewed papers and an IEEE Best Paper Award."/>
-    <meta property="og:image" content="/assets/og-image.jpg"/>
+    <meta property="og:title" content="Md. Mosfikur Rahman (Mosfik) | Backend Engineer and Researcher, Dhaka"/>
+    <meta property="og:description" content="Md. Mosfikur Rahman (Mosfik) is a backend engineer and team lead in Dhaka, and an applied machine learning researcher with ten peer-reviewed papers."/>
+    <meta property="og:image" content="https://mdmosfikurrahman.github.io/og-image.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:image:alt" content="Md. Mosfikur Rahman, backend engineer and applied machine learning researcher in Dhaka"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:url" content="https://mdmosfikurrahman.github.io/"/>
-    <meta name="twitter:title" content="Md. Mosfikur Rahman"/>
-    <meta name="twitter:description" content="Backend architect and applied-ML researcher. Production systems, ten peer-reviewed papers and an IEEE Best Paper Award."/>
-    <meta name="twitter:image" content="/assets/og-image.jpg"/>
+    <meta name="twitter:title" content="Md. Mosfikur Rahman (Mosfik) | Backend Engineer and Researcher, Dhaka"/>
+    <meta name="twitter:description" content="Md. Mosfikur Rahman (Mosfik) is a backend engineer and team lead in Dhaka, and an applied machine learning researcher with ten peer-reviewed papers."/>
+    <meta name="twitter:image" content="https://mdmosfikurrahman.github.io/og-image.png"/>
 
     <meta name="google-site-verification" content="5smukTT1zEJgw0PUtKOQDFYAp9jSjpTFs99A_uqNIpc" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://mdmosfikurrahman.github.io/#website",
+          "url": "https://mdmosfikurrahman.github.io/",
+          "name": "Md. Mosfikur Rahman",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://mdmosfikurrahman.github.io/#person" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://mdmosfikurrahman.github.io/#person",
+          "name": "Md. Mosfikur Rahman",
+          "alternateName": ["Mosfikur Rahman", "Md Mosfikur Rahman", "Mosfik", "mdmosfikurrahman"],
+          "url": "https://mdmosfikurrahman.github.io/",
+          "image": "https://mdmosfikurrahman.github.io/profile-avatar.png",
+          "jobTitle": "Backend Engineer and Engineering Team Lead",
+          "description": "Backend engineer and team lead in Dhaka, and applied machine learning researcher.",
+          "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressCountry": "BD" },
+          "alumniOf": [
+            { "@type": "CollegeOrUniversity", "name": "Daffodil International University" },
+            { "@type": "CollegeOrUniversity", "name": "Adam Mickiewicz University" }
+          ],
+          "knowsAbout": ["Backend engineering", "Distributed systems", "Microservices", "Travel technology", "Machine learning"],
+          "sameAs": [
+            "https://www.linkedin.com/in/mdmosfikurrahman",
+            "https://github.com/mdmosfikurrahman",
+            "https://scholar.google.com/citations?user=1GAfMAEAAAAJ",
+            "https://orcid.org/0000-0002-2370-2983"
+          ]
+        }
+      ]
+    }
+    </script>
 
     <script>
       // Apply the theme to <html> before the entry screen paints.
@@ -56,7 +101,8 @@
         var path = window.location.pathname.replace(/\/+$/, '') || '/';
         // A /#present link goes straight into the deck, no welcome gate.
         var presenting = /^#present/.test(window.location.hash);
-        if (KNOWN.indexOf(path) === -1 || presenting) {
+        var prerendering = /[?&]prerender=1/.test(window.location.search);
+        if (KNOWN.indexOf(path) === -1 || presenting || prerendering) {
           window.__entryClicked = true;
           document.documentElement.classList.add('skip-entry');
         }
@@ -126,11 +172,14 @@
         }
       })();
     </script>
-  <script type="module" crossorigin src="/assets/index-iyTXZcCm.js"></script>
+  <script type="module" crossorigin src="/assets/index-DkursKA9.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-Cr51TYJ6.css">
 </head>
 
 <body>
+<noscript>
+<p>Md. Mosfikur Rahman is a backend engineer and team lead in Dhaka, and an applied machine learning researcher. This site needs JavaScript. Profiles: <a href="https://www.linkedin.com/in/mdmosfikurrahman">LinkedIn</a>, <a href="https://github.com/mdmosfikurrahman">GitHub</a>, <a href="https://scholar.google.com/citations?user=1GAfMAEAAAAJ">Google Scholar</a>, <a href="https://orcid.org/0000-0002-2370-2983">ORCID</a>.</p>
+</noscript>
 <div id="root">
     <style>
         /* Entry screen, painted before the bundle loads. React mounts only
@@ -262,7 +311,7 @@
 
         <main class="se-main">
             <p id="siteEntryEyebrow" class="se-eyebrow se-in se-d1">Backend architect · Applied-ML researcher</p>
-            <h1 class="se-name se-in se-d2">Md. Mosfikur Rahman</h1>
+            <div class="se-name se-in se-d2">Md. Mosfikur Rahman</div>
             <p class="se-tagline se-in se-d3">Designing the <em>quiet half</em> of software (services, schemas, and workflows) and studying the machine learning that keeps them standing.</p>
             <!-- The figures mirror `figures` in src/lib/content.ts; years are computed below. -->
             <ul class="se-facts se-in se-d4">

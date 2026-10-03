@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)"/>
+    <meta name="theme-color" content="#0f1212" media="(prefers-color-scheme: dark)"/>
+
+    <title>Work with me | Md. Mosfikur Rahman</title>
+    <meta name="description" content="Work with Md. Mosfikur Rahman: backend architecture and engineering for travel and distributed systems." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://mdmosfikurrahman.github.io/hire/" />
+    <meta name="author" content="Md. Mosfikur Rahman" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="mask-icon" href="/favicon.svg" color="#116949" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Preload portrait during the entry animation so Hero paints without a flash. -->
+    <link rel="preload" as="image" href="/profile-avatar.png" fetchpriority="high" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=JetBrains+Mono:wght@400..600&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap"/>
+
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="Md. Mosfikur Rahman"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:url" content="https://mdmosfikurrahman.github.io/hire/"/>
+    <meta property="og:title" content="Work with me | Md. Mosfikur Rahman"/>
+    <meta property="og:description" content="Work with Md. Mosfikur Rahman: backend architecture and engineering for travel and distributed systems."/>
+    <meta property="og:image" content="https://mdmosfikurrahman.github.io/og-image.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:image:alt" content="Md. Mosfikur Rahman, backend engineer and applied machine learning researcher in Dhaka"/>
+
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:url" content="https://mdmosfikurrahman.github.io/hire/"/>
+    <meta name="twitter:title" content="Work with me | Md. Mosfikur Rahman"/>
+    <meta name="twitter:description" content="Work with Md. Mosfikur Rahman: backend architecture and engineering for travel and distributed systems."/>
+    <meta name="twitter:image" content="https://mdmosfikurrahman.github.io/og-image.png"/>
+
+    <meta name="google-site-verification" content="5smukTT1zEJgw0PUtKOQDFYAp9jSjpTFs99A_uqNIpc" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://mdmosfikurrahman.github.io/#website",
+          "url": "https://mdmosfikurrahman.github.io/",
+          "name": "Md. Mosfikur Rahman",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://mdmosfikurrahman.github.io/#person" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://mdmosfikurrahman.github.io/#person",
+          "name": "Md. Mosfikur Rahman",
+          "alternateName": ["Mosfikur Rahman", "Md Mosfikur Rahman", "Mosfik", "mdmosfikurrahman"],
+          "url": "https://mdmosfikurrahman.github.io/",
+          "image": "https://mdmosfikurrahman.github.io/profile-avatar.png",
+          "jobTitle": "Backend Engineer and Engineering Team Lead",
+          "description": "Backend engineer and team lead in Dhaka, and applied machine learning researcher.",
+          "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressCountry": "BD" },
+          "alumniOf": [
+            { "@type": "CollegeOrUniversity", "name": "Daffodil International University" },
+            { "@type": "CollegeOrUniversity", "name": "Adam Mickiewicz University" }
+          ],
+          "knowsAbout": ["Backend engineering", "Distributed systems", "Microservices", "Travel technology", "Machine learning"],
+          "sameAs": [
+            "https://www.linkedin.com/in/mdmosfikurrahman",
+            "https://github.com/mdmosfikurrahman",
+            "https://scholar.google.com/citations?user=1GAfMAEAAAAJ",
+            "https://orcid.org/0000-0002-2370-2983"
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <script>
+      // Apply the theme to <html> before the entry screen paints.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var dark = stored
+            ? stored === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (_) {}
+      })();
+    </script>
+
+    <!-- Unknown route → skip the entry/welcome gate and mount React directly. -->
+    <script>
+      (function () {
+        var KNOWN = ['/', '/work', '/experience', '/publications', '/research', '/about', '/hire', '/cv', '/resume', '/publication-list', '/yearbook'];
+        var path = window.location.pathname.replace(/\/+$/, '') || '/';
+        // A /#present link goes straight into the deck, no welcome gate.
+        var presenting = /^#present/.test(window.location.hash);
+        var prerendering = /[?&]prerender=1/.test(window.location.search);
+        if (KNOWN.indexOf(path) === -1 || presenting || prerendering) {
+          window.__entryClicked = true;
+          document.documentElement.classList.add('skip-entry');
+        }
+      })();
+    </script>
+    <style>
+      html.skip-entry .site-entry { display: none !important; }
+    </style>
+
+    <!-- Inline content guards, active from first paint (before React mounts). -->
+    <script>
+      (function () {
+        var BLUR = 'guards-blur';
+        var devtoolsOpen = false;
+
+        document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+        document.addEventListener('keydown', function (e) {
+          var k = e.key;
+          var u = k.length === 1 ? k.toUpperCase() : k;
+          var cm = e.ctrlKey || e.metaKey;
+          var sh = e.shiftKey;
+          if (k === 'F12') { e.preventDefault(); return; }
+          if (cm && sh && ['I', 'J', 'C', 'K'].indexOf(u) !== -1) { e.preventDefault(); return; }
+          if (cm && ['U', 'S', 'P', 'A', 'C', 'X'].indexOf(u) !== -1) { e.preventDefault(); return; }
+          if (k === 'PrintScreen' || k === 'F13') {
+            try { navigator.clipboard && navigator.clipboard.writeText(''); } catch (_) {}
+            if (document.body) {
+              document.body.classList.add(BLUR);
+              setTimeout(function () {
+                if (!devtoolsOpen && document.body) document.body.classList.remove(BLUR);
+              }, 1500);
+            }
+          }
+        });
+
+        // The site's own copy buttons raise window.__siteCopy for their single call.
+        document.addEventListener('copy', function (e) { if (window.__siteCopy) return; e.preventDefault(); });
+        document.addEventListener('cut', function (e) { e.preventDefault(); });
+        document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        document.addEventListener('selectstart', function (e) {
+          var t = e.target;
+          if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+          e.preventDefault();
+        });
+
+        // DevTools size-delta detector: polls every 500ms, blurs body when open.
+        // Skipped on touch devices: mobile keyboards shrink innerHeight by ~300px,
+        // which would otherwise fire a false positive every time an input is focused.
+        // On desktop we only compare width: devtools docked side panels grow wDelta;
+        // height deltas alone fire false positives for browser chrome/zoom changes.
+        var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
+        function detectDevtools() {
+          if (isTouch) return;
+          var wDelta = Math.abs(window.outerWidth - window.innerWidth);
+          var open = wDelta > 160;
+          if (open !== devtoolsOpen) {
+            devtoolsOpen = open;
+            if (document.body) {
+              document.body.classList.toggle(BLUR, open);
+            }
+          }
+        }
+        if (!isTouch) {
+          setInterval(detectDevtools, 500);
+          detectDevtools();
+        }
+      })();
+    </script>
+  <script type="module" crossorigin src="/assets/index-DkursKA9.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Cr51TYJ6.css">
+</head>
+
+<body>
+<noscript>
+<p>Md. Mosfikur Rahman is a backend engineer and team lead in Dhaka, and an applied machine learning researcher. This site needs JavaScript. Profiles: <a href="https://www.linkedin.com/in/mdmosfikurrahman">LinkedIn</a>, <a href="https://github.com/mdmosfikurrahman">GitHub</a>, <a href="https://scholar.google.com/citations?user=1GAfMAEAAAAJ">Google Scholar</a>, <a href="https://orcid.org/0000-0002-2370-2983">ORCID</a>.</p>
+</noscript>
+<div id="root">
+    <style>
+        /* Entry screen, painted before the bundle loads. React mounts only
+           after the visitor presses Enter (see main.tsx). Colours mirror the
+           site tokens in src/index.css. */
+        html, body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        img, svg, video { -webkit-user-drag: none; user-drag: none; }
+        body.guards-blur > *:not(.site-entry),
+        body.guards-blur .site-entry {
+            filter: blur(14px) saturate(0.4);
+            transition: filter 160ms ease-out;
+        }
+        body.guards-blur > *:not(.site-entry) { pointer-events: none; }
+        @media print { html, body { display: none !important; visibility: hidden !important; } }
+
+        .site-entry {
+            --se-paper: #faf9f7; --se-ink: #151918; --se-soft: #3c4442; --se-muted: #626a69;
+            --se-line: #dae0dd; --se-accent: #116949; --se-btn: #116949; --se-btn-ink: #ffffff;
+            --se-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            --se-serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+            --se-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+            position: fixed; inset: 0; z-index: 9999; isolation: isolate; overflow: hidden;
+            display: grid; grid-template-rows: auto 1fr auto;
+            background: var(--se-paper); color: var(--se-ink); font-family: var(--se-sans);
+            -webkit-font-smoothing: antialiased;
+        }
+        html.dark .site-entry {
+            --se-paper: #0f1212; --se-ink: #f1f1ee; --se-soft: #c9cac5; --se-muted: #949e9b;
+            --se-line: #292e2d; --se-accent: #54c99a; --se-btn: #54c99a; --se-btn-ink: #0f1212;
+        }
+        .site-entry::before {
+            content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+            background:
+                radial-gradient(42% 60% at 86% 10%, color-mix(in srgb, var(--se-accent) 14%, transparent), transparent 70%),
+                radial-gradient(30% 45% at 6% 92%, rgba(200, 140, 20, 0.07), transparent 70%);
+        }
+        .se-bg {
+            position: absolute; inset: 0; z-index: -1; pointer-events: none;
+            background-image: radial-gradient(color-mix(in srgb, var(--se-ink) 9%, transparent) 1px, transparent 1.3px);
+            background-size: 24px 24px;
+            -webkit-mask-image: radial-gradient(ellipse 70% 75% at 80% 10%, #000 0%, transparent 70%);
+                    mask-image: radial-gradient(ellipse 70% 75% at 80% 10%, #000 0%, transparent 70%);
+        }
+        .se-top, .se-foot {
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            padding: 20px clamp(20px, 5vw, 56px);
+        }
+        .se-brand { display: inline-flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; }
+        .se-brand img {
+            width: 32px; height: 32px; border-radius: 50%; -o-object-fit: cover; object-fit: cover; -o-object-position: center 22%; object-position: center 22%;
+            box-shadow: 0 0 0 2px var(--se-paper), 0 0 0 3.5px var(--se-accent); background: var(--se-line);
+        }
+        .se-icon {
+            width: 36px; height: 36px; display: grid; place-items: center; border-radius: 9px; cursor: pointer;
+            color: var(--se-muted); background: transparent; border: 1px solid var(--se-line);
+        }
+        .se-icon:hover { color: var(--se-ink); }
+        .se-icon .se-sun { display: none; }
+        html.dark .se-icon .se-sun { display: block; }
+        html.dark .se-icon .se-moon { display: none; }
+        .se-main {
+            align-self: center; width: 100%; max-width: 1080px; margin: 0 auto;
+            padding: 0 clamp(20px, 5vw, 56px) 4vh;
+        }
+        .se-eyebrow { margin: 0; font-size: 13.5px; font-weight: 600; color: var(--se-accent); }
+        .se-name {
+            margin: 18px 0 0; font-size: clamp(2.6rem, 8vw, 5.6rem); line-height: 0.98;
+            letter-spacing: -0.05em; font-weight: 700;
+        }
+        .se-tagline {
+            margin: 22px 0 0; max-width: 34ch; font-family: var(--se-serif);
+            font-size: clamp(1.25rem, 2.4vw, 1.65rem); line-height: 1.4; color: var(--se-soft);
+        }
+        .se-tagline em { font-style: italic; color: var(--se-accent); }
+        .se-facts {
+            list-style: none; margin: 40px 0 0; padding: 22px 0 0; border-top: 1px solid var(--se-line);
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 0; max-width: 820px;
+        }
+        @media (min-width: 720px) { .se-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .se-facts li { padding-right: 16px; }
+        .se-facts b { display: block; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+        .se-facts span { display: block; margin-top: 4px; font-size: 13px; color: var(--se-muted); }
+        .se-actions { margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .se-btn {
+            display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 11px;
+            font: 600 15px/1 var(--se-sans); letter-spacing: -0.005em; cursor: pointer;
+            color: var(--se-ink); background: transparent; border: 1px solid var(--se-line);
+            transition: transform .2s ease, background .2s ease, border-color .2s ease;
+        }
+        .se-btn:hover { border-color: color-mix(in srgb, var(--se-ink) 35%, transparent); }
+        .se-btn--primary { color: var(--se-btn-ink); background: var(--se-btn); border-color: var(--se-btn); }
+        .se-btn--primary:hover { transform: translateY(-1px); }
+        .se-btn:focus-visible, .se-icon:focus-visible { outline: 2px solid var(--se-accent); outline-offset: 3px; }
+        .se-btn svg { width: 11px; height: 11px; }
+        .se-hint { font-size: 13px; color: var(--se-muted); }
+        .se-hint kbd {
+            font: 500 11.5px/1 var(--se-mono); padding: 3px 6px; border-radius: 5px;
+            border: 1px solid var(--se-line); color: var(--se-soft);
+        }
+        .se-foot { border-top: 1px solid var(--se-line); margin: 0 clamp(20px, 5vw, 56px); padding-inline: 0; font-size: 12.5px; color: var(--se-muted); }
+        .se-foot span:last-child { font-family: var(--se-mono); font-size: 12px; }
+
+        .se-in { opacity: 0; transform: translateY(10px); animation: se-in 640ms cubic-bezier(.2,.7,.2,1) forwards; }
+        .se-d1 { animation-delay: 60ms; } .se-d2 { animation-delay: 140ms; } .se-d3 { animation-delay: 230ms; }
+        .se-d4 { animation-delay: 320ms; } .se-d5 { animation-delay: 410ms; }
+        @keyframes se-in { to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .se-in { animation: none; opacity: 1; transform: none; } }
+        @media (max-height: 620px) { .se-facts { display: none; } .se-actions { margin-top: 28px; } }
+    </style>
+
+    <div class="site-entry" role="dialog" aria-label="Welcome to the portfolio of Md. Mosfikur Rahman">
+        <div class="se-bg" aria-hidden="true"></div>
+
+        <header class="se-top se-in">
+            <div class="se-brand">
+                <img id="siteEntryAvatar" src="/profile-avatar.png" alt="" width="32" height="32">
+                <span>Md. Mosfikur Rahman</span>
+            </div>
+            <button id="siteEntryTheme" type="button" class="se-icon" aria-label="Toggle light or dark theme" title="Toggle theme">
+                <svg class="se-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg class="se-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            </button>
+        </header>
+
+        <main class="se-main">
+            <p id="siteEntryEyebrow" class="se-eyebrow se-in se-d1">Backend architect · Applied-ML researcher</p>
+            <div class="se-name se-in se-d2">Md. Mosfikur Rahman</div>
+            <p class="se-tagline se-in se-d3">Designing the <em>quiet half</em> of software (services, schemas, and workflows) and studying the machine learning that keeps them standing.</p>
+            <!-- The figures mirror `figures` in src/lib/content.ts; years are computed below. -->
+            <ul class="se-facts se-in se-d4">
+                <li><b id="siteEntryYears">4+ yr</b><span>in industry · Java, .NET</span></li>
+                <li><b>10</b><span>peer-reviewed papers</span></li>
+                <li><b>78</b><span>manuscripts reviewed</span></li>
+                <li><b>5</b><span>systems shipped</span></li>
+            </ul>
+            <div class="se-actions se-in se-d5">
+                <button id="siteEntryEnter" type="button" class="se-btn se-btn--primary">Enter <span aria-hidden="true">→</span></button>
+                <button id="siteEntryPresent" type="button" class="se-btn">
+                    <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5v9l8-4.5z" fill="currentColor"/></svg>
+                    Start presentation
+                </button>
+                <span class="se-hint">or press <kbd>Enter</kbd></span>
+            </div>
+        </main>
+
+        <footer class="se-foot se-in se-d5">
+            <span>© <span id="siteEntryYear">2026</span> Md. Mosfikur Rahman</span>
+            <span>Dhaka, Bangladesh · GMT+6</span>
+        </footer>
+    </div>
+
+    <script>
+      (function () {
+        var btn = document.getElementById('siteEntryEnter');
+
+        var yr = document.getElementById('siteEntryYear');
+        if (yr) yr.textContent = String(new Date().getFullYear());
+
+        // Career began April 2022; same rule as `stats.years` in content.ts.
+        var yrs = document.getElementById('siteEntryYears');
+        if (yrs) {
+          var n = Math.max(1, Math.floor((Date.now() - new Date(2022, 3, 1).getTime()) / (365.25 * 24 * 3600 * 1000)));
+          yrs.textContent = n + '+ yr';
+        }
+
+        // The admin-published portrait, when this browser already has it.
+        try {
+          var av = document.getElementById('siteEntryAvatar');
+          var st = JSON.parse(localStorage.getItem('portfolio.settings.v1') || '{}');
+          if (av && st && typeof st.avatarUrl === 'string' && st.avatarUrl) av.src = st.avatarUrl;
+        } catch (_) {}
+
+        // A ?for=research or ?for=industry link (or a remembered choice) sets
+        // which side leads, and which presentation deck the button opens.
+        var lens = 'balanced';
+        try {
+          var v = (new URLSearchParams(location.search).get('for') || localStorage.getItem('portfolio.lens') || '').toLowerCase();
+          if (v === 'research' || v === 'academia' || v === 'academic' || v === 'phd') lens = 'academia';
+          else if (v === 'industry' || v === 'engineering' || v === 'work') lens = 'industry';
+        } catch (_) {}
+        var eyebrow = document.getElementById('siteEntryEyebrow');
+        if (eyebrow) {
+          if (lens === 'academia') eyebrow.textContent = 'Applied-ML researcher · Backend architect';
+          else if (lens === 'industry') eyebrow.textContent = 'Backend architect · Engineering team lead';
+        }
+        var deck = lens === 'academia' ? 'research' : lens === 'industry' ? 'engineering' : 'seminar';
+
+        if (btn) {
+          btn.addEventListener('click', function () {
+            window.__entryClicked = true;
+            window.dispatchEvent(new Event('entry-enter'));
+          });
+          window.setTimeout(function () { try { btn.focus({ preventScroll: true }); } catch (_) {} }, 900);
+        }
+
+        var pres = document.getElementById('siteEntryPresent');
+        if (pres && btn) {
+          pres.addEventListener('click', function () {
+            try { history.replaceState(null, '', location.pathname + location.search + '#present/' + deck); }
+            catch (_) { location.hash = '#present/' + deck; }
+            btn.click();
+          });
+        }
+
+        var themeBtn = document.getElementById('siteEntryTheme');
+        if (themeBtn) {
+          themeBtn.addEventListener('click', function () {
+            var isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (_) {}
+          });
+        }
+      })();
+    </script>
+<div id="prerendered"><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div><div class="relative z-10"><div style="opacity: 1;"><header class="fo-header" data-scrolled="false"><div class="fo-wrap fo-header-inner"><a class="fo-brand" aria-label="Md. Mosfikur Rahman, home" href="/"><img src="/profile-avatar.png" alt=""><span class="truncate"><span class="fo-brand-pre">Md. </span>Mosfikur Rahman</span></a><nav class="fo-nav" aria-label="Primary"><a class="fo-navlink" href="/work">Work</a><a class="fo-navlink" href="/publications">Research</a><a class="fo-navlink" href="/experience">Experience</a><a class="fo-navlink" href="/about">About</a></nav><div class="fo-header-tools"><button type="button" class="fo-iconbtn fo-iconbtn--bare fo-hide-sm" aria-label="Start presentation" title="Start presentation (P)"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-presentation"><path d="M2 3h20"></path><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"></path><path d="m7 21 5-5 5 5"></path></svg></button><button type="button" class="fo-iconbtn fo-iconbtn--bare" aria-label="Switch to light mode" title="Toggle theme"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg></button><a href="https://mdmosfikurrahman.github.io/cv/" target="_blank" rel="noreferrer" class="fo-iconbtn fo-iconbtn--bare" aria-label="Open CV" title="Open CV"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M12 18v-6"></path><path d="m9 15 3 3 3-3"></path></svg></a><button type="button" class="fo-iconbtn fo-menubtn" aria-expanded="false" aria-controls="fo-mobile-menu" aria-label="Open menu"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button></div></div><span class="fo-progress" aria-hidden="true" style="transform: scaleX(0);"></span></header><main><header class="fo-pagehero"><div class="fo-wrap"><p class="fo-eyebrow">Hire me</p><h1 class="fo-h1 mt-3 max-w-[22ch]">Need a backend built <em>properly</em>?</h1><p class="fo-lead mt-5 max-w-[60ch]">I take a small number of freelance engagements alongside my day job: backend work in .NET and Java, scoped tightly and finished. The standard I build to is public: Flavian, my clean-architecture foundation for .NET 9, is on GitHub for you to read before you commit to anything.</p><div class="mt-10"><div class="fo-actions"><div class="fo-split fo-split--primary  "><a href="mailto:mdmosfikurrahman.cse@gmail.com" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><span class="fo-split-text"><span class="fo-split-label">Email me</span></span></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy email address" title="Copy email address"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div><a href="https://www.fiverr.com/mosfikur_rahman" target="_blank" rel="noreferrer" class="fo-btn fo-btn--secondary">Fiverr profile <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a><span class="fo-chip"><span class="fo-dot fo-dot--live" aria-hidden="true"></span>Available for freelance work</span></div></div></div></header><section id="services" class="fo-section  "><div class="fo-wrap"><div class="fo-head"><div><p class="fo-eyebrow">Services</p><h2 class="fo-h2 mt-3">What I take on</h2><p class="fo-lede mt-3 max-w-[58ch]">Backend work in .NET and Java, plus the frontend wiring that has to meet it.</p></div></div><div class="fo-grid-2"><article class="fo-card flex flex-col"><p class="fo-meta">01</p><h3 class="fo-h3 mt-3">.NET 9 microservices</h3><p class="fo-body mt-2">Layered, dependency direction enforced, EF Core 9, validation, JWT, Swagger, and a migration path that survives the second deploy.</p><a href="https://www.fiverr.com/s/2pKpNEX" target="_blank" rel="noreferrer" class="fo-link mt-auto pt-6">See the gig <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></article><article class="fo-card flex flex-col"><p class="fo-meta">02</p><h3 class="fo-h3 mt-3">Spring Boot REST APIs</h3><p class="fo-body mt-2">JPA mapped sanely, Bean Validation, centralised exception handling, OpenAPI 3.0 your frontend can build from, Dockerised.</p><a href="https://www.fiverr.com/s/YLRLA2a" target="_blank" rel="noreferrer" class="fo-link mt-auto pt-6">See the gig <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></article><article class="fo-card flex flex-col"><p class="fo-meta">03</p><h3 class="fo-h3 mt-3">Slow queries and ORM performance</h3><p class="fo-body mt-2">Execution plans read, not guessed: N+1 behind lazy loading, wrong-order indexes, filtering in memory. Before and after timings included.</p><a href="https://www.fiverr.com/s/qbD595X" target="_blank" rel="noreferrer" class="fo-link mt-auto pt-6">See the gig <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></article><article class="fo-card flex flex-col"><p class="fo-meta">04</p><h3 class="fo-h3 mt-3">Next.js wired to your API</h3><p class="fo-body mt-2">Typed API layer, httpOnly-cookie auth with single-flight refresh, middleware route guards, built against your design system, not a new one.</p></article></div><div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2"><span class="fo-small fo-muted">Also offered:</span><a href="https://www.fiverr.com/s/yevWm76" target="_blank" rel="noreferrer" class="fo-link">Third-party API integration <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></div></div></section><section id="process" class="fo-section fo-section--alt "><div class="fo-wrap"><div class="fo-head"><div><p class="fo-eyebrow">Process</p><h2 class="fo-h2 mt-3">How an engagement runs</h2></div></div><ol class="fo-grid-2 lg:!grid-cols-4"><li class="fo-card"><span class="fo-badge">Step 1</span><h3 class="fo-h4 mt-4">Send the problem</h3><p class="fo-small mt-2">Email what you are building and where it hurts. Replies within the hour, GMT+6.</p></li><li class="fo-card"><span class="fo-badge">Step 2</span><h3 class="fo-h4 mt-4">Agree a tight scope</h3><p class="fo-small mt-2">Two engagements at a time, ten to fifteen hours a week, so each one gets finished.</p></li><li class="fo-card"><span class="fo-badge">Step 3</span><h3 class="fo-h4 mt-4">Read the standard first</h3><p class="fo-small mt-2">Flavian, my clean-architecture foundation for .NET 9, is public. Read it before you commit to anything.</p></li><li class="fo-card"><span class="fo-badge">Step 4</span><h3 class="fo-h4 mt-4">Get finished work</h3><p class="fo-small mt-2">Documented APIs your frontend can build from, and before and after timings on performance work.</p></li></ol><dl class="fo-facts mt-10"><div><dt class="fo-overline">Capacity</dt><dd>Ten to fifteen hours a week, two engagements at a time.</dd></div><div><dt class="fo-overline">Response</dt><dd>Replies within the hour · GMT+6</dd></div><div><dt class="fo-overline">Based in</dt><dd>Dhaka, Bangladesh</dd></div><div><dt class="fo-overline">Stack</dt><dd>.NET 9, Spring Boot, SQL, Next.js</dd></div></dl></div></section><section id="proof" class="fo-section  "><div class="fo-wrap"><div class="fo-head"><div><p class="fo-eyebrow">Proof</p><h2 class="fo-h2 mt-3">Read the work before you hire</h2></div></div><a class="fo-feature fo-card--link group" href="/work/travilo"><div class="min-w-0"><div class="flex flex-wrap items-center gap-3"><span class="fo-badge">Case study</span><span class="fo-meta">Akij iBOS Ltd. · Nov 2024 – Present</span></div><h3 class="fo-h2 fo-card-title mt-5">Travilo</h3><p class="fo-body mt-3 max-w-[52ch]">Backend architecture for a multi-client OTA SaaS platform: .NET 9 microservices, taken from an empty repository to live white-label deployments.</p><p class="fo-link mt-6">Read the case study <span class="arw" aria-hidden="true">→</span></p></div><dl class="fo-specs"><div class="fo-spec"><dt>Role</dt><dd>Backend architect · Engineering Team Lead</dd></div><div class="fo-spec"><dt>Systems</dt><dd><ul class="fo-spec-list"><li>Search aggregation</li><li>Pricing and rules</li><li>Booking and platform services</li><li>Observability</li></ul></dd></div><div class="fo-spec"><dt>Stack</dt><dd><ul class="fo-tags"><li class="fo-tag">.NET 9</li><li class="fo-tag">gRPC</li><li class="fo-tag">SQL Server</li><li class="fo-tag">MongoDB</li><li class="fo-tag">DynamoDB</li><li class="fo-tag">Drools</li><li class="fo-tag">Docker</li><li class="fo-tag">Kubernetes</li></ul></dd></div></dl></a><a href="https://github.com/mdmosfikurrahman/Flavian" target="_blank" rel="noreferrer" class="fo-card fo-card--link mt-4 flex items-start gap-4"><span class="fo-channel-icon shrink-0" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg></span><div class="min-w-0"><p class="fo-h4 fo-card-title">Flavian, on GitHub</p><p class="fo-small mt-1">My clean-architecture foundation for .NET 9: the standard every engagement is built to.</p></div><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-muted ml-auto shrink-0" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></div></section><section class="fo-band"><div class="fo-wrap flex flex-col gap-8 md:flex-row md:items-end md:justify-between"><div><p class="fo-eyebrow">Start here</p><h2 class="fo-h2 mt-3 max-w-[20ch]">Have a backend problem? Send it over.</h2></div><div class="fo-actions"><div class="fo-split fo-split--primary  "><a href="mailto:mdmosfikurrahman.cse@gmail.com" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><span class="fo-split-text"><span class="fo-split-label">Email me</span></span></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy email address" title="Copy email address"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div></div></div></section></main><footer class="fo-footer"><div class="fo-wrap"><div class="fo-footer-cta"><p class="fo-footer-statement">Available for senior backend, system design, and applied-ML collaborations.</p><div class="fo-actions"><div class="fo-split fo-split--primary  "><a href="mailto:mdmosfikurrahman.cse@gmail.com" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><span class="fo-split-text"><span class="fo-split-label">Email me</span></span></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy email address" title="Copy email address"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div><a href="https://mdmosfikurrahman.github.io/cv/" target="_blank" rel="noreferrer" class="fo-btn fo-btn--secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg> CV</a></div></div><div class="fo-footer-grid"><div class="fo-footer-brand"><a class="fo-brand" aria-label="Md. Mosfikur Rahman, home" href="/"><img src="/profile-avatar.png" alt=""><span>Md. Mosfikur Rahman</span></a><p class="fo-small mt-4 max-w-[34ch]">Backend architect and applied-ML researcher, building production systems in Dhaka.</p><p class="fo-small mt-3">Local time <span class="fo-footer-time">09:47</span> (GMT+6)</p></div><nav aria-label="Footer"><h2 class="fo-overline">Navigate</h2><ul><li><a href="/">Home</a></li><li><a href="/work">Work</a></li><li><a href="/publications">Research</a></li><li><a href="/experience">Experience</a></li><li><a href="/about">About</a></li></ul></nav><div><h2 class="fo-overline">Profiles</h2><ul><li><a href="https://github.com/mdmosfikurrahman" target="_blank" rel="noreferrer" class="fo-footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg> GitHub<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-footer-ext" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></li><li><a href="https://scholar.google.com/citations?user=1GAfMAEAAAAJ" target="_blank" rel="noreferrer" class="fo-footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg> Google Scholar<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-footer-ext" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></li><li><a href="https://orcid.org/0000-0002-2370-2983" target="_blank" rel="noreferrer" class="fo-footer-link"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-id-card" aria-hidden="true"><path d="M16 10h2"></path><path d="M16 14h2"></path><path d="M6.17 15a3 3 0 0 1 5.66 0"></path><circle cx="9" cy="11" r="2"></circle><rect x="2" y="5" width="20" height="14" rx="2"></rect></svg> ORCID<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-footer-ext" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a></li></ul></div><div><h2 class="fo-overline">Contact</h2><ul class="fo-footer-channels"><li><div class="fo-split  fo-split--sm fo-split--block"><a href="mailto:mdmosfikurrahman.cse@gmail.com" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span><span class="fo-split-text"><span class="fo-split-label">Email</span></span></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy email address" title="Copy email address"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div></li><li><div class="fo-split  fo-split--sm fo-split--block"><a href="https://wa.me/8801797554948" target="_blank" rel="noreferrer" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 20.5l1.3-4.1A8.5 8.5 0 1 1 8 19.4z"></path><path d="M9.2 8.6c.2-.5.5-.6.8-.6h.6c.2 0 .4.1.5.4l.8 1.8c.1.2 0 .5-.1.6l-.6.7c-.1.2-.1.4 0 .6.6 1 1.5 1.8 2.5 2.4.2.1.4.1.6 0l.7-.7c.2-.2.4-.2.6-.1l1.8.8c.3.1.4.3.4.5v.6c0 .3-.1.6-.6.8-.6.3-1.4.4-2.1.2-1.9-.5-3.6-1.7-4.8-3.3-.8-1.1-1.3-2.3-1.4-3.1-.1-.6 0-1.2.3-1.6z"></path></svg></span><span class="fo-split-text"><span class="fo-split-label">WhatsApp</span></span><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-split-arrow" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy whatsapp number" title="Copy whatsapp number"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div></li><li><div class="fo-split  fo-split--sm fo-split--block"><a href="https://linkedin.com/in/mdmosfikurrahman" target="_blank" rel="noreferrer" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg></span><span class="fo-split-text"><span class="fo-split-label">LinkedIn</span></span><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-split-arrow" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy linkedin link" title="Copy linkedin link"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div></li><li><div class="fo-split  fo-split--sm fo-split--block"><a href="https://www.facebook.com/mdmosfikurrahman.matul" target="_blank" rel="noreferrer" class="fo-split-main"><span class="shrink-0 inline-flex" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span><span class="fo-split-text"><span class="fo-split-label">Facebook</span></span><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right fo-split-arrow" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a><button type="button" class="fo-split-copy" data-copied="false" aria-label="Copy facebook link" title="Copy facebook link"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></div></li><li class="pt-1"><a href="/hire">Freelance work</a></li></ul></div></div><div class="fo-footer-bottom"><p>© 2026 Md. Mosfikur Rahman. All rights reserved.</p></div></div></footer></div></div><button type="button" aria-label="Back to top, 0% read" title="Back to top" tabindex="-1" aria-hidden="true" class="fo-totop fo-totop--stacked "><svg class="fo-totop-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="fo-totop-track" cx="22" cy="22" r="19"></circle><circle class="fo-totop-bar" cx="22" cy="22" r="19" stroke-dasharray="119.38052083641213" stroke-dashoffset="119.38052083641213"></circle></svg><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up fo-totop-icon"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg></button><button type="button" aria-label="Open chatbot" title="Ask Mosfik's assistant" class="group fixed bottom-5 right-5 md:bottom-8 md:right-8 z-50 w-12 h-12 grid place-items-center bg-[hsl(var(--accent))] text-[hsl(var(--accent-ink))] rounded-full shadow-[0_2px_0_hsl(var(--ink)/0.06),0_18px_36px_-14px_hsl(var(--accent)/0.7)] hover:scale-[1.04] active:scale-[0.96] transition-transform duration-200 ease-out print:hidden" style="box-shadow: 0 0 0 0 hsl(var(--accent) / 0.45); animation: 2.6s ease-out 0s infinite normal none running chatbot-fab-pulse;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></button><div role="dialog" aria-label="Mosfik portfolio assistant" aria-hidden="true" class="fixed z-50 print:hidden bottom-20 right-3 left-3 md:left-auto md:right-8 md:bottom-24 md:w-[400px] max-h-[min(660px,calc(100vh/var(--zoom,1)_-_7rem))] flex flex-col rounded-[14px] overflow-hidden bg-paper shadow-[0_2px_0_hsl(var(--ink)/0.04),0_30px_60px_-22px_hsl(var(--ink)/0.55)] transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right opacity-0 translate-y-3 pointer-events-none scale-[0.96]" style="border: 1px solid hsl(var(--rule));"><div class="flex items-center gap-3 px-4 py-3.5" style="border-bottom: 1px solid hsl(var(--rule)); background: linear-gradient(180deg, hsl(var(--paper-glass)) 0%, hsl(var(--paper)) 100%); backdrop-filter: blur(8px);"><div class="relative"><img src="/profile-avatar.png" alt="" class="w-9 h-9 rounded-full object-cover" aria-hidden="true" style="object-position: center 22%; box-shadow: 0 0 0 1px hsl(var(--rule)); background: hsl(var(--paper-deep));"><span aria-hidden="true" class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full" style="background: rgb(40, 189, 90); box-shadow: 0 0 0 2px hsl(var(--paper)), 0 0 0 3px hsl(140 65% 45% / 0.25);"></span></div><div class="flex-1 min-w-0"><div class="text-[14px] font-semibold leading-tight flex items-center gap-1.5" style="color: hsl(var(--ink));">Ask Mosfik<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles" aria-hidden="true" style="color: hsl(var(--accent));"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg></div><div class="text-[11.5px] leading-tight mt-0.5 flex items-center gap-1.5" style="color: hsl(var(--muted));"><span>Portfolio assistant</span><span style="color: hsl(var(--whisper));">·</span><span>not a real AI</span></div></div><button type="button" aria-label="Clear chat" title="Clear chat" class="inline-flex items-center gap-1 text-[11px] px-2 py-1 transition-all rounded-md" style="border: 1px solid hsl(var(--rule)); color: hsl(var(--ink-soft)); background: hsl(var(--paper));"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg><span>Clear</span></button><button type="button" aria-label="Close" class="p-1.5 -mr-1 hover:opacity-70 transition-opacity rounded-md" style="color: hsl(var(--ink));"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div><div class="flex-1 overflow-y-auto px-4 py-4 space-y-3" style="scrollbar-width: thin;"><div class="flex w-full items-end gap-2 justify-start chatbot-message-enter"><div class="w-6 h-6 grid place-items-center rounded-full shrink-0 mb-1" aria-hidden="true" style="background: linear-gradient(135deg, hsl(var(--ink)) 0%, hsl(var(--ink-soft)) 100%); color: hsl(var(--paper));"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg></div><div class="max-w-[82%] flex flex-col items-start"><div class="px-3.5 py-2.5 text-[13.5px] leading-[1.55] whitespace-pre-wrap break-words" style="border-radius: 12px 12px 12px 4px; background: hsl(var(--paper-deep)); color: hsl(var(--ink)); border: 1px solid hsl(var(--rule)); box-shadow: 0 1px 0 hsl(var(--ink) / 0.03);">Hey, I'm Mosfik's portfolio assistant. Ask me anything about his work, research, or how to reach him.</div></div></div><div class="pt-2 pb-1"><div class="text-[11px] uppercase tracking-[0.12em] mb-2.5 font-semibold" style="color: hsl(var(--whisper));">Try asking</div><div class="grid grid-cols-1 gap-1.5"><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Who is Mosfik?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">What does he do at iBOS?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Tell me about the OTA platform</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Show me the IEEE Best Paper</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">What's his tech stack?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Is he open to opportunities?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Why backend?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Where is he based?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">Future plans / grad school?</button><button type="button" class="text-left text-[13px] px-3 py-2 transition-all duration-150 disabled:opacity-50" style="border: 1px solid hsl(var(--rule)); border-radius: 8px; background: hsl(var(--paper)); color: hsl(var(--ink-soft));">How can I contact him?</button></div></div></div><form class="px-3 py-2.5 flex items-end gap-2" style="border-top: 1px solid hsl(var(--rule)); background: linear-gradient(180deg, hsl(var(--paper)) 0%, hsl(var(--paper-glass)) 100%);"><textarea placeholder="Ask about work, papers or contact" rows="1" class="flex-1 resize-none bg-transparent outline-none text-[13.5px] leading-[1.5] py-2 px-2 max-h-32 placeholder:opacity-50 disabled:opacity-60" style="color: hsl(var(--ink));"></textarea><button type="submit" aria-label="Send" disabled="" class="w-9 h-9 grid place-items-center rounded-md transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-[1.04] active:scale-[0.96]" style="background: hsl(var(--ink)); color: hsl(var(--paper));"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg></button></form><div class="px-4 py-2 text-[11px] tracking-wide text-center" style="color: hsl(var(--whisper)); border-top: 1px solid hsl(var(--rule)); background: hsl(var(--paper));">Heuristic responses · sourced from Mosfik's portfolio data</div></div></div></div>
+</body>
+</html>
