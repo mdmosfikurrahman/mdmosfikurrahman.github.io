@@ -8,6 +8,7 @@ import ExperienceStrip from "@/site/ExperienceStrip";
 import Capabilities from "@/site/Capabilities";
 import Recommendations from "@/site/Recommendations";
 import Contact from "@/site/Contact";
+import ProductGlimpse from "@/site/ProductGlimpse";
 import { recommendations } from "@/lib/content";
 import { useLens, type Lens } from "@/lib/lens";
 
@@ -19,13 +20,14 @@ const RECORD: Section = { key: "record", C: ExperienceStrip };
 const CAPS: Section = { key: "caps", C: Capabilities };
 const RECS: Section = { key: "recs", C: Recommendations };
 const CONTACT: Section = { key: "contact", C: Contact };
+const PRODUCT: Section = { key: "product", C: ProductGlimpse };
 
 // What each kind of reader meets first. The balanced order alternates the two
 // sides of the profile so neither one buries the other.
 const ORDER: Record<Lens, Section[]> = {
-  balanced: [WORK, RESEARCH, RECORD, CAPS, RECS, CONTACT],
-  industry: [WORK, RECORD, RESEARCH, CAPS, RECS, CONTACT],
-  academia: [RESEARCH, RECORD, WORK, CAPS, RECS, CONTACT],
+  balanced: [WORK, RESEARCH, RECORD, PRODUCT, CAPS, RECS, CONTACT],
+  industry: [WORK, RECORD, PRODUCT, RESEARCH, CAPS, RECS, CONTACT],
+  academia: [RESEARCH, RECORD, WORK, PRODUCT, CAPS, RECS, CONTACT],
 };
 
 export default function Home() {

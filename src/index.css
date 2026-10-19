@@ -1363,3 +1363,10 @@ a.fo-row:hover .fo-row-title,
   .fo-card--link:hover,
   .fo-btn--primary:hover { transform: none; }
 }
+.fo-product { align-items: start; }
+.fo-product-shot {
+  display: block; overflow: hidden; border-radius: 12px; border: 1px solid hsl(var(--rule));
+  box-shadow: 0 18px 40px -24px hsl(var(--ink) / 0.45); background: hsl(var(--paper));
+}
+.fo-product-shot img { display: block; width: 100%; height: auto; transition: transform 0.4s ease; }
+.fo-product-shot:hover img { transform: scale(1.015); }

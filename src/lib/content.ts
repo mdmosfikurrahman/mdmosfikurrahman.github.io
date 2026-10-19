@@ -77,10 +77,10 @@ export const roles: Role[] = [
     to: "2024-10",
     place: "Dhaka, BD",
     summary:
-      "Enterprise backend in Java and Spring Boot for the national Customs Bond Management System, digitizing manual customs-compliance processing for garment exporters. Built full-stack modules with Thymeleaf and Oracle, collaborating with senior engineers on system design; focused on throughput, security, and compliance.",
+      "Java and Spring Boot backend for the national Customs Bond Management System, which took garment exporters' customs compliance off paper. Full-stack modules in Thymeleaf and Oracle, designed with senior engineers, with most of the effort going into throughput, security and compliance.",
     bullets: [
-      "Shipped production modules on a national compliance system (NBR Customs Bond), collaborating with senior engineers and architects on overall system design.",
-      "Built full-stack features: Thymeleaf front, Spring Boot back, Oracle data layer.",
+      "Shipped production modules for NBR's Customs Bond system and worked through the overall design with the senior engineers and architects.",
+      "Built features across the stack, from Thymeleaf pages down to the Spring Boot services and the Oracle schema.",
       "Improved system throughput ~25% through query tuning and access-path refactoring.",
       "Hardened authentication and authorisation via OAuth2 and Spring Security.",
       "Automated BGMEA / BKMEA sync for garment-export declaration processing, working closely with the Business Analysis team.",
@@ -97,8 +97,8 @@ export const roles: Role[] = [
     summary:
       "Backend for Rakuten Echiba e-commerce and the Denka corporate CMS. GraphQL-based BFF, schema-stitched resolvers, and database optimisation, with delivery to Japanese stakeholders.",
     bullets: [
-      "Built GraphQL BFF services handling complex nested data with resolver batching.",
-      "Collaborated with Rakuten engineers and the internal BJIT team on schema design and backend implementation approaches.",
+      "Built GraphQL BFF services for deeply nested e-commerce data, using resolver batching to keep the calls down.",
+      "Worked out schema design and backend approach together with Rakuten's engineers and the BJIT team.",
       "Reduced query latency via schema stitching and join-path optimisation.",
       "Delivered CMS and multilingual content logic for Denka corporate site.",
       "Contributed reusable service patterns to internal GraphQL schema tooling.",
@@ -164,7 +164,7 @@ export const projects: Project[] = [
     blurb:
       "GraphQL Backend-for-Frontend for Rakuten Echiba e-commerce, delivered to Japanese stakeholders.",
     highlights: [
-      "Built GraphQL BFF services handling complex nested data with resolver batching.",
+      "Built GraphQL BFF services for deeply nested e-commerce data, using resolver batching to keep the calls down.",
       "Reduced query latency through schema stitching and join-path optimisation.",
       "Contributed reusable service patterns to internal GraphQL schema tooling used across teams.",
       "Delivered to Japanese enterprise review standards: correctness and operational calmness.",
@@ -189,6 +189,24 @@ export const projects: Project[] = [
     tags: ["Java", "Thymeleaf", "CMS"],
   },
 ];
+
+export const product = {
+  name: "TexBlocks",
+  tagline: "A no-code LaTeX document builder",
+  href: "https://texblocks.vercel.app",
+  year: "2026",
+  role: "Creator · solo product",
+  summary:
+    "I built TexBlocks so anyone can produce a LaTeX-quality CV, thesis, paper or letter without writing LaTeX. You fill in blocks, choose a template, and get a typeset PDF in seconds.",
+  points: [
+    "52 templates: resumes and CVs, IEEE and Elsevier papers, theses, proposals, reports, question papers, letters and certificates.",
+    "Live PDF preview, fit to a page count, version history and read-only share links.",
+    "Bangla and English in the same line, photos, signatures and QR codes.",
+    "Free tools alongside: application PDF, citation generator, signature maker, QR codes and a writing check.",
+  ],
+  stack: ["JavaScript", "Node.js", "PostgreSQL", "LaTeX (Tectonic)", "Vercel"],
+  image: "/texblocks-glimpse.jpg",
+};
 
 export type Publication = {
   key: string;

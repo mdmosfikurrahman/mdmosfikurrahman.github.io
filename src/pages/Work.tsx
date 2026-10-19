@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { projects } from "@/lib/content";
 import { FoPage, FoSection, FoHead } from "@/site/parts";
 import { CaseStudyFeature } from "@/site/SelectedWork";
+import { ProductCard } from "@/site/ProductGlimpse";
 
 export default function Work() {
   const others = projects.filter((p) => !p.flagship);
@@ -14,6 +15,11 @@ export default function Work() {
     >
       <FoSection tight>
         <CaseStudyFeature metrics={4} />
+      </FoSection>
+
+      <FoSection>
+        <FoHead eyebrow="Product" title="Built on my own" />
+        <ProductCard />
       </FoSection>
 
       <FoSection alt>

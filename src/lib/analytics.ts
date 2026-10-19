@@ -187,6 +187,7 @@ function getOrCreateSessionId(): string {
 // visitor analytics.
 export async function recordPageView(path?: string): Promise<void> {
   if (typeof window === "undefined") return;
+  if (/[?&]prerender=1/.test(window.location.search)) return;
   if (!isBinConfigured()) return;
 
   const ua = navigator.userAgent || "";
