@@ -30,6 +30,7 @@ import Experience from "./pages/Experience";
 import Publications from "./pages/Publications";
 import About from "./pages/About";
 import Hire from "./pages/Hire";
+import Photography from "./pages/Photography";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -177,6 +178,7 @@ function AnimatedRoutes() {
         <Route path="/research" element={<Navigate to="/publications" replace />} />
         <Route path="/about" element={<About />} />
         <Route path="/hire" element={<Hire />} />
+        <Route path="/photography" element={<Photography />} />
 
         <Route path="/admin" element={<AdminRedirect section="dashboard" />} />
         <Route path="/admin/dashboard" element={<AdminRedirect section="dashboard" />} />

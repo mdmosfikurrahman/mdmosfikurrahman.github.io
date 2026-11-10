@@ -253,7 +253,7 @@ function skillsBlurb(q: string): string {
 function educationBlurb(q: string): string {
   if (/erasmus|poland|poznan|adam mickiewicz|exchange/i.test(q)) {
     const e = education.find((x) => x.school.includes("Adam Mickiewicz"))!;
-    return `Erasmus+ exchange at ${e.school}, ${e.place}: ${e.degree}. ${e.note ?? ""} (${fmtMonth(e.from)} – ${fmtMonth(e.to)})`;
+    return `Exchange semester at ${e.school}, ${e.place}: ${e.degree}. ${e.note ?? ""} (${fmtMonth(e.from)} – ${fmtMonth(e.to)})`;
   }
   if (/thesis|dissertation/i.test(q)) {
     return `Completed a BSc thesis at Daffodil International University (2018–2021, CGPA 3.83 / 4.00). The research line carried into peer-reviewed publications, including the IEEE Best Paper for the smart-sewerage IoT system.`;
@@ -521,7 +521,7 @@ const intents: Intent[] = [
     patterns: ["education", "studied", "study", "university", "uni", "college", "degree", "school", "daffodil", "diu", "erasmus", "poland", "poznan", "adam mickiewicz", "exchange", "ssc", "hsc", "thesis", "dissertation"],
     handle: (q) => ({
       text: educationBlurb(q),
-      chips: ["Erasmus exchange", "BSc thesis", "Distinctions", "Certifications"],
+      chips: ["Exchange semester", "BSc thesis", "Distinctions", "Certifications"],
     }),
   },
 

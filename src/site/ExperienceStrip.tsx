@@ -15,7 +15,7 @@ export default function ExperienceStrip({ alt }: { alt?: boolean }) {
       <FoHead
         eyebrow="Record"
         title="Experience and education"
-        lede={`${stats.years}+ years across ${roles.length} companies, after a B.Sc. in Computer Science and Engineering with an Erasmus+ semester in Poland.`}
+        lede={`${stats.years}+ years across ${roles.length} companies, after a B.Sc. in Computer Science and Engineering with an exchange semester in Poland.`}
         action={{ to: "/experience", label: "Full record" }}
       />
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1.5fr),minmax(0,1fr)] lg:gap-16">

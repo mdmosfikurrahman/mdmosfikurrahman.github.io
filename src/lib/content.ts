@@ -651,7 +651,7 @@ export const education: Education[] = [
     school: "Adam Mickiewicz University",
     place: "Poznań, PL",
     url: "https://amu.edu.pl/en",
-    degree: "B.Sc. in Computer Science & Engineering · Erasmus+ Exchange",
+    degree: "Exchange semester in Computer Science (non-degree)",
     note: "Passed with 80% · 6 ECTS",
     from: "2021-03",
     to: "2021-08",
@@ -799,9 +799,9 @@ export const distinctions: Distinction[] = [
   {
     year: 2021,
     kind: "exchange",
-    headline: "Erasmus+ Exchange Fellowship",
+    headline: "Exchange semester in Poland",
     issuer: "Adam Mickiewicz University, Poznań",
-    detail: "One semester of CSE coursework; passed with 80%, 6 ECTS.",
+    detail: "Bilateral exchange between DIU and Adam Mickiewicz University: one semester of CSE coursework, passed with 80%, 6 ECTS.",
   },
   {
     year: 2024,

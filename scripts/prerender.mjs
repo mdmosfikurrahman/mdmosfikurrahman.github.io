@@ -48,6 +48,11 @@ const ROUTES = [
     description: `About ${NAME} (Mosfik): backend engineer and applied machine learning researcher based in Dhaka, Bangladesh.`,
   },
   {
+    route: '/photography/',
+    title: `Photography | ${NAME}`,
+    description: `Photographs by ${NAME}, shot in Bangladesh: streets, food, light and everyday details.`,
+  },
+  {
     route: '/hire/',
     title: `Work with me | ${NAME}`,
     description: `Work with ${NAME}: backend architecture and engineering for travel and distributed systems.`,

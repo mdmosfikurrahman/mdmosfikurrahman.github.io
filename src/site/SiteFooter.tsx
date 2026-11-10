@@ -23,7 +23,7 @@ export default function SiteFooter() {
     { label: "Google Scholar", href: profile.links.scholar, Icon: GraduationCap },
     { label: "ORCID", href: profile.links.orcid, Icon: IdCard },
   ];
-  const navigate = [{ to: "/", label: "Home" }, ...FOLIO_NAV];
+  const navigate = [{ to: "/", label: "Home" }, ...FOLIO_NAV, { to: "/photography", label: "Photography" }];
 
   return (
     <footer className="fo-footer">

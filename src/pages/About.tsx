@@ -70,8 +70,8 @@ export default function About() {
               Undergraduate research began earlier than the timing might suggest. A first IEEE paper on an IoT-based autonomous
               smart-sewerage system was presented at WIECON-ECE 2020, won the Best Paper Award, and quietly seeded everything that
               came afterwards. Three journal papers followed in 2021, two as first author, on the mental-health and situational
-              aftermath of COVID-19, all in Elsevier's <em>Current Research in Behavioral Sciences</em>. A mid-degree Erasmus+
-              exchange at Adam Mickiewicz University in Poznań closed the undergraduate chapter.
+              aftermath of COVID-19, all in Elsevier's <em>Current Research in Behavioral Sciences</em>. A mid-degree
+              exchange semester at Adam Mickiewicz University in Poznań closed the undergraduate chapter.
             </p>
             <Distinctions items={distinctions.filter((d) => d.year <= 2021)} />
           </Act>

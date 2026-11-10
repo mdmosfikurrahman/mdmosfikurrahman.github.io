@@ -561,7 +561,7 @@ function EducationSlide() {
       </h2>
       <ol className="mt-8 grid sm:grid-cols-2 gap-4">
         {education
-          .filter((e) => /B\.Sc\.|Erasmus/.test(e.degree))
+          .filter((e) => /B\.Sc\.|Exchange/.test(e.degree))
           .map((e) => (
           <li key={e.school + e.degree} className="kn-card p-6">
             <div className="flex items-center justify-between gap-3">
